@@ -26,7 +26,7 @@ class CategoryFactory extends Factory
             $title = $this->faker->words(3, true); 
     
             return [
-                'parent_category_id' => null, 
+                // 'parent_category_id' => null, 
                 'cat_title' => $title,
                 'cat_slug' => Str::slug($title), 
                 'cat_image' => $this->faker->imageUrl(200, 200, 'categories', true),

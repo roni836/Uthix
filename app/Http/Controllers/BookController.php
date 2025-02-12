@@ -216,7 +216,7 @@ public function update(Request $request, $id)
         }
     }
 
-    
+
     public function getBookByCategories(Request $request, $id){
         $query=Book::where('Category_id',$id);
 
@@ -224,9 +224,9 @@ public function update(Request $request, $id)
             $searchbooks=$request->input('search');
 
             $query->where(function($q) use ($searchbooks){
-         $q->where('title', 'like', '%searchbooks%')
-          ->orwhere('description', 'like', '%searchbooks%')
-       ->orwhere('author', 'like', '%searchbooks%');
+         $q->where('title', 'like', '%' .$searchbooks. '%')
+          ->orwhere('description', 'like', '%' .$searchbooks. '%')
+       ->orwhere('author', 'like', '%' .$searchbooks. '%');
             });
         }
         $books=$query->get();
@@ -243,4 +243,5 @@ public function update(Request $request, $id)
             'books'=>$books
         ],200);
     }
+    
 }

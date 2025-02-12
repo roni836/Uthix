@@ -32,7 +32,7 @@ class BookFactory extends Factory
             'description'=>$this->faker->paragraph(5),
             'thumbnail_img'=>$this->faker->imageUrl(200,300,'books'),
             'rating'=>$this->faker->randomFloat(2,0,5),
-            'price'=>$this->faker->randomFloat(2,5,100),
+            'price'=>$this->faker->randomFloat(3,50,2000),
             'discount_price'=>$this->faker->optional()->randomFloat(2,1,50),
             'discount_type'=>$this->faker->optional()->randomElement(['percentage','fixed']),
             'stock' => $this->faker->numberBetween(0, 500),

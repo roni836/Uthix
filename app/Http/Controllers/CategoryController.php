@@ -31,7 +31,7 @@ class CategoryController extends Controller
         $request->validate([
             'cat_title' => 'required|string|max:255',
             'cat_description' => 'required|string',
-            'parent_category_id' => 'nullable|exists:categories,id',
+            // 'parent_category_id' => 'nullable|exists:categories,id',
             'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -53,7 +53,7 @@ class CategoryController extends Controller
 
             $category = new Category();
             $category->cat_title = $request->cat_title;
-            $category->parent_category_id = $request->parent_category_id;
+            // $category->parent_category_id = $request->parent_category_id;
             $category->cat_slug = $catSlug;
             $category->cat_description = $request->cat_description;
             $category->cat_image = $imageName;
@@ -100,7 +100,7 @@ class CategoryController extends Controller
     $validator = Validator::make($request->all(), [
         'cat_title' => 'nullable|string|max:255',
         'cat_description' => 'nullable|string',
-        'parent_category_id' => 'nullable|integer|exists:categories,id',
+        // 'parent_category_id' => 'nullable|integer|exists:categories,id',
         'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ]);
 
@@ -125,9 +125,9 @@ class CategoryController extends Controller
             $updateData['cat_description'] = $request->input('cat_description');
         }
 
-        if ($request->has('parent_category_id')) {
-            $updateData['parent_category_id'] = $request->input('parent_category_id');
-        }
+        // if ($request->has('parent_category_id')) {
+        //     $updateData['parent_category_id'] = $request->input('parent_category_id');
+        // }
 
         // Handle image update
         if ($request->hasFile('cat_image')) {
