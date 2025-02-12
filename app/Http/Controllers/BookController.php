@@ -215,4 +215,32 @@ public function update(Request $request, $id)
             return response()->json(['message' => 'Book not deleted successfully'], 500);
         }
     }
+
+    
+    public function getBookByCategories(Request $request, $id){
+        $query=Book::where('Category_id',$id);
+
+        if($request->has('search')){
+            $searchbooks=$request->input('search');
+
+            $query->where(function($q) use ($searchbooks){
+         $q->where('title', 'like', '%searchbooks%')
+          ->orwhere('description', 'like', '%searchbooks%')
+       ->orwhere('author', 'like', '%searchbooks%');
+            });
+        }
+        $books=$query->get();
+        if ($books->isEmpty()) {
+            return response()->json([
+                'message'=>'no book founds in category',
+                'books'=>[]
+            ],404);
+            # code...
+        }
+
+        return response()->json([
+            'message'=>'books retrived successfully',
+            'books'=>$books
+        ],200);
+    }
 }

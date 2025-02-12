@@ -25,3 +25,4 @@ Route::get('/test', function () {
 
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('books', BookController::class);
+Route::get('/categories/{id}/books',[BookController::class,'getBookByCategories']);

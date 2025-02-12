@@ -20,14 +20,19 @@ class CategoryFactory extends Factory
     protected $model = Category::class;
 
     public function definition(): array
-    {
-        return [
-            'parent_category_id' => null, // You can adjust this to generate subcategories
-            'cat_title' => $this->faker->word,
-            'cat_slug' => $this->faker->sentence(3),
-            'cat_image' => $this->faker->imageUrl(200, 200, 'categories', true),
-            'cat_description' => $this->faker->paragraph(),
-            'status' => $this->faker->boolean(),
-        ];
-    }
+    
+        
+        {
+            $title = $this->faker->words(3, true); 
+    
+            return [
+                'parent_category_id' => null, 
+                'cat_title' => $title,
+                'cat_slug' => Str::slug($title), 
+                'cat_image' => $this->faker->imageUrl(200, 200, 'categories', true),
+                'cat_description' => $this->faker->paragraph(),
+                'status' => $this->faker->boolean(),
+            ];
+        }
+   
 }
