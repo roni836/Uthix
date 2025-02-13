@@ -32,9 +32,40 @@ class WishlistController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
+{
+    $request->validate([
+        'book_id' => 'required|exists:books,id', 
+    ]);
+
+    $user = Auth::guard('sanctum')->user(); 
+
+    if (!$user) {
+        return response()->json(['error' => 'Unauthorized'], 401);
     }
+
+    $productId = $request->input('book_id');
+
+    $wishlistItem = Wishlist::where('user_id', $user->id)
+                            ->where('book_id', $productId)
+                            ->first();
+
+    if ($wishlistItem) {
+        $wishlistItem->delete(); 
+        return response()->json([
+            'status' => true,
+            'message' => 'Product removed from wishlist successfully'
+        ]);
+    } else {
+        Wishlist::create([
+            'user_id' => $user->id,
+            'book_id' => $productId,
+        ]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Product added to wishlist successfully'
+        ]);
+    }
+}
 
     /**
      * Display the specified resource.
@@ -55,8 +86,27 @@ class WishlistController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Wishlist $wishlist)
+    public function destroy(string $id)
     {
-        //
+        $user = Auth::user(); // Get authenticated user
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $wishlistItem = Wishlist::where('id', $id)
+        ->where('user_id', $user->id)
+        ->first();
+          if(!$wishlistItem){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Wishlist item not found'
+            ],404);
+        }
+        $wishlistItem->delete();
+        return response()->json([
+            'status'=>true,
+            'message'=>'wishlist item removed successfully'
+        ]);
+
     }
 }
