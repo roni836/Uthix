@@ -13,9 +13,23 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        $query = Category::query();
+        if($request->has('search')){
+            $searchcategories=$request->input('search');
+            $query->where(function($q) use ($searchcategories){
+                $q->where('cat_title','like', '%'.$searchcategories. '%');
+            });
+        }
+        $categories = $query->get();
+         // If no books found
+    if ($categories->isEmpty()) {
+        return response()->json([
+            'message' => 'No categories found',
+            'books' => []
+        ], 404);
+    }
         return response()->json([
             'message' => 'Categories fetched successfully',
             'categories' => $categories

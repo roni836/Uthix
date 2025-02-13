@@ -230,13 +230,14 @@ public function update(Request $request, $id)
         '2000_2500' => [2000, 2500],
         'above_2500' => [2501, null] 
     ];
-    // Apply search filters
+    // search
     if ($request->has('search')) {
         $searchbooks = $request->input('search');
         $query->where(function ($q) use ($searchbooks) {
             $q->where('title', 'like', '%' . $searchbooks . '%')
                 ->orWhere('description', 'like', '%' . $searchbooks . '%')
-                ->orWhere('author', 'like', '%' . $searchbooks . '%');
+                ->orWhere('author', 'like', '%' . $searchbooks . '%')
+                ->orWhere('language', 'like', '%' . $searchbooks . '%');
         });
     }
 

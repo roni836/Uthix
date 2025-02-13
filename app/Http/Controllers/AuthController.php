@@ -35,7 +35,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // User Login
+    // User Login   
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
