@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Http\Request;
@@ -18,6 +19,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/add-to-cart', [CartController::class, 'addToCart']);
+    Route::get('/cart', [CartController::class, 'getCart']);
+    Route::delete('/cart/clear', [CartController::class, 'clearCart']);
+
+
     Route::apiResource('wishlist', WishlistController::class);
 });
 

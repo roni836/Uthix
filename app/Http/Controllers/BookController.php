@@ -15,7 +15,7 @@ class BookController extends Controller
      */
     public function index()
     {
-       $books=Book::all();
+       $books=Book::with('category')->get();
        return response()->json([
         'message'=>'Books added successfully',
         'books'=>$books
