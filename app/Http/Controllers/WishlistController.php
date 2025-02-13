@@ -43,26 +43,26 @@ class WishlistController extends Controller
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
-    $productId = $request->input('book_id');
+    $bookId = $request->input('book_id');
 
     $wishlistItem = Wishlist::where('user_id', $user->id)
-                            ->where('book_id', $productId)
+                            ->where('book_id', $bookId)
                             ->first();
 
     if ($wishlistItem) {
         $wishlistItem->delete(); 
         return response()->json([
             'status' => true,
-            'message' => 'Product removed from wishlist successfully'
+            'message' => 'Book removed from wishlist successfully'
         ]);
     } else {
         Wishlist::create([
             'user_id' => $user->id,
-            'book_id' => $productId,
+            'book_id' => $bookId,
         ]);
         return response()->json([
             'status' => true,
-            'message' => 'Product added to wishlist successfully'
+            'message' => 'Book added to wishlist successfully'
         ]);
     }
 }
