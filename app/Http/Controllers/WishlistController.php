@@ -13,20 +13,21 @@ class WishlistController extends Controller
      */
     public function index()
     {
-       $user=Auth::user();
-       if(!$user){
-        return response()->json(['error'=>'Unauthorized'],401);
-
-       }
-       $wishlists=Wishlist::where('user_id',$user->id)->with('book')->get();
-       return response()->json([
-        'status'=>true,
-        'message'=>'user wishlist fetched successfully',
-        'wishlists'=>$wishlists
-       ],200);
-
+        $user = Auth::user();
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        $wishlists = Wishlist::where('user_id', $user->id)->get();
+    
+        return response()->json([
+            'status' => true,
+            'message' => 'User wishlist fetched successfully',
+            'wishlists' => $wishlists
+        ]);
     }
-
+    
     /**
      * Store a newly created resource in storage.
      */
