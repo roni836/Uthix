@@ -22,7 +22,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add-to-cart', [CartController::class, 'addToCart']);
     Route::get('/cart', [CartController::class, 'getCart']);
     Route::delete('/cart/clear', [CartController::class, 'clearCart']);
+    Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
 
+    Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
 
     Route::apiResource('wishlist', WishlistController::class);
 });

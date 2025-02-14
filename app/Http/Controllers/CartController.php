@@ -61,10 +61,78 @@ class CartController extends Controller
         ], 200);
     }
     public function clearCart()
-    {
-        Cart::where('user_id', Auth::id())->delete();
+{
+    $user = Auth::guard('sanctum')->user(); 
 
-        return response()->json(['message' => 'Cart cleared successfully'], 200);
+    if (!$user) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Unauthorized'
+        ], 401); }
+
+    Cart::where('user_id', $user->id)->delete();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Cart cleared successfully'
+    ], 200);
+}
+
+public function updateCart(Request $req, $cartId){
+    $req->validate([
+        'quantity'=>'required|integer|min:1',
+    ]);
+
+    $user=Auth::user();
+    if(!$user){
+        return response()->json([
+            'status'=>false,
+            'message'=>'unauthorized'
+        ],401);
+
     }
-   
+    $cartItem=Cart::where('id',$cartId)->where('user_id',$user->id)->first();
+    if(!$cartItem){
+        return response()->json([
+            'status'=>false,
+            'message'=>'cart item is not found'
+        ],404);
+    }
+    $cartItem->update(['quantity'=>$req->quantity]);
+    $cartItem->load('user', 'book'); 
+
+
+    return response()->json([
+        'status'=>true,
+        'message'=>'cart updated successfully',
+        'cart'=>$cartItem,
+    ],200);
+}
+public function removeFromCart($cartId)
+    {
+        $user=Auth::user();
+        if(!$user){
+            return response()->json([
+                'status'=>false,
+                'message'=>'unauthorized'
+            ]);
+        }
+        $cartItem = Cart::where('id', $cartId)
+                        ->where('user_id', $user->id)
+                        ->first();
+
+        if (!$cartItem) {
+            return response()->json([
+                'status'=>false,
+                'message' => 'Cart item not found'
+            ], 404);
+        }
+
+        $cartItem->delete();
+
+        return response()->json([
+            'status'=>true,
+            'message' => 'Cart item removed'
+        ], 200);
+    }
 }
