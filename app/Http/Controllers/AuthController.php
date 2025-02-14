@@ -54,6 +54,7 @@ class AuthController extends Controller
         // ], 201);
     }
 
+
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -79,6 +80,7 @@ class AuthController extends Controller
 
 
     // User Login
+
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
