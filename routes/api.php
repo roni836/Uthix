@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CartController;
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
 
     Route::apiResource('wishlist', WishlistController::class);
+    Route::apiResource('address', AddressController::class);
 });
 
 Route::get('/test', function () {
