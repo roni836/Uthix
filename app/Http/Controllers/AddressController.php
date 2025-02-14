@@ -110,8 +110,59 @@ class AddressController extends Controller
      */
     public function update(Request $request, Address $address)
     {
-        //
+        // Validate request data
+        $request->validate([
+            'name'         => 'sometimes|required|string|min:3|max:255',
+            'phone'        => 'sometimes|required|digits:10|numeric',
+            'alt_phone'    => 'nullable|digits:10|numeric',
+            'address_type' => 'sometimes|required|in:home,office,other',
+            'landmark'     => 'sometimes|required|string|min:3|max:255',
+            'street'       => 'sometimes|required|string|min:3|max:255',
+            'area'         => 'sometimes|required|string|min:3|max:255',
+            'postal_code'  => 'sometimes|required|digits:6|numeric',
+            'is_default'   => 'sometimes|boolean'
+        ]);
+    
+        // Check if authenticated user owns this address
+        if (Auth::id() !== $address->user_id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+    
+        // If postal code is updated, fetch new city & state
+        if ($request->has('postal_code')) {
+            $pincode = $request->postal_code;
+            $response = Http::get("https://api.postalpincode.in/pincode/{$pincode}");
+            $data = $response->json();
+    
+            if (!isset($data[0]) || $data[0]['Status'] !== 'Success') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid Pincode or API issue'
+                ], 400);
+            }
+    
+            $request->merge([
+                'city' => $data[0]['PostOffice'][0]['District'] ?? 'Unknown',
+                'state' => $data[0]['PostOffice'][0]['State'] ?? 'Unknown',
+            ]);
+        }
+    
+        // Update address with only provided fields
+        $address->update($request->only([
+            'name', 'phone', 'alt_phone', 'address_type', 'landmark', 'street',
+            'area', 'postal_code', 'city', 'state', 'is_default'
+        ]));
+    
+        return response()->json([
+            'status' => true,
+            'message' => 'Address updated successfully',
+            'data' => $address
+        ]);
     }
+    
 
     /**
      * Remove the specified resource from storage.
