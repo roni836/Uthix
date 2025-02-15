@@ -18,32 +18,38 @@ class CartController extends Controller
             'book_id' => 'required|exists:books,id',
             'quantity' => 'required|integer|min:1'
         ]);
+    
         $user = Auth::user();
         if (!$user) {
             return response()->json([
                 'status' => false,
-                'message' => 'Item is not added to cart'
-            ], 404);
+                'message' => 'Unauthorized user'
+            ], 401);
         }
+    
         $book = Book::findOrFail($request->book_id);
         $cartItem = Cart::where('user_id', $user->id)
-            ->where('book_id', $book->id)->first();
+            ->where('book_id', $book->id)
+            ->first();
+    
         if ($cartItem) {
             $cartItem->quantity += $request->quantity;
             $cartItem->save();
         } else {
-            Cart::create([
+            $cartItem = Cart::create([
                 'user_id' => $user->id,
                 'book_id' => $book->id,
                 'quantity' => $request->quantity
             ]);
-
         }
+    
         return response()->json([
             'status'  => true,
-            'message' => 'Product added to cart successfully'
+            'message' => 'Product added to cart successfully',
+            'cartItem' => $cartItem,
         ], 200);
     }
+    
 
     public function getCart()
     {
