@@ -6,6 +6,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('wishlist', WishlistController::class);
     Route::apiResource('address', AddressController::class);
+    Route::apiResource('orders', OrderController::class);
+    Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
+
 });
 
 Route::get('/test', function () {
