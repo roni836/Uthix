@@ -50,13 +50,11 @@ Route::get('/books/filter', [BookController::class, 'filterBooks']);
 Route::apiResource('coupons', CouponController::class);
 
 Route::get('phonepe',[PaymentController::class,'phonePe']);
-Route::post('phonepe-response',[PaymentController::class,'response'])->name('response');
-
-
+// Route::post('phonepe-response',[PaymentController::class,'response'])->name('response');
 Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
-Route::post('/phonepe/status', [PhonePeController::class, 'checkStatus']);
-Route::post('/phonepe/refund', [PhonePeController::class, 'refund']);
-Route::post('/phonepe/callback', [PhonePeController::class, 'paymentCallback'])->name('phonepe.callback');
-Route::get('/phonepe/success', function () {
-    return "Payment Successful!";
-})->name('phonepe.success');
+// Route::post('/phonepe/status', [PhonePeController::class, 'checkStatus']);
+// Route::post('/phonepe/refund', [PhonePeController::class, 'refund']);
+// Route::post('/phonepe/callback', [PhonePeController::class, 'paymentCallback'])->name('phonepe.callback');
+// Route::get('/phonepe/success', function () {
+//     return "Payment Successful!";
+// })->name('phonepe.success');
