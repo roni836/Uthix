@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -10,9 +11,8 @@ Route::get('/', function () {
     return view('admin/index');
 });
 
-Route::get('/manage-user', function () {
-    return view('admin/manageUser');
-});
-Route::get('/insert-user', function () {
-    return view('admin/insertUser');
-});
+Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard'); 
+
+Route::get('/manage-user', [AdminController::class, 'manageUser'])->name('manage.user'); 
+Route::get('/insert-user', [AdminController::class, 'insertUser'])->name('insert.user'); 
+
