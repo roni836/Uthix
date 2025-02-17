@@ -36,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('address', AddressController::class);
     Route::apiResource('orders', OrderController::class);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
+    Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
+
 
 });
 
@@ -51,7 +53,7 @@ Route::apiResource('coupons', CouponController::class);
 
 Route::get('phonepe',[PaymentController::class,'phonePe']);
 // Route::post('phonepe-response',[PaymentController::class,'response'])->name('response');
-Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
+// Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
 // Route::post('/phonepe/status', [PhonePeController::class, 'checkStatus']);
 // Route::post('/phonepe/refund', [PhonePeController::class, 'refund']);
 // Route::post('/phonepe/callback', [PhonePeController::class, 'paymentCallback'])->name('phonepe.callback');

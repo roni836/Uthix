@@ -1,161 +1,147 @@
 <?php
  
- namespace App\Http\Controllers;
-
- use App\Models\Payment;
- use App\Models\Order;
- use Illuminate\Http\Request;
- use Illuminate\Support\Facades\Http;
- use Illuminate\Support\Facades\Log;
- use Illuminate\Support\Facades\DB;
- use Exception;
+namespace App\Http\Controllers;
  
- class PaymentController extends Controller
- {
-     /**
-      * Initiates the PhonePe payment process and stores initial payment data.
-      */
-     public function initiatePayment(Request $request)
-     {
-         DB::beginTransaction();
+use Exception;
+use Http;
+use Illuminate\Http\Request;
+use Ixudra\Curl\Facades\Curl;
+use Log;
  
-         try {
-             // Validate Request Data
-             $data = $request->validate([
-                 'order_id' => 'required|exists:orders,id',
-                 'amount' => 'required|numeric',
-                 'user_id' => 'required|exists:users,id',
-             ]);
+class PaymentController extends Controller
+{
+    /**
+     * Initiates the PhonePe payment process.
+     */
+    public function phonePe()
+    {
+        $data = [
+            "merchantId" => env('PHONEPE_MERCHANT_ID'),
+            "merchantTransactionId" => "MT7850590068188104",
+            "merchantUserId" => "MUID123",
+            "amount" => 10000,
+            "redirectUrl" => "https://webhook.site/redirect-url",
+            "redirectMode" => "REDIRECT",
+            "callbackUrl" => "https://webhook.site/callback-url",
+            "mobileNumber" => "9999999999",
+            "paymentInstrument" => [
+                "type" => "PAY_PAGE"
+            ],
+        ];
  
-             // Convert amount to paise
-             $amountInPaise = $data['amount'] * 100;
  
-             // Generate a unique transaction ID
-             $merchantTransactionId = 'TXN' . time() . rand(1000, 9999);
  
-             // Store initial payment data in the database
-             $payment = Payment::create([
-                 'order_id' => $data['order_id'],
-                 'user_id' => $data['user_id'],
-                 'amount' => $data['amount'],
-                 'currency' => 'INR',
-                 'payment_status' => 'pending',
-                 'status' => 'pending',
-                 'transaction_id' => $merchantTransactionId,
-             ]);
+        $encode = base64_encode(json_encode($data));
+        $saltKey = env('PHONEPE_SALT_KEY');
+        $saltIndex = env('PHONEPE_SALT_INDEX');
+        $string = $encode . '/pg/v1/pay' . $saltKey;
+        $sha256 = hash('sha256', $string);
+        $finalXHeader = $sha256 . '###' . $saltIndex;
  
-             // Prepare Request Data for PhonePe
-             $requestData = [
-                 'merchantId' => env('PHONEPE_MERCHANT_ID'),
-                 'merchantTransactionId' => $merchantTransactionId,
-                 'merchantUserId' => $data['user_id'],
-                 'amount' => $amountInPaise,
-                 'redirectUrl' => route('payment.response', ['transaction_id' => $merchantTransactionId]),
-                 'callbackUrl' => route('payment.callback'),
-                 'paymentInstrument' => ['type' => 'PAY_PAGE'],
-             ];
+        // Log the request for debugging
+        // Log::debug('Request URL: ' . 'https://api-preprod.phonepe.com/apis/merchant-simulator/pg/v1/pay');
+        // Log::debug('Request Payload: ' . json_encode(['request' => $encode]));
+        // Log::debug('X-VERIFY Header: ' . $finalXHeader);
  
-             // Generate Encrypted Payload
-             $payload = json_encode($requestData);
-             $payloadMain = base64_encode($payload);
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'X-VERIFY' => $finalXHeader,
+        ])->post('https://api-preprod.phonepe.com/apis/merchant-simulator/pg/v1/pay', [
+                    'request' => $encode,
+                ]);
  
-             // Generate Checksum
-             $saltKey = env('PHONEPE_SALT_KEY');
-             $keyIndex = env('PHONEPE_SALT_INDEX');
-             $string = $payloadMain . "/pg/v1/pay" . $saltKey;
-             $sha256 = hash('sha256', $string);
-             $checksum = $sha256 . '###' . $keyIndex;
+        // Debug: Output the response from PhonePe
+        return response()->json($response->json());
+    }
+    public function initiatePayment(Request $request)
+    {        
+        try {
+            $data = $request->validate([
+                'amount' => 'required|numeric',
+                'transactionId' => 'required|string',
+                'userId' => 'required|string',
+                'userEmail' => 'nullable|email',
+                'checkoutId' => 'required|string',
+                'bookId' => 'nullable|string',
+                'date' => 'nullable|string',
+                'time' => 'nullable|string',
+                'addressId' => 'required|string',
+            ]);
  
-             // Determine API URL based on environment
-             $apiUrl = (env('PHONEPE_ENV') === 'PROD') ?
-                 'https://api.phonepe.com/apis/hermes/pg/v1/pay' :
-                 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay';
+            $amountInPaise = $data['amount'] * 100;
+            $saltKey = env('PHONEPE_SALT_KEY');
+            $merchantId = env('PHONEPE_MERCHANT_ID');
+            $keyIndex = env('PHONEPE_SALT_INDEX');
+            $baseUrl = env('BASE_URL');
  
-             // Send Request to PhonePe
-             $response = Http::withHeaders([
-                 'accept' => 'application/json',
-                 'Content-Type' => 'application/json',
-                 'X-VERIFY' => $checksum,
-             ])->post($apiUrl, ['request' => $payloadMain]);
+            $redirectUrl = "{$baseUrl}/api/paymentstatus?id={$data['transactionId']}&userId={$data['userId']}&userEmail={$data['userEmail']}&checkoutId={$data['checkoutId']}&bookId={$data['bookId']}&date={$data['date']}&time={$data['time']}&addressId={$data['addressId']}";
+            $callbackUrl = "{$baseUrl}/api/paymentstatus?id={$data['transactionId']}";
  
-             // Get Response
-             $responseData = $response->json();
+            $requestData = [
+                'merchantId' => $merchantId,
+                'merchantTransactionId' => $data['transactionId'],
+                'merchantUserId' => $data['userId'],
+                'amount' => $amountInPaise,
+                'redirectUrl' => $redirectUrl,
+                'redirectMode' => 'POST',
+                'callbackUrl' => $callbackUrl,
+                'paymentInstrument' => [
+                    'type' => 'PAY_PAGE',
+                ],
+            ];
  
-             if ($responseData['success'] && isset($responseData['data']['instrumentResponse']['redirectInfo']['url'])) {
-                 DB::commit();
-                 return response()->json([
-                     'success' => true,
-                     'paymentUrl' => $responseData['data']['instrumentResponse']['redirectInfo']['url'],
-                 ]);
-             } else {
-                 throw new Exception('Payment initiation failed');
-             }
-         } catch (Exception $e) {
-             DB::rollBack();
-             Log::error('Payment initiation error:', ['error' => $e->getMessage()]);
-             return response()->json([
-                 'error' => 'Payment initiation failed',
-                 'details' => $e->getMessage(),
-             ], 500);
-         }
-     }
+            // Prepare the payload
+            $payload = json_encode($requestData);
+            $payloadMain = base64_encode($payload);
  
-     /**
-      * Handle the response from PhonePe.
-      */
-     public function response(Request $request)
-     {
-         $transactionId = $request->query('transaction_id');
-         $payment = Payment::where('transaction_id', $transactionId)->first();
+            // Generate checksum
+            $string = $payloadMain . "/pg/v1/pay" . $saltKey;
+            $sha256 = hash('sha256', $string);
+            $checksum = $sha256 . '###' . $keyIndex;
  
-         if (!$payment) {
-             return response()->json(['error' => 'Payment record not found'], 404);
-         }
+            // Determine API URL based on environment
+            $apiUrl = (env('PHONEPE_ENV') === 'PROD') ?
+                'https://api.phonepe.com/apis/hermes/pg/v1/pay' :
+                'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay';
  
-         return response()->json([
-             'message' => 'Payment initiated successfully',
-             'payment_status' => $payment->payment_status,
-         ]);
-     }
+            // Send the request to PhonePe API
+            $response = Http::withHeaders([
+                'accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'X-VERIFY' => $checksum,
+            ])->post($apiUrl, [
+                        'request' => $payloadMain,
+                    ]);
  
-     /**
-      * Handle the callback from PhonePe and update the payment status in the database.
-      */
-     public function callback(Request $request)
-     {
-         try {
-             $responseData = $request->all();
-             Log::info('PhonePe Callback Data:', $responseData);
+            // Handle the response
+            $responseData = $response->json();
  
-             if (!isset($responseData['transactionId'])) {
-                 return response()->json(['error' => 'Invalid transaction ID'], 400);
-             }
+            if ($responseData['success'] && isset($responseData['data']['instrumentResponse']['redirectInfo']['url'])) {
+                return response()->json([
+                    'success' => true,
+                    'paymentUrl' => $responseData['data']['instrumentResponse']['redirectInfo']['url'],
+                ]);
+            } else {
+                throw new Exception('Payment initiation failed');
+            }
+        } catch (Exception $e) {
+            Log::error('Payment initiation error:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'error' => 'Payment initiation failed',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
+    }
  
-             // Fetch Payment Record
-             $payment = Payment::where('transaction_id', $responseData['transactionId'])->first();
-             if (!$payment) {
-                 return response()->json(['error' => 'Payment not found'], 404);
-             }
+    /**
+     * Handle the response from PhonePe.
+     */
+    public function response(Request $request)
+    {
+        // Log the input data (for debugging)
+        $input = $request->all();
+        dd($input); // Output the request data for debugging purposes
+    }
+}
  
-             // Update Payment Status
-             $payment->update([
-                 'payment_status' => $responseData['code'] === 'PAYMENT_SUCCESS' ? 'success' : 'failed',
-                 'transaction_fee' => $responseData['transactionFee'] ?? null,
-                 'transaction_date' => now(),
-                 'status' => $responseData['code'] === 'PAYMENT_SUCCESS' ? 'completed' : 'failed',
-                 'error_reason' => $responseData['message'] ?? null,
-             ]);
- 
-             // Update Order Status if Payment is Successful
-             if ($payment->payment_status === 'success') {
-                 Order::where('id', $payment->order_id)->update(['status' => 'paid']);
-             }
- 
-             return response()->json(['message' => 'Payment status updated successfully']);
-         } catch (Exception $e) {
-             Log::error('Payment callback error:', ['error' => $e->getMessage()]);
-             return response()->json(['error' => 'Failed to process payment status'], 500);
-         }
-     }
- }
  
