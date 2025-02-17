@@ -9,6 +9,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PhonePeController;
+use App\Http\Controllers\VendorController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Http\Request;
@@ -60,6 +61,8 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API is working!']);
 });
 
+
+Route::apiResource('vendors', VendorController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('books', BookController::class);
 Route::get('/categories/{id}/books',[BookController::class,'getBookByCategories']);
