@@ -7,6 +7,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PhonePeController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Http\Request;
@@ -64,3 +66,12 @@ Route::get('/categories/{id}/books',[BookController::class,'getBookByCategories'
 Route::get('/books/filter', [BookController::class, 'filterBooks']);
 Route::apiResource('coupons', CouponController::class);
 
+Route::get('phonepe',[PaymentController::class,'phonePe']);
+// Route::post('phonepe-response',[PaymentController::class,'response'])->name('response');
+Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
+// Route::post('/phonepe/status', [PhonePeController::class, 'checkStatus']);
+// Route::post('/phonepe/refund', [PhonePeController::class, 'refund']);
+// Route::post('/phonepe/callback', [PhonePeController::class, 'paymentCallback'])->name('phonepe.callback');
+// Route::get('/phonepe/success', function () {
+//     return "Payment Successful!";
+// })->name('phonepe.success');

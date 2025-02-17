@@ -31,7 +31,7 @@ class CategoryController extends Controller
         ], 404);
     }
         return response()->json([
-            'message' => 'Categories fetched successfully',
+            'message' => 'Categories search successfully',
             'categories' => $categories
         ], 200);
     }
