@@ -37,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('orders', OrderController::class);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
     Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('books', BookController::class);
 
 
 });
@@ -62,8 +64,6 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API is working!']);
 });
 
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('books', BookController::class);
 Route::get('/categories/{id}/books',[BookController::class,'getBookByCategories']);
 Route::get('/books/filter', [BookController::class, 'filterBooks']);
 Route::apiResource('coupons', CouponController::class);

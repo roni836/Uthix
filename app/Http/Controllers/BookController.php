@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -29,7 +30,14 @@ class BookController extends Controller
     
     public function store(Request $request)
     {
-        // Validation rules
+        $user = Auth::user();  
+
+    if ($user->role !== 'admin' && $user->role !== 'seller') {
+        return response()->json([
+            'message' => 'You do not have permission to create a book.',
+        ], 403); 
+    }
+
         $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
@@ -65,7 +73,7 @@ class BookController extends Controller
                 'title' => $request->title,
                 'author' => $request->author,
                 'category_id' => $request->category_id,
-                'user_id' => $request->user_id,
+                 'user_id' => $user->id,
                 'isbn' => $request->isbn,
                 'language' => $request->language ?? 'English',
                 'pages' => $request->pages,
