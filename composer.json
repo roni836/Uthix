@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ixudra/curl": "^6.22",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
@@ -71,5 +72,23 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "package",
+            "package": [
+                {
+                    "dist": {
+                        "type": "zip",
+                        "url": "https://phonepe.mycloudrepo.io/public/repositories/phonepe-pg-php-sdk/phonepe-pg-php-sdk.zip"
+                    },
+                    "name": "phonepe/phonepe-pg-php-sdk",
+                    "version": "1.0.0",
+                    "autoload": {
+                        "classmap": ["/"]
+                    }
+                }
+            ]
+        }
+    ]
 }
