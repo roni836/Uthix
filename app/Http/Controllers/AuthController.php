@@ -123,27 +123,36 @@ class AuthController extends Controller
     //     return response()->json(['message' => 'User logged out successfully']);
     // }
 
-     public function register(Request $request)
+    public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
+            'role' => 'required|string|in:student,instructor,seller,admin',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
+    
+        // Set the default role to 'student' if no role is provided
+        $role = $request->role ?? 'student'; 
+    
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $role,
         ]);
+    
         return response()->json([
             'message' => 'User registered successfully!',
             'user' => $user
         ], 201);
     }
-    // User Login
+    
+    
+
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -158,13 +167,18 @@ class AuthController extends Controller
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+    
+        // Add role-based response
+        $role = $user->role;
         $token = $user->createToken('auth_token')->plainTextToken;
+    
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'role' => $role
         ]);
-        
     }
+    
     // Get Authenticated User
     public function profile(Request $request)
     {
