@@ -22,15 +22,15 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
-//     Route::post('/logout', [AuthController::class, 'logout']);
-//     Route::post('/add-to-cart', [CartController::class, 'addToCart']);
-//     Route::get('/cart', [CartController::class, 'getCart']);
-//     Route::delete('/cart/clear', [CartController::class, 'clearCart']);
-//     Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/add-to-cart', [CartController::class, 'addToCart']);
+    Route::get('/cart', [CartController::class, 'getCart']);
+    Route::delete('/cart/clear', [CartController::class, 'clearCart']);
+    Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
 
-//     Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
+    Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
 
     Route::apiResource('wishlist', WishlistController::class);
     Route::apiResource('address', AddressController::class);
@@ -39,7 +39,7 @@ Route::post('/login', [AuthController::class, 'login']);
     Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
 
 
-// });
+});
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
