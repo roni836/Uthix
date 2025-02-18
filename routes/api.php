@@ -16,6 +16,7 @@ use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -39,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('orders', OrderController::class);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
     Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('books', BookController::class);
+    // Route::apiResource('books', BookController::class);
 
     Route::post('/create-payment', [PaymentController::class, 'createPayment']);
     Route::post('/verify-payment', [PaymentController::class, 'callback']);
@@ -51,6 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard',function(){
         return response()->json(['message' => 'admin API is working!']);
     });
+    
     Route::middleware([RoleMiddleware::class . ':instructor'])->get('/instructor-dashboard',function(){
         return response()->json(['message' => 'instructor API is working!']);
     });
@@ -69,13 +71,18 @@ Route::get('/test', function () {
 
 
 Route::apiResource('vendors', VendorController::class);
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('books', BookController::class);
+
 
 Route::get('/categories/{id}/books',[BookController::class,'getBookByCategories']);
 Route::get('/books/filter', [BookController::class, 'filterBooks']);
 Route::apiResource('coupons', CouponController::class);
 
 
- 
+
+
+
+
+Route::middleware(['auth:sanctum', RoleMiddleware::class . ':admin,seller'])->group(function () {
+    Route::post('/books', [BookController::class, 'store']);
+});
 
