@@ -23,7 +23,8 @@ return new class extends Migration
             $table->enum('payment_status', ['paid', 'unpaid', 'refunded'])->default('unpaid');
             $table->string('payment_method')->nullable();
             $table->string('tracking_number')->nullable();
-            $table->string('coupon_code')->nullable();
+            $table->foreignId('coupon_id')->nullable()->constrained('coupons')->onDelete('set null'); // Correcting coupon reference
+
             $table->timestamps();
         });
     }

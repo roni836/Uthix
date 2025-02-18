@@ -8,8 +8,10 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+
 use App\Http\Controllers\PhonePeController;
 use App\Http\Controllers\VendorController;
+
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Http\Request;
@@ -23,22 +25,26 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
-//     Route::post('/logout', [AuthController::class, 'logout']);
-//     Route::post('/add-to-cart', [CartController::class, 'addToCart']);
-//     Route::get('/cart', [CartController::class, 'getCart']);
-//     Route::delete('/cart/clear', [CartController::class, 'clearCart']);
-//     Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/add-to-cart', [CartController::class, 'addToCart']);
+    Route::get('/cart', [CartController::class, 'getCart']);
+    Route::delete('/cart/clear', [CartController::class, 'clearCart']);
+    Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
 
-//     Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
+    Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
 
-//     Route::apiResource('wishlist', WishlistController::class);
-//     Route::apiResource('address', AddressController::class);
-//     Route::apiResource('orders', OrderController::class);
-//     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
+    Route::apiResource('wishlist', WishlistController::class);
+    Route::apiResource('address', AddressController::class);
+    Route::apiResource('orders', OrderController::class);
+    Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('books', BookController::class);
 
-// });
+    Route::post('/create-payment', [PaymentController::class, 'createPayment']);
+    Route::post('/verify-payment', [PaymentController::class, 'callback']);
+});
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -62,19 +68,15 @@ Route::get('/test', function () {
 });
 
 
+
 Route::apiResource('vendors', VendorController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('books', BookController::class);
+
 Route::get('/categories/{id}/books',[BookController::class,'getBookByCategories']);
 Route::get('/books/filter', [BookController::class, 'filterBooks']);
 Route::apiResource('coupons', CouponController::class);
 
-Route::get('phonepe',[PaymentController::class,'phonePe']);
-// Route::post('phonepe-response',[PaymentController::class,'response'])->name('response');
-Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
-// Route::post('/phonepe/status', [PhonePeController::class, 'checkStatus']);
-// Route::post('/phonepe/refund', [PhonePeController::class, 'refund']);
-// Route::post('/phonepe/callback', [PhonePeController::class, 'paymentCallback'])->name('phonepe.callback');
-// Route::get('/phonepe/success', function () {
-//     return "Payment Successful!";
-// })->name('phonepe.success');
+
+ 
+

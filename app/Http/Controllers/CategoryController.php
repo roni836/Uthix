@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -15,6 +16,7 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        
         $query = Category::query();
         if($request->has('search')){
             $searchcategories=$request->input('search');
@@ -42,6 +44,19 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
 
+        if (!Auth::check()) {
+            return response()->json([
+                'message' => 'Unauthorized. Please log in.'
+            ], 401);
+        }
+    
+        $user = Auth::user();
+    
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'message' => 'Access denied. Only admins can create categories.'
+            ], 403);
+        }
         $request->validate([
             'cat_title' => 'required|string|max:255',
             'cat_description' => 'required|string',
@@ -105,6 +120,20 @@ class CategoryController extends Controller
   
     public function update(Request $request, $id)
 {
+ 
+    if (!Auth::check()) {
+        return response()->json([
+            'message' => 'Unauthorized. Please log in.'
+        ], 401);
+    }
+
+    $user = Auth::user();
+
+    if ($user->role !== 'admin') {
+        return response()->json([
+            'message' => 'Access denied. Only admins can update categories.'
+        ], 403);
+    }
     Log::info('Update request received', $request->except('cat_image'));
 
     // Find category by ID
@@ -185,6 +214,20 @@ class CategoryController extends Controller
     
     public function destroy(Category $category)
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'message' => 'Unauthorized. Please log in.'
+            ], 401);
+        }
+    
+        $user = Auth::user();
+    
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'status'=>false,
+                'message' => 'Access denied. Only admins can delete categories.'
+            ], 403);
+        }
         try {
             $category->delete();
             return response()->json(['message' => 'Category deleted successfully'], 200);

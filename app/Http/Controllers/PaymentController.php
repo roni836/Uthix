@@ -1,161 +1,146 @@
 <?php
- 
- namespace App\Http\Controllers;
 
- use App\Models\Payment;
- use App\Models\Order;
- use Illuminate\Http\Request;
- use Illuminate\Support\Facades\Http;
- use Illuminate\Support\Facades\Log;
- use Illuminate\Support\Facades\DB;
- use Exception;
- 
- class PaymentController extends Controller
- {
-     /**
-      * Initiates the PhonePe payment process and stores initial payment data.
-      */
-     public function initiatePayment(Request $request)
-     {
-         DB::beginTransaction();
- 
-         try {
-             // Validate Request Data
-             $data = $request->validate([
-                 'order_id' => 'required|exists:orders,id',
-                 'amount' => 'required|numeric',
-                 'user_id' => 'required|exists:users,id',
-             ]);
- 
-             // Convert amount to paise
-             $amountInPaise = $data['amount'] * 100;
- 
-             // Generate a unique transaction ID
-             $merchantTransactionId = 'TXN' . time() . rand(1000, 9999);
- 
-             // Store initial payment data in the database
-             $payment = Payment::create([
-                 'order_id' => $data['order_id'],
-                 'user_id' => $data['user_id'],
-                 'amount' => $data['amount'],
-                 'currency' => 'INR',
-                 'payment_status' => 'pending',
-                 'status' => 'pending',
-                 'transaction_id' => $merchantTransactionId,
-             ]);
- 
-             // Prepare Request Data for PhonePe
-             $requestData = [
-                 'merchantId' => env('PHONEPE_MERCHANT_ID'),
-                 'merchantTransactionId' => $merchantTransactionId,
-                 'merchantUserId' => $data['user_id'],
-                 'amount' => $amountInPaise,
-                 'redirectUrl' => route('payment.response', ['transaction_id' => $merchantTransactionId]),
-                 'callbackUrl' => route('payment.callback'),
-                 'paymentInstrument' => ['type' => 'PAY_PAGE'],
-             ];
- 
-             // Generate Encrypted Payload
-             $payload = json_encode($requestData);
-             $payloadMain = base64_encode($payload);
- 
-             // Generate Checksum
-             $saltKey = env('PHONEPE_SALT_KEY');
-             $keyIndex = env('PHONEPE_SALT_INDEX');
-             $string = $payloadMain . "/pg/v1/pay" . $saltKey;
-             $sha256 = hash('sha256', $string);
-             $checksum = $sha256 . '###' . $keyIndex;
- 
-             // Determine API URL based on environment
-             $apiUrl = (env('PHONEPE_ENV') === 'PROD') ?
-                 'https://api.phonepe.com/apis/hermes/pg/v1/pay' :
-                 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay';
- 
-             // Send Request to PhonePe
-             $response = Http::withHeaders([
-                 'accept' => 'application/json',
-                 'Content-Type' => 'application/json',
-                 'X-VERIFY' => $checksum,
-             ])->post($apiUrl, ['request' => $payloadMain]);
- 
-             // Get Response
-             $responseData = $response->json();
- 
-             if ($responseData['success'] && isset($responseData['data']['instrumentResponse']['redirectInfo']['url'])) {
-                 DB::commit();
-                 return response()->json([
-                     'success' => true,
-                     'paymentUrl' => $responseData['data']['instrumentResponse']['redirectInfo']['url'],
-                 ]);
-             } else {
-                 throw new Exception('Payment initiation failed');
-             }
-         } catch (Exception $e) {
-             DB::rollBack();
-             Log::error('Payment initiation error:', ['error' => $e->getMessage()]);
-             return response()->json([
-                 'error' => 'Payment initiation failed',
-                 'details' => $e->getMessage(),
-             ], 500);
-         }
-     }
- 
-     /**
-      * Handle the response from PhonePe.
-      */
-     public function response(Request $request)
-     {
-         $transactionId = $request->query('transaction_id');
-         $payment = Payment::where('transaction_id', $transactionId)->first();
- 
-         if (!$payment) {
-             return response()->json(['error' => 'Payment record not found'], 404);
-         }
- 
-         return response()->json([
-             'message' => 'Payment initiated successfully',
-             'payment_status' => $payment->payment_status,
-         ]);
-     }
- 
-     /**
-      * Handle the callback from PhonePe and update the payment status in the database.
-      */
-     public function callback(Request $request)
-     {
-         try {
-             $responseData = $request->all();
-             Log::info('PhonePe Callback Data:', $responseData);
- 
-             if (!isset($responseData['transactionId'])) {
-                 return response()->json(['error' => 'Invalid transaction ID'], 400);
-             }
- 
-             // Fetch Payment Record
-             $payment = Payment::where('transaction_id', $responseData['transactionId'])->first();
-             if (!$payment) {
-                 return response()->json(['error' => 'Payment not found'], 404);
-             }
- 
-             // Update Payment Status
-             $payment->update([
-                 'payment_status' => $responseData['code'] === 'PAYMENT_SUCCESS' ? 'success' : 'failed',
-                 'transaction_fee' => $responseData['transactionFee'] ?? null,
-                 'transaction_date' => now(),
-                 'status' => $responseData['code'] === 'PAYMENT_SUCCESS' ? 'completed' : 'failed',
-                 'error_reason' => $responseData['message'] ?? null,
-             ]);
- 
-             // Update Order Status if Payment is Successful
-             if ($payment->payment_status === 'success') {
-                 Order::where('id', $payment->order_id)->update(['status' => 'paid']);
-             }
- 
-             return response()->json(['message' => 'Payment status updated successfully']);
-         } catch (Exception $e) {
-             Log::error('Payment callback error:', ['error' => $e->getMessage()]);
-             return response()->json(['error' => 'Failed to process payment status'], 500);
-         }
-     }
- }
- 
+namespace App\Http\Controllers;
+
+use App\Models\Payment;
+use Illuminate\Http\Request;
+use Razorpay\Api\Api;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
+
+class PaymentController extends Controller
+{
+
+   
+
+    public function createPayment(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
+        }
+    
+        $order = Order::where('id', $request->order_id)->where('user_id', $user->id)->first();
+        if (!$order) {
+            return response()->json(['status' => false, 'message' => 'Order not found'], 404);
+        }
+    
+        $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+        $orderData = [
+            'receipt' => 'order_' . $order->id,
+            'amount' => ($order->total_amount + $order->shipping_charge) * 100, // Convert to paise
+            'currency' => 'INR',
+            'payment_capture' => 1
+        ];
+    
+        try {
+            $razorpayOrder = $api->order->create($orderData);
+    
+            // Store the payment record in the database
+            $payment = Payment::create([
+                'order_id' => $order->id,
+                'user_id' => $user->id,
+                'amount' => $order->total_amount + $order->shipping_charge,
+                'currency' => 'INR',
+                'receipt_no' => $razorpayOrder['receipt'],
+                'payment_id' => null, // Will be updated after successful payment
+                'transaction_id' => $razorpayOrder['id'], // Store Razorpay order ID
+                'payment_method' => $request->payment_method ?? 'razorpay',
+                'payment_status' => 'pending', // Payment is still pending
+                'status' => 'pending'
+            ]);
+    
+            return response()->json([
+                'status' => true,
+                'message' => 'Razorpay order created successfully',
+                'razorpay_order_id' => $razorpayOrder['id'], // Return Razorpay order ID to frontend
+                'amount' => $razorpayOrder['amount'],
+                'currency' => $razorpayOrder['currency'],
+                'order_number' => $order->order_number, // Your custom order number
+                'payment' => $payment
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to create Razorpay order',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    
+    public function callback(Request $request)
+    {
+        $razorpayOrderId = $request->razorpay_order_id;
+        $razorpayPaymentId = $request->razorpay_payment_id;
+        $razorpaySignature = $request->razorpay_signature;
+        
+        // Find the payment record using the Razorpay order ID
+        $payment = Payment::where('transaction_id', $razorpayOrderId)->first();
+    
+        if (!$payment) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Payment not found'
+            ], 404);
+        }
+    
+        // Verify the payment signature using Razorpay API
+        $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+        try {
+            $attributes = [
+                'razorpay_order_id' => $razorpayOrderId,
+                'razorpay_payment_id' => $razorpayPaymentId,
+                'razorpay_signature' => $razorpaySignature,
+            ];
+    
+            // Verify the payment signature
+            $api->utility->verifyPaymentSignature($attributes);
+    
+            // Now, we insert all the necessary details into the `payments` table
+            $payment->update([
+                'payment_id' => $razorpayPaymentId,
+                'payment_status' => 'successful',
+                'status' => 'completed',
+                'receipt_no' => $request->razorpay_order_id, // Optional: You can use any field from Razorpay data
+                'transaction_fee' => $request->transaction_fee ?? null, // If available
+                'transaction_id' => $razorpayOrderId,
+                'transaction_date' => now(), // You can store the current timestamp
+                'payment_card_id' => $request->payment_card_id ?? null,
+                'method' => 'razorpay', // Assuming Razorpay as the payment method
+                'wallet' => $request->wallet ?? null,
+                'bank' => $request->bank ?? null,
+                'payment_date' => now(),
+                'payment_vpa' => $request->payment_vpa ?? null,
+                'ip_address' => $request->ip() ?? null,
+                'international_payment' => $request->international_payment ?? null,
+                'error_reason' => $request->error_reason ?? null,
+                'error_code' => $request->error_code ?? null,
+                'error_description' => $request->error_description ?? null,
+                'payment_method' => 'razorpay'
+            ]);
+    
+            // Optionally, update the order status
+            $order = $payment->order;
+            $order->update([
+                'status' => 'completed',
+                'payment_status' => 'paid'
+            ]);
+    
+            return response()->json([
+                'status' => true,
+                'message' => 'Payment verified and completed',
+                'order_number' => $order->order_number // You can return the order number or any other useful info
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Payment verification failed',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+
+
+}

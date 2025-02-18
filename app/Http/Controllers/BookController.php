@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -29,7 +30,14 @@ class BookController extends Controller
     
     public function store(Request $request)
     {
-        // Validation rules
+        $user = Auth::user();  
+
+    if ($user->role !== 'admin' && $user->role !== 'seller') {
+        return response()->json([
+            'message' => 'You do not have permission to create a book.',
+        ], 403); 
+    }
+
         $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
@@ -65,7 +73,7 @@ class BookController extends Controller
                 'title' => $request->title,
                 'author' => $request->author,
                 'category_id' => $request->category_id,
-                'user_id' => $request->user_id,
+                 'user_id' => $user->id,
                 'isbn' => $request->isbn,
                 'language' => $request->language ?? 'English',
                 'pages' => $request->pages,
@@ -124,6 +132,20 @@ class BookController extends Controller
 
 public function update(Request $request, $id)
 {
+    
+    $user = Auth::user();  
+
+    if ($user->role === 'seller' && $id->user_id !== $user->id) {
+        return response()->json([
+            'message' => 'You do not have permission to delete this book.',
+        ], 403);
+    }
+
+    if ($user->role !== 'admin' && $user->role !== 'seller') {
+        return response()->json([
+            'message' => 'You do not have permission to delete a book.',
+        ], 403);
+    }
     // Find the book or return error
     $book = Book::find($id);
     if (!$book) {
@@ -171,7 +193,7 @@ public function update(Request $request, $id)
         $book->title = $request->title ?? $book->title;
         $book->author = $request->author ?? $book->author;
         $book->category_id = $request->category_id ?? $book->category_id;
-        $book->user_id = $request->user_id ?? $book->user_id;
+        $book->user_id = $request->$user->id ?? $book->$user->id;
         $book->isbn = $request->isbn ?? $book->isbn;
         $book->language = $request->language ?? $book->language;
         $book->pages = $request->pages ?? $book->pages;
@@ -208,6 +230,19 @@ public function update(Request $request, $id)
      */
     public function destroy(Book $book)
     {
+            $user = Auth::user();
+
+        if ($user->role === 'seller' && $book->user_id !== $user->id) {
+            return response()->json([
+                'message' => 'You do not have permission to delete this book.',
+            ], 403);
+        }
+    
+        if ($user->role !== 'admin' && $user->role !== 'seller') {
+            return response()->json([
+                'message' => 'You do not have permission to delete a book.',
+            ], 403);
+        }
         try {
             $book->delete();
             return response()->json(['message' => 'Book deleted successfully'], 200);
