@@ -8,7 +8,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PhonePeController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Http\Request;
@@ -36,7 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('address', AddressController::class);
     Route::apiResource('orders', OrderController::class);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
-    Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('books', BookController::class);
 
@@ -68,12 +66,12 @@ Route::get('/categories/{id}/books',[BookController::class,'getBookByCategories'
 Route::get('/books/filter', [BookController::class, 'filterBooks']);
 Route::apiResource('coupons', CouponController::class);
 
-Route::get('phonepe',[PaymentController::class,'phonePe']);
-// Route::post('phonepe-response',[PaymentController::class,'response'])->name('response');
-// Route::post('/phonepe/initiate', [PhonePeController::class, 'initiatePayment']);
-// Route::post('/phonepe/status', [PhonePeController::class, 'checkStatus']);
-// Route::post('/phonepe/refund', [PhonePeController::class, 'refund']);
-// Route::post('/phonepe/callback', [PhonePeController::class, 'paymentCallback'])->name('phonepe.callback');
-// Route::get('/phonepe/success', function () {
-//     return "Payment Successful!";
-// })->name('phonepe.success');
+
+ 
+Route::post("/razorpay/payment",[PaymentController::class,'payment'])->name('razorpay.payment');
+Route::get("/razorpay/callback",[PaymentController::class,'callback'])->name('razorpay.callback');
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/create-payment', [PaymentController::class, 'createPayment']);
+    Route::post('/verify-payment', [PaymentController::class, 'callback']);
+});
