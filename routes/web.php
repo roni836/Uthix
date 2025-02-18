@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Artisan;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -20,5 +21,17 @@ Route::get('/manage-vendor', [AdminController::class, 'manageVendor'])->name('ma
 Route::get('/manage-category', [AdminController::class, 'manageCategory'])->name('manage.category'); 
 Route::get('/insert-product', [AdminController::class, 'insertProduct'])->name('insert.product'); 
 Route::get('/manage-product', [AdminController::class, 'manageProduct'])->name('manage.product'); 
+
+
+Route::get('/clear-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    Artisan::call('config:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    // Artisan::call('optimize:clear');
+
+    return "All Caches are cleared by @Roni";
+});
 
 
