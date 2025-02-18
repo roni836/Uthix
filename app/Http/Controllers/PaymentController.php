@@ -11,41 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class PaymentController extends Controller
 {
 
-    // public function payment(Request $request)
-    // {
-    //     $amount = $request->input('amount');
-    //     $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
-    //     $orderData = [
-    //         'receipt' => 'order_' . rand(1000, 9999),
-    //         'amount' => $amount * 100,
-    //         'currency' => 'INR',
-    //         'payment_capture' => 1
-    //     ];
-    //     $order = $api->order->create($orderData);
-    //     echo $order['id'];
-    // }
-    // public function callback(Request $request)
-    // {
-    //     $payid = $request->payid;
-    //     $orderid = $request->orderid;
-    //     $sign = $request->sign;
-    //     $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
-    //     try {
-    //         $attr = [
-    //             'razorpay_order_id' => $orderid,
-    //             'razorpay_payment_id' => $payid,
-    //             'razorpay_signature' => $sign,
-    //         ];
-    //         $api->utility->verifyPaymentSignature($attr);
-    //         echo "Payment verified:" . $payid;
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'payment verification failed'
-    //         ]);
-    //     }
-    // }
-  
+   
 
     public function createPayment(Request $request)
     {

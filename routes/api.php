@@ -38,7 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('books', BookController::class);
 
-
+    Route::post('/create-payment', [PaymentController::class, 'createPayment']);
+    Route::post('/verify-payment', [PaymentController::class, 'callback']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -68,10 +69,4 @@ Route::apiResource('coupons', CouponController::class);
 
 
  
-Route::post("/razorpay/payment",[PaymentController::class,'payment'])->name('razorpay.payment');
-Route::get("/razorpay/callback",[PaymentController::class,'callback'])->name('razorpay.callback');
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/create-payment', [PaymentController::class, 'createPayment']);
-    Route::post('/verify-payment', [PaymentController::class, 'callback']);
-});
