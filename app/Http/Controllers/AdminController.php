@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vendor;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -25,6 +26,11 @@ class AdminController extends Controller
     
     public function insertVendor(){
         return view('admin.insertVendor');
+    }
+
+    public function manageCategory(){
+        $category = Category::get();
+        return view('admin.manageCategory', compact('category'));
     }
     
 }
