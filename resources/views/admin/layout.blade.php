@@ -57,6 +57,11 @@
 
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="../../assets/js/config.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 </head>
 
 <body>
@@ -97,7 +102,7 @@
                 <div class="menu-inner-shadow"></div>
 
                 <ul class="menu-inner py-1">
-                    
+
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-users"></i>
@@ -110,12 +115,12 @@
                                 </a>
                                 <ul class="menu-sub">
                                     <li class="menu-item">
-                                        <a href="{{url('insert-user')}}" class="menu-link">
+                                        <a href="{{ url('insert-user') }}" class="menu-link">
                                             <div data-i18n="Add User">Add User</div>
                                         </a>
                                     </li>
                                     <li class="menu-item">
-                                        <a href="{{url('manage-user')}}" class="menu-link">
+                                        <a href="{{ url('manage-user') }}" class="menu-link">
                                             <div data-i18n="User List">User List</div>
                                         </a>
                                     </li>
@@ -206,6 +211,23 @@
                             <div data-i18n="E-Commerce Management">E-Commerce Management</div>
                         </a>
                         <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <div data-i18n="Vendors">Vendors</div>
+                                </a>
+                                <ul class="menu-sub">
+                                    <li class="menu-item">
+                                        <a href="{{ route('manage.vendor') }}" class="menu-link">
+                                            <div data-i18n="Vendors List">Vendors List</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="{{ route('insert.vendor') }}" class="menu-link">
+                                            <div data-i18n="Add New Vendor">Add New Vendor</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li class="menu-item">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <div data-i18n="Products">Products</div>
@@ -452,6 +474,8 @@
 
     <!-- Page JS -->
     <script src="../../assets/js/dashboards-analytics.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
 </body>
 
 </html>
