@@ -27,7 +27,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    // Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/add-to-cart', [CartController::class, 'addToCart']);
     Route::get('/cart', [CartController::class, 'getCart']);
     Route::delete('/cart/clear', [CartController::class, 'clearCart']);
@@ -39,7 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('address', AddressController::class);
     Route::apiResource('orders', OrderController::class);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
-    Route::apiResource('categories', CategoryController::class);
+    // Route::apiResource('categories', CategoryController::class);
     // Route::apiResource('books', BookController::class);
 
     Route::post('/create-payment', [PaymentController::class, 'createPayment']);
@@ -49,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
 
     // Admin routes
+    Route::post('/logout', [AuthController::class, 'logout']);
+
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard',function(){
         return response()->json(['message' => 'admin API is working!']);
     });
@@ -58,7 +60,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     Route::middleware([RoleMiddleware::class . ':seller'])->get('/seller-dashboard',function(){
         return response()->json(['message' => 'seller API is working!']);
+    }); 
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function() {
+        Route::apiResource('categories', CategoryController::class);
     });
+    // Route::middleware([RoleMiddleware::class . ':seller'])->group(function() {
+    //     Route::post('/logout', [AuthController::class, 'logout']);
+    // });
+    
     Route::middleware([RoleMiddleware::class . ':student'])->get('/student-dashboard',function(){
         return response()->json(['message' => 'student API is working!']);
     });
