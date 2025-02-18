@@ -16,6 +16,7 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        
         $query = Category::query();
         if($request->has('search')){
             $searchcategories=$request->input('search');
