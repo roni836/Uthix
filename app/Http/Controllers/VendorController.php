@@ -22,7 +22,7 @@ class VendorController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'mobile' => 'required|unique:vendors,mobile',
-            'gender' => 'required|in:male,female,other',
+            'gender' => 'required|in:male,female,others',
             'dob' => 'required|date',
             'address' => 'required|string',
             'store_name' => 'required|string',
@@ -31,8 +31,12 @@ class VendorController extends Controller
             'school' => 'nullable|string',
             'counter' => 'nullable',
         ]);
+
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json([
+                'status' => 422,
+                'error' => $validator->messages()
+            ], 422);
         }
 
         // Step 1: Create User
@@ -60,6 +64,6 @@ class VendorController extends Controller
             'status' => $request->status ?? 'pending',
         ]);
 
-        return response()->json(['user' => $user, 'vendor' => $vendor], 201);
+        return response()->json(['user' => $user, 'vendor' => $vendor,'message'=>'Vendor Created Successfully'], 201);
     }
 }
