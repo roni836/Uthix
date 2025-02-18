@@ -18,4 +18,7 @@ Route::get('/insert-user', [AdminController::class, 'insertUser'])->name('insert
 Route::get('/insert-vendor', [AdminController::class, 'insertVendor'])->name('insert.vendor'); 
 Route::get('/manage-vendor', [AdminController::class, 'manageVendor'])->name('manage.vendor'); 
 Route::get('/manage-category', [AdminController::class, 'manageCategory'])->name('manage.category'); 
+Route::get('/insert-product', [AdminController::class, 'insertProduct'])->name('insert.product'); 
+Route::get('/manage-product', [AdminController::class, 'manageProduct'])->name('manage.product'); 
+
 

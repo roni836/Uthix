@@ -32,11 +32,11 @@ class BookController extends Controller
     {
         $user = Auth::user();  
 
-    if ($user->role !== 'admin' && $user->role !== 'seller') {
-        return response()->json([
-            'message' => 'You do not have permission to create a book.',
-        ], 403); 
-    }
+    // if ($user->role !== 'admin' && $user->role !== 'seller') {
+    //     return response()->json([
+    //         'message' => 'You do not have permission to create a book.',
+    //     ], 403); 
+    // }
 
         $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -73,7 +73,7 @@ class BookController extends Controller
                 'title' => $request->title,
                 'author' => $request->author,
                 'category_id' => $request->category_id,
-                 'user_id' => $user->id,
+                'user_id' => $user->id,
                 'isbn' => $request->isbn,
                 'language' => $request->language ?? 'English',
                 'pages' => $request->pages,

@@ -44,7 +44,7 @@ class VendorController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'vendor'
+            'role' => 'seller'
         ]);
 
         // Step 2: Create Vendor linked to User

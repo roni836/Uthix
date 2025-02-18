@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Vendor;
 use App\Models\Category;
+use App\Models\Book;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -31,6 +32,16 @@ class AdminController extends Controller
     public function manageCategory(){
         $category = Category::get();
         return view('admin.manageCategory', compact('category'));
+    }
+    
+    public function insertProduct(){
+        $category = Category::get();
+        return view('admin.insertProduct', compact('category'));
+    }
+
+    public function manageProduct(){
+        $products = Book::get();
+        return view('admin.manageProduct', compact('products'));
     }
     
 }
