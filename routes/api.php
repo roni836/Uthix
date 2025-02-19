@@ -44,33 +44,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/verify-payment', [PaymentController::class, 'callback']);
 });
 
-// Route::middleware(['auth:sanctum'])->group(function () {
-
-//     // Admin routes
-//     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard',function(){
-//         return response()->json(['message' => 'admin API is working!']);
-//     });
-//     Route::middleware([RoleMiddleware::class . ':instructor'])->get('/instructor-dashboard',function(){
-//         return response()->json(['message' => 'instructor API is working!']);
-//     });
-//     Route::middleware([RoleMiddleware::class . ':seller'])->get('/seller-dashboard',function(){
-//         return response()->json(['message' => 'seller API is working!']);
-//     });
-//     Route::middleware([RoleMiddleware::class . ':student'])->get('/student-dashboard',function(){
-//         return response()->json(['message' => 'student API is working!']);
-//     });
-// });
-
 Route::middleware(['auth:sanctum'])->group(function () {
 
     // Admin routes
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard',function(){
-        return response()->json(['message' => 'admin API is working!']);});
-
-        Route::middleware([RoleMiddleware::class . ':seller'])->get('/seller-dashboard',function(){
-                    return response()->json(['message' => 'seller API is working!']);
-                });
+        return response()->json(['message' => 'admin API is working!']);
+    });
+    Route::middleware([RoleMiddleware::class . ':instructor'])->get('/instructor-dashboard',function(){
+        return response()->json(['message' => 'instructor API is working!']);
+    });
+    Route::middleware([RoleMiddleware::class . ':seller'])->get('/seller-dashboard',function(){
+        return response()->json(['message' => 'seller API is working!']);
+    });
+    Route::middleware([RoleMiddleware::class . ':student'])->get('/student-dashboard',function(){
+        return response()->json(['message' => 'student API is working!']);
+    });
 });
+
 
 Route::get('/test', function () {
     return response()->json(['message' => 'API is working!']);
