@@ -2,21 +2,19 @@
 
 namespace Database\Factories;
 
-use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Book>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
  */
-class BookFactory extends Factory
+class ProductFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    protected $model=Book::class;
     public function definition(): array
     {
         return [
@@ -30,7 +28,7 @@ class BookFactory extends Factory
             'language'=>$this->faker->randomElement(['English','Hindi']),
             'pages'=>$this->faker->numberBetween(100,1000),
             'description'=>$this->faker->paragraph(5),
-            'thumbnail_img'=>$this->faker->imageUrl(200,300,'books'),
+            'thumbnail_img'=>$this->faker->imageUrl(200,300,'products'),
             'rating'=>$this->faker->randomFloat(2,0,5),
             'price'=>$this->faker->randomFloat(3,50,2000),
             'discount_price'=>$this->faker->optional()->randomFloat(2,1,50),

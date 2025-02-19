@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
+use App\Models\Product;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +15,7 @@ class CartController extends Controller
     public function addToCart(Request $request)
     {
         $request->validate([
-            'book_id' => 'required|exists:books,id',
+            'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1'
         ]);
     
@@ -27,9 +27,9 @@ class CartController extends Controller
             ], 401);
         }
     
-        $book = Book::findOrFail($request->book_id);
+        $product = Product::findOrFail($request->product_id);
         $cartItem = Cart::where('user_id', $user->id)
-            ->where('book_id', $book->id)
+            ->where('product_id', $product->id)
             ->first();
     
         if ($cartItem) {
@@ -38,7 +38,7 @@ class CartController extends Controller
         } else {
             $cartItem = Cart::create([
                 'user_id' => $user->id,
-                'book_id' => $book->id,
+                'product_id' => $product->id,
                 'quantity' => $request->quantity
             ]);
         }
@@ -60,7 +60,7 @@ class CartController extends Controller
                 'message'=>'Unauthorized'
             ],401);
         }
-        $cartItems = Cart::with('book')->where('user_id', $user->id)->get();
+        $cartItems = Cart::with('product')->where('user_id', $user->id)->get();
         return response()->json([
             'message' => 'Cart retrieved successfully',
             'cart' => $cartItems
@@ -105,7 +105,7 @@ public function updateCart(Request $req, $cartId){
         ],404);
     }
     $cartItem->update(['quantity'=>$req->quantity]);
-    $cartItem->load('user', 'book'); 
+    $cartItem->load('user', 'product'); 
 
 
     return response()->json([

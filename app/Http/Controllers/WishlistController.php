@@ -34,7 +34,7 @@ class WishlistController extends Controller
     public function store(Request $request)
 {
     $request->validate([
-        'book_id' => 'required|exists:books,id', 
+        'product_id' => 'required|exists:products,id', 
     ]);
 
     $user = Auth::guard('sanctum')->user(); 
@@ -43,26 +43,26 @@ class WishlistController extends Controller
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
-    $bookId = $request->input('book_id');
+    $productId = $request->input('product_id');
 
     $wishlistItem = Wishlist::where('user_id', $user->id)
-                            ->where('book_id', $bookId)
+                            ->where('product_id', $productId)
                             ->first();
 
     if ($wishlistItem) {
         $wishlistItem->delete(); 
         return response()->json([
             'status' => true,
-            'message' => 'Book removed from wishlist successfully'
+            'message' => 'product removed from wishlist successfully'
         ]);
     } else {
         Wishlist::create([
             'user_id' => $user->id,
-            'book_id' => $bookId,
+            'product_id' => $productId,
         ]);
         return response()->json([
             'status' => true,
-            'message' => 'Book added to wishlist successfully'
+            'message' => 'product added to wishlist successfully'
         ]);
     }
 }

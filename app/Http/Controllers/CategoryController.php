@@ -25,11 +25,11 @@ class CategoryController extends Controller
             });
         }
         $categories = $query->get();
-         // If no books found
+         // If no products found
     if ($categories->isEmpty()) {
         return response()->json([
             'message' => 'No categories found',
-            'books' => []
+            'products' => []
         ], 404);
     }
         return response()->json([

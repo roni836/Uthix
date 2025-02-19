@@ -2,13 +2,12 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BookController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
-
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VendorController;
 
 use App\Http\Controllers\WishlistController;
@@ -39,7 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('orders', OrderController::class);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
     Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('books', BookController::class);
+    Route::apiResource('products', ProductController::class);
 
     Route::post('/create-payment', [PaymentController::class, 'createPayment']);
     Route::post('/verify-payment', [PaymentController::class, 'callback']);
@@ -80,11 +79,8 @@ Route::get('/test', function () {
 
 
 Route::apiResource('vendors', VendorController::class);
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('books', BookController::class);
-
-Route::get('/categories/{id}/books',[BookController::class,'getBookByCategories']);
-Route::get('/books/filter', [BookController::class, 'filterBooks']);
+Route::get('/categories/{id}/products',[ProductController::class,'getproductByCategories']);
+Route::get('/products/filter', [ProductController::class, 'filterProducts']);
 Route::apiResource('coupons', CouponController::class);
 
 

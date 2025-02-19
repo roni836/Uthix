@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
+use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class BookController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-       $books=Book::with('category')->get();
+       $products=Product::with('category')->get();
        return response()->json([
-        'message'=>'Books added successfully',
-        'books'=>$books
+        'message'=>'products added successfully',
+        'products'=>$products
        ],200);
     }
 
@@ -34,7 +34,7 @@ class BookController extends Controller
 
     // if ($user->role !== 'admin' && $user->role !== 'seller') {
     //     return response()->json([
-    //         'message' => 'You do not have permission to create a book.',
+    //         'message' => 'You do not have permission to create a product.',
     //     ], 403); 
     // }
 
@@ -43,7 +43,7 @@ class BookController extends Controller
             'author' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'exists:categories,id'],
             'user_id' => ['nullable', 'exists:users,id'],
-            'isbn' => ['nullable', 'string', 'max:20', 'unique:books,isbn'],
+            'isbn' => ['nullable', 'string', 'max:20', 'unique:products,isbn'],
             'language' => ['nullable', 'string', 'max:50'],
             'pages' => ['nullable', 'integer', 'min:1'],
             'description' => ['nullable', 'string'],
@@ -65,11 +65,11 @@ class BookController extends Controller
             if ($request->hasFile('thumbnail_img')) {
                 $image = $request->file('thumbnail_img');
                 $imageName = time() . '.' . $image->extension();
-                $image->storeAs('image/books', $imageName, 'public');
+                $image->storeAs('image/products', $imageName, 'public');
             }
     
-            // Create the book record
-            $book = Book::create([
+            // Create the product record
+            $product = Product::create([
                 'title' => $request->title,
                 'author' => $request->author,
                 'category_id' => $request->category_id,
@@ -92,8 +92,8 @@ class BookController extends Controller
             ]);
     
             return response()->json([
-                'message' => 'Book created successfully!',
-                'book' => $book
+                'message' => 'product created successfully!',
+                'product' => $product
             ], 201);
             
         } catch (\Exception $e) {
@@ -111,17 +111,17 @@ class BookController extends Controller
      */
     public function show($id)
     {
-        $book = Book::where('id', $id)->first();
+        $product = Product::where('id', $id)->first();
 
-        if (!$book) {
+        if (!$product) {
             return response()->json([
-                'message' => 'book not found'
+                'message' => 'product not found'
             ], 404);
         }
 
         return response()->json([
-            'message' => 'book retrieved successfully',
-            'book' => $book
+            'message' => 'product retrieved successfully',
+            'product' => $product
         ], 200);
     }
 
@@ -137,19 +137,19 @@ public function update(Request $request, $id)
 
     if ($user->role === 'seller' && $id->user_id !== $user->id) {
         return response()->json([
-            'message' => 'You do not have permission to delete this book.',
+            'message' => 'You do not have permission to delete this product.',
         ], 403);
     }
 
     if ($user->role !== 'admin' && $user->role !== 'seller') {
         return response()->json([
-            'message' => 'You do not have permission to delete a book.',
+            'message' => 'You do not have permission to delete a product.',
         ], 403);
     }
-    // Find the book or return error
-    $book = Book::find($id);
-    if (!$book) {
-        return response()->json(['message' => 'Book not found.'], 404);
+    // Find the product or return error
+    $product = Product::find($id);
+    if (!$product) {
+        return response()->json(['message' => 'product not found.'], 404);
     }
 
     // Validation rules
@@ -158,7 +158,7 @@ public function update(Request $request, $id)
         'author' => ['sometimes', 'string', 'max:255'],
         'category_id' => ['sometimes', 'exists:categories,id'],
         'user_id' => ['nullable', 'exists:users,id'],
-        'isbn' => ['nullable', 'string', 'max:20', 'unique:books,isbn,' . $id], // Unique ISBN except current book
+        'isbn' => ['nullable', 'string', 'max:20', 'unique:products,isbn,' . $id], // Unique ISBN except current product
         'language' => ['nullable', 'string', 'max:50'],
         'pages' => ['nullable', 'integer', 'min:1'],
         'description' => ['nullable', 'string'],
@@ -178,42 +178,42 @@ public function update(Request $request, $id)
         // Handle Image Update
         if ($request->hasFile('thumbnail_img')) {
             // Delete the old image if exists
-            if ($book->thumbnail_img) {
-                Storage::disk('public')->delete('images/books/' . $book->thumbnail_img);
+            if ($product->thumbnail_img) {
+                Storage::disk('public')->delete('images/products/' . $product->thumbnail_img);
             }
 
             // Store new image
             $image = $request->file('thumbnail_img');
             $imageName = time() . '.' . $image->extension();
-            $image->storeAs('images/books', $imageName, 'public');
-            $book->thumbnail_img = $imageName;
+            $image->storeAs('images/products', $imageName, 'public');
+            $product->thumbnail_img = $imageName;
         }
 
         // Update fields if provided
-        $book->title = $request->title ?? $book->title;
-        $book->author = $request->author ?? $book->author;
-        $book->category_id = $request->category_id ?? $book->category_id;
-        $book->user_id = $request->$user->id ?? $book->$user->id;
-        $book->isbn = $request->isbn ?? $book->isbn;
-        $book->language = $request->language ?? $book->language;
-        $book->pages = $request->pages ?? $book->pages;
-        $book->description = $request->description ?? $book->description;
-        $book->rating = $request->rating ?? $book->rating;
-        $book->price = $request->price ?? $book->price;
-        $book->discount_price = $request->discount_price ?? $book->discount_price;
-        $book->discount_type = $request->discount_type ?? $book->discount_type;
-        $book->stock = $request->stock ?? $book->stock;
-        $book->min_qty = $request->min_qty ?? $book->min_qty;
-        $book->is_featured = $request->is_featured ?? $book->is_featured;
-        $book->is_published = $request->is_published ?? $book->is_published;
-        $book->num_of_sales = $request->num_of_sales ?? $book->num_of_sales;
-        $book->slug = Str::slug($request->title ?? $book->title); // Update slug if title changes
+        $product->title = $request->title ?? $product->title;
+        $product->author = $request->author ?? $product->author;
+        $product->category_id = $request->category_id ?? $product->category_id;
+        $product->user_id = $request->$user->id ?? $product->$user->id;
+        $product->isbn = $request->isbn ?? $product->isbn;
+        $product->language = $request->language ?? $product->language;
+        $product->pages = $request->pages ?? $product->pages;
+        $product->description = $request->description ?? $product->description;
+        $product->rating = $request->rating ?? $product->rating;
+        $product->price = $request->price ?? $product->price;
+        $product->discount_price = $request->discount_price ?? $product->discount_price;
+        $product->discount_type = $request->discount_type ?? $product->discount_type;
+        $product->stock = $request->stock ?? $product->stock;
+        $product->min_qty = $request->min_qty ?? $product->min_qty;
+        $product->is_featured = $request->is_featured ?? $product->is_featured;
+        $product->is_published = $request->is_published ?? $product->is_published;
+        $product->num_of_sales = $request->num_of_sales ?? $product->num_of_sales;
+        $product->slug = Str::slug($request->title ?? $product->title); // Update slug if title changes
 
-        $book->save();
+        $product->save();
 
         return response()->json([
-            'message' => 'Book updated successfully!',
-            'book' => $book
+            'message' => 'product updated successfully!',
+            'product' => $product
         ], 200);
 
     } catch (\Exception $e) {
@@ -228,33 +228,33 @@ public function update(Request $request, $id)
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Book $book)
+    public function destroy(Product $product)
     {
             $user = Auth::user();
 
-        if ($user->role === 'seller' && $book->user_id !== $user->id) {
+        if ($user->role === 'seller' && $product->user_id !== $user->id) {
             return response()->json([
-                'message' => 'You do not have permission to delete this book.',
+                'message' => 'You do not have permission to delete this product.',
             ], 403);
         }
     
         if ($user->role !== 'admin' && $user->role !== 'seller') {
             return response()->json([
-                'message' => 'You do not have permission to delete a book.',
+                'message' => 'You do not have permission to delete a product.',
             ], 403);
         }
         try {
-            $book->delete();
-            return response()->json(['message' => 'Book deleted successfully'], 200);
+            $product->delete();
+            return response()->json(['message' => 'product deleted successfully'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Book not deleted successfully'], 500);
+            return response()->json(['message' => 'product not deleted successfully'], 500);
         }
     }
 
 
-    public function getBookByCategories(Request $request, $id)
+    public function getproductByCategories(Request $request, $id)
 {
-    $query = Book::where('category_id', $id);
+    $query = Product::where('category_id', $id);
 
     // Price range filters
     $priceRanges = [
@@ -267,12 +267,12 @@ public function update(Request $request, $id)
     ];
     // search
     if ($request->has('search')) {
-        $searchbooks = $request->input('search');
-        $query->where(function ($q) use ($searchbooks) {
-            $q->where('title', 'like', '%' . $searchbooks . '%')
-                ->orWhere('description', 'like', '%' . $searchbooks . '%')
-                ->orWhere('author', 'like', '%' . $searchbooks . '%')
-                ->orWhere('language', 'like', '%' . $searchbooks . '%');
+        $searchproducts = $request->input('search');
+        $query->where(function ($q) use ($searchproducts) {
+            $q->where('title', 'like', '%' . $searchproducts . '%')
+                ->orWhere('description', 'like', '%' . $searchproducts . '%')
+                ->orWhere('author', 'like', '%' . $searchproducts . '%')
+                ->orWhere('language', 'like', '%' . $searchproducts . '%');
         });
     }
 
@@ -296,24 +296,24 @@ public function update(Request $request, $id)
 
     }
 
-    // Fetch filtered books
-    $books = $query->get();
+    // Fetch filtered products
+    $products = $query->get();
 
-    // If no books found
-    if ($books->isEmpty()) {
+    // If no products found
+    if ($products->isEmpty()) {
         return response()->json([
-            'message' => 'No books found in this category',
-            'books' => []
+            'message' => 'No products found in this category',
+            'products' => []
         ], 404);
     }
 
-    // Get min and max price from the filtered books
-    $minPrice = $books->min('discount_price');
-    $maxPrice = $books->max('discount_price');
+    // Get min and max price from the filtered products
+    $minPrice = $products->min('discount_price');
+    $maxPrice = $products->max('discount_price');
 
     return response()->json([
-        'message' => 'Books retrieved successfully',
-        'books' => $books,
+        'message' => 'products retrieved successfully',
+        'products' => $products,
         'min_price' => $minPrice,
         'max_price' => $maxPrice
     ], 200);

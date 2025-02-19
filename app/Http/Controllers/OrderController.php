@@ -57,7 +57,7 @@ class OrderController extends Controller
     
         // Calculate initial total amount
         $totalAmount = $cartItems->sum(function ($cart) {
-            return $cart->book->price * $cart->quantity;
+            return $cart->product->price * $cart->quantity;
         });
     
         $shippingCharge = 50; // Default shipping charge
@@ -102,9 +102,9 @@ class OrderController extends Controller
         foreach ($cartItems as $cart) {
             OrderItem::create([
                 'order_id'   => $order->id,
-                'book_id'    => $cart->book_id,
+                'product_id'    => $cart->product_id,
                 'quantity'   => $cart->quantity,
-                'price'      => $cart->book->price
+                'price'      => $cart->product->price
             ]);
         }
     

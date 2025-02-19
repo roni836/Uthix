@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Address extends Model
 {
-    /** @use HasFactory<\Database\Factories\BookFactory> */
     use HasFactory;
     protected $guarded=[];
 }
