@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade'); // Foreign Key
         $table->string('image_path', 255); 
-        $table->integer('sort_order')->nullable(); 
             $table->timestamps();
         });
     }
