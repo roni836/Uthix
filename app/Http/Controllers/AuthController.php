@@ -131,27 +131,32 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
             'role' => 'required|string|in:student,instructor,seller,admin',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
-    
+
         // Set the default role to 'student' if no role is provided
         $role = $request->role ?? 'student'; 
-    
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $role,
         ]);
-    
+
+        // Generate authentication token
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
             'message' => 'User registered successfully!',
-            'user' => $user
+            'user' => $user,
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'role' => $role
         ], 201);
     }
-    
-    
 
     public function login(Request $request)
     {
