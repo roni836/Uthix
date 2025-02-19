@@ -121,7 +121,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $product = Product::where('id', $id)->first();
+        $product = Product::where('id', $id)->with('images')->first();
 
         if (!$product) {
             return response()->json([

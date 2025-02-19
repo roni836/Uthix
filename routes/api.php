@@ -8,6 +8,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\VendorController;
 
 use App\Http\Controllers\WishlistController;
@@ -18,11 +19,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
+Route::apiResource('categories', CategoryController::class);
+Route::apiResource('products', ProductController::class);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -37,9 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('address', AddressController::class);
     Route::apiResource('orders', OrderController::class);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('products', ProductController::class);
-
+   
+    Route::apiResource('reviews', ReviewController::class);
     Route::post('/create-payment', [PaymentController::class, 'createPayment']);
     Route::post('/verify-payment', [PaymentController::class, 'callback']);
 });

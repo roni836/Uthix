@@ -44,19 +44,19 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
 
-        if (!Auth::check()) {
-            return response()->json([
-                'message' => 'Unauthorized. Please log in.'
-            ], 401);
-        }
+        // if (!Auth::check()) {
+        //     return response()->json([
+        //         'message' => 'Unauthorized. Please log in.'
+        //     ], 401);
+        // }
     
-        $user = Auth::user();
+        // $user = Auth::user();
     
-        if ($user->role !== 'admin') {
-            return response()->json([
-                'message' => 'Access denied. Only admins can create categories.'
-            ], 403);
-        }
+        // if ($user->role !== 'admin') {
+        //     return response()->json([
+        //         'message' => 'Access denied. Only admins can create categories.'
+        //     ], 403);
+        // }
         $request->validate([
             'cat_title' => 'required|string|max:255',
             'cat_description' => 'required|string',
