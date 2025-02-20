@@ -14,7 +14,7 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function getAllCategories(Request $request)
     {
         
         $query = Category::query();
@@ -25,6 +25,7 @@ class CategoryController extends Controller
             });
         }
         $categories = $query->get();
+        
          // If no products found
     if ($categories->isEmpty()) {
         return response()->json([
@@ -60,7 +61,7 @@ class CategoryController extends Controller
         $request->validate([
             'cat_title' => 'required|string|max:255',
             'cat_description' => 'required|string',
-            // 'parent_category_id' => 'nullable|exists:categories,id',
+            'parent_category_id' => 'nullable|exists:categories,id',
             'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -82,17 +83,21 @@ class CategoryController extends Controller
 
             $category = new Category();
             $category->cat_title = $request->cat_title;
-            // $category->parent_category_id = $request->parent_category_id;
+            $category->parent_category_id = $request->parent_category_id;
             $category->cat_slug = $catSlug;
             $category->cat_description = $request->cat_description;
             $category->cat_image = $imageName;
             $category->save();
 
-
+            $parentCategory = $category->parent_category_id 
+            ? Category::find($category->parent_category_id) 
+            : null;
             return response()->json([
                 'message' => 'Category created successfully',
-                'category' => $category
+                'category' => $category,
+                'parent_category'=>$parentCategory
             ], 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Something went wrong.',
