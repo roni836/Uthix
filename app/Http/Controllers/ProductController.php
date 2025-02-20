@@ -32,6 +32,9 @@ class ProductController extends Controller
      public function store(Request $request)
      {
          $user = Auth::user();
+         if ($user->role === 'vendor') {
+            $request->merge(['user_id' => $user->id]);
+        }
      
          // Validation
          $request->validate([

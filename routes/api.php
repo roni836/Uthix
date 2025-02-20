@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-Route::apiResource('products', ProductController::class);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -46,6 +45,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('reviews', ReviewController::class);
         Route::post('/create-payment', [PaymentController::class, 'createPayment']);
         Route::post('/verify-payment', [PaymentController::class, 'callback']);
+        Route::apiResource('products', ProductController::class);
 
     // Admin routes
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard',function(){
@@ -62,6 +62,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function() {
         Route::apiResource('categories', CategoryController::class);
+        Route::post('/admin/products', [ProductController::class, 'store']);
+    });
+     Route::middleware([RoleMiddleware::class . ':seller'])->group(function() {
+        Route::post('/vendor/products', [ProductController::class, 'store']);
+        Route::get('/vendor/categories', [VendorController::class, 'getVendorCategories']);
+Route::get('/get/vendor/products', [VendorController::class, 'getVendorProducts']);
+Route::get('/vendor/dashboard', [VendorController::class, 'getVendorDashboard']);
 
     });
 
