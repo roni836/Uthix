@@ -1,30 +1,28 @@
 <?php
-
+ 
 namespace App\Http\Controllers;
-
+ 
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Razorpay\Api\Api;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
-
+ 
 class PaymentController extends Controller
 {
-
-   
-
+ 
     public function createPayment(Request $request)
     {
         $user = Auth::user();
         if (!$user) {
             return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
         }
-    
+ 
         $order = Order::where('id', $request->order_id)->where('user_id', $user->id)->first();
         if (!$order) {
             return response()->json(['status' => false, 'message' => 'Order not found'], 404);
         }
-    
+ 
         $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
         $orderData = [
             'receipt' => 'order_' . $order->id,
@@ -32,10 +30,10 @@ class PaymentController extends Controller
             'currency' => 'INR',
             'payment_capture' => 1
         ];
-    
+ 
         try {
             $razorpayOrder = $api->order->create($orderData);
-    
+ 
             // Store the payment record in the database
             $payment = Payment::create([
                 'order_id' => $order->id,
@@ -49,14 +47,15 @@ class PaymentController extends Controller
                 'payment_status' => 'pending', // Payment is still pending
                 'status' => 'pending'
             ]);
-    
+ 
+            $amountInInr = $razorpayOrder['amount'] / 100;
             return response()->json([
                 'status' => true,
                 'message' => 'Razorpay order created successfully',
-                'razorpay_order_id' => $razorpayOrder['id'], // Return Razorpay order ID to frontend
-                'amount' => $razorpayOrder['amount'],
+                'razorpay_order_id' => $razorpayOrder['id'],
+                'amount' => $amountInInr,
                 'currency' => $razorpayOrder['currency'],
-                'order_number' => $order->order_number, // Your custom order number
+                'order_number' => $order->order_number,
                 'payment' => $payment
             ]);
         } catch (\Exception $e) {
@@ -67,24 +66,24 @@ class PaymentController extends Controller
             ], 500);
         }
     }
-    
-    
+ 
+ 
     public function callback(Request $request)
     {
         $razorpayOrderId = $request->razorpay_order_id;
         $razorpayPaymentId = $request->razorpay_payment_id;
         $razorpaySignature = $request->razorpay_signature;
-        
+ 
         // Find the payment record using the Razorpay order ID
         $payment = Payment::where('transaction_id', $razorpayOrderId)->first();
-    
+ 
         if (!$payment) {
             return response()->json([
                 'status' => false,
                 'message' => 'Payment not found'
             ], 404);
         }
-    
+ 
         // Verify the payment signature using Razorpay API
         $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
         try {
@@ -93,10 +92,10 @@ class PaymentController extends Controller
                 'razorpay_payment_id' => $razorpayPaymentId,
                 'razorpay_signature' => $razorpaySignature,
             ];
-    
+ 
             // Verify the payment signature
             $api->utility->verifyPaymentSignature($attributes);
-    
+ 
             // Now, we insert all the necessary details into the `payments` table
             $payment->update([
                 'payment_id' => $razorpayPaymentId,
@@ -119,14 +118,14 @@ class PaymentController extends Controller
                 'error_description' => $request->error_description ?? null,
                 'payment_method' => 'razorpay'
             ]);
-    
+ 
             // Optionally, update the order status
             $order = $payment->order;
             $order->update([
                 'status' => 'completed',
                 'payment_status' => 'paid'
             ]);
-    
+ 
             return response()->json([
                 'status' => true,
                 'message' => 'Payment verified and completed',
@@ -140,7 +139,8 @@ class PaymentController extends Controller
             ], 500);
         }
     }
-    
-
-
+ 
+ 
+ 
 }
+ 

@@ -19,32 +19,33 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-Route::apiResource('categories', CategoryController::class);
 Route::apiResource('products', ProductController::class);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile', [AuthController::class, 'profile']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/add-to-cart', [CartController::class, 'addToCart']);
-    Route::get('/cart', [CartController::class, 'getCart']);
-    Route::delete('/cart/clear', [CartController::class, 'clearCart']);
-    Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
+Route::get('/categories/store', [CategoryController::class, 'getAllCategories']);
 
-    Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
-
-    Route::apiResource('wishlist', WishlistController::class);
-    Route::apiResource('address', AddressController::class);
-    Route::apiResource('orders', OrderController::class);
-    Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
-   
-    Route::apiResource('reviews', ReviewController::class);
-    Route::post('/create-payment', [PaymentController::class, 'createPayment']);
-    Route::post('/verify-payment', [PaymentController::class, 'callback']);
-});
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
+        //  (accessible to all authenticated users)
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/profile', [AuthController::class, 'profile']);
+        Route::post('/add-to-cart', [CartController::class, 'addToCart']);
+        Route::get('/cart', [CartController::class, 'getCart']);
+        Route::delete('/cart/clear', [CartController::class, 'clearCart']);
+        Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
+
+        Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
+    
+        Route::apiResource('wishlist', WishlistController::class);
+        Route::apiResource('address', AddressController::class);
+        Route::apiResource('orders', OrderController::class);
+        Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
+       
+        Route::apiResource('reviews', ReviewController::class);
+        Route::post('/create-payment', [PaymentController::class, 'createPayment']);
+        Route::post('/verify-payment', [PaymentController::class, 'callback']);
 
     // Admin routes
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard',function(){
@@ -59,6 +60,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':student'])->get('/student-dashboard',function(){
         return response()->json(['message' => 'student API is working!']);
     });
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function() {
+        Route::apiResource('categories', CategoryController::class);
+
+    });
+
 });
 
 
