@@ -27,16 +27,20 @@ class CategoryController extends Controller
         $categories = $query->get();
         
          // If no products found
-    if ($categories->isEmpty()) {
-        return response()->json([
-            'message' => 'No categories found',
-            'categories' => []
-        ], 404);
-    }
-        return response()->json([
-            'message' => 'Categories search successfully',
-            'categories' => $categories
-        ], 200);
+    // if ($categories->isEmpty()) {
+    //     return response()->json([
+    //         'message' => 'No categories found',
+    //         'categories' => []
+    //     ], 204);
+    // }
+    //     return response()->json([
+    //         'message' => 'Categories search successfully',
+    //         'categories' => $categories
+    //     ], 200);
+    return response()->json([
+        'message' => $categories->isEmpty() ? 'No categories found' : 'Categories searched successfully',
+        'categories' => $categories
+    ], 200);
     }
 
     /**
