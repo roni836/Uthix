@@ -67,7 +67,7 @@ class VendorController extends Controller
             'status' => $request->status ?? 'pending',
         ]);
 
-        return response()->json(['user' => $user, 'vendor' => $vendor,'message'=>'Vendor Created Successfully'], 201);
+        return response()->json(['user' => $user, 'vendor' => $vendor, 'message' => 'Vendor Created Successfully'], 201);
     }
 
 
@@ -79,49 +79,47 @@ class VendorController extends Controller
         $categories = Category::whereHas('products', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->get();
-    
+
         return response()->json([
             'message' => 'Categories fetched successfully',
             'categories' => $categories
         ], 200);
     }
-    
+
 
     public function getVendorProducts(Request $request)
     {
-        $user = Auth::user(); 
-        $categoryId = $request->query('category_id'); 
-    
+        $user = Auth::user();
+        $categoryId = $request->query('category_id');
+
         $query = Product::where('user_id', $user->id);
-    
+
         if ($categoryId) {
             $query->where('category_id', $categoryId);
         }
-    
+
         $products = $query->with('category')->get();
-    
+
         return response()->json([
             'message' => 'Products fetched successfully',
             'products' => $products
         ], 200);
     }
     public function getVendorDashboard()
-{
-    $user = Auth::user(); // Vendor
-    
-    $totalBooks = Product::where('user_id', $user->id)->count();
-    $booksSold = Product::where('user_id', $user->id)->sum('num_of_sales');
-    $averageRating = Product::where('user_id', $user->id)->avg('rating');
+    {
+        $user = Auth::user(); // Vendor
 
-    return response()->json([
-        'message' => 'Dashboard data fetched successfully',
-        'data' => [
-            'rating' => round($averageRating, 1),
-            'total_books' => $totalBooks,
-            'books_sold' => $booksSold
-        ]
-    ], 200);
-}
+        $totalBooks = Product::where('user_id', $user->id)->count();
+        $booksSold = Product::where('user_id', $user->id)->sum('num_of_sales');
+        $averageRating = Product::where('user_id', $user->id)->avg('rating');
 
-
+        return response()->json([
+            'message' => 'Dashboard data fetched successfully',
+            'data' => [
+                'rating' => round($averageRating, 1),
+                'total_books' => $totalBooks,
+                'books_sold' => $booksSold
+            ]
+        ], 200);
+    }
 }
