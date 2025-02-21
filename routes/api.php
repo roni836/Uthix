@@ -69,6 +69,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/categories', [VendorController::class, 'getVendorCategories']);
 Route::get('/get/vendor/products', [VendorController::class, 'getVendorProducts']);
 Route::get('/vendor/dashboard', [VendorController::class, 'getVendorDashboard']);
+Route::post('/vendor-store', [VendorController::class, 'store']);  // Create Store
 
     });
 
