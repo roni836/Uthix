@@ -43,12 +43,14 @@ class VendorController extends Controller
         }
 
         // Step 1: Create User
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'seller'
-        ]);
+        // $user = User::create([
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'password' => Hash::make($request->password),
+        //     'role' => 'seller'
+        // ]);
+
+        $user = Auth::user();
 
         // Step 2: Create Vendor linked to User
         $vendor = Vendor::create([
