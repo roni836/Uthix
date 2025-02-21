@@ -565,8 +565,7 @@
                                             <td>
                                                 <span class="fw-medium">{{$data->cat_title}}</span>
                                             </td>
-                                            <td>{{$data->cat_image}}</td>
-                                            <td>{{$data->cat_description}}</td>
+                                            <td><img src="{{ asset('storage/image/category/' . $data->cat_image) }}" alt="Category Image" width="100"></td>                                            <td>{{$data->cat_description}}</td>
                                             
                                             {{-- <td><span class="badge bg-label-primary me-1">{{$data->status}}</span></td> --}}
                                             <td>
