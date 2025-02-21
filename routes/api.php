@@ -22,7 +22,7 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/categories/store', [CategoryController::class, 'getAllCategories']);
+Route::get('/all-categories', [CategoryController::class, 'getAllCategories']);
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function() {
         Route::apiResource('categories', CategoryController::class);
-        Route::post('/admin/products', [ProductController::class, 'store']);
+        Route::post('/admin/products', [ProductController::class, 'store'])->name('books.store');
     });
      Route::middleware([RoleMiddleware::class . ':seller'])->group(function() {
         Route::post('/vendor/products', [ProductController::class, 'store']);
