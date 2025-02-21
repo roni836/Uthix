@@ -324,7 +324,7 @@ class ProductController extends Controller
             return response()->json([
                 'message' => 'No products found in this category',
                 'products' => []
-            ], 404);
+            ], 200);
         }
 
         // Get min and max price from the filtered products
