@@ -30,7 +30,7 @@ class CategoryController extends Controller
     if ($categories->isEmpty()) {
         return response()->json([
             'message' => 'No categories found',
-            'products' => []
+            'categories' => []
         ], 404);
     }
         return response()->json([
