@@ -23,6 +23,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/all-categories', [CategoryController::class, 'getAllCategories']);
+Route::get('categories/{id}', [CategoryController::class, 'show']);
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
