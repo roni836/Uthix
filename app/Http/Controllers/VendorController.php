@@ -22,7 +22,6 @@ class VendorController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'mobile' => 'required|unique:vendors,mobile',
             'gender' => 'required|in:male,female,others',
@@ -43,12 +42,14 @@ class VendorController extends Controller
         }
 
         // Step 1: Create User
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'seller'
-        ]);
+        // $user = User::create([
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'password' => Hash::make($request->password),
+        //     'role' => 'seller'
+        // ]);
+
+        $user = Auth::user();
 
         // Step 2: Create Vendor linked to User
         $vendor = Vendor::create([
