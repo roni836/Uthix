@@ -22,7 +22,6 @@ class VendorController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'mobile' => 'required|unique:vendors,mobile',
             'gender' => 'required|in:male,female,others',
