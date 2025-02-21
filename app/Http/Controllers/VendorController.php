@@ -75,14 +75,7 @@ class VendorController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-
-        // Only allow sellers to create stores
-        // if ($user->role !== 'seller') {
-        //     return response()->json([
-        //         'message' => 'Only sellers can create a store.'
-        //     ], 403);
-        // }
-
+    
         // Validation
         $validator = Validator::make($request->all(), [
             'store_name' => 'required|string|max:255',
@@ -91,40 +84,56 @@ class VendorController extends Controller
             'gender' => 'required|in:male,female,others',
             'dob' => 'nullable|date',
             'address' => 'required|string',
-            'logo' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate logo as an image
             'school' => 'nullable|string',
             'counter' => 'nullable|integer',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json([
                 'status' => 422,
                 'errors' => $validator->messages()
             ], 422);
         }
-
+    
+        // Handle Logo Upload
+        $logoPath = null;
+        if ($request->hasFile('logo')) { // ✅ Changed 'cat_image' to 'logo'
+            $image = $request->file('logo');
+    
+            if (!$image->isValid()) {
+                return response()->json(['error' => 'Uploaded image is not valid.'], 400);
+            }
+    
+            // Generate unique filename
+            $logoPath = time() . '.' . $image->extension();
+            $image->storeAs('images/logos', $logoPath, 'public'); // ✅ Store in 'storage/app/public/images/logos'
+        }
+    
         // Store Data
         $vendorStore = Vendor::create([
             'user_id' => $user->id,
             'name' => $user->name,
             'mobile' => $request->mobile,
             'gender' => $request->gender,
-            'dob' => Carbon::parse($request->dob)->format('Y-m-d'),
+            'dob' => $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null,
             'address' => $request->address,
             'store_name' => $request->store_name,
             'store_address' => $request->store_address,
-            'logo' => $request->logo,
+            'logo' => $logoPath, // Save file path in DB
             'school' => $request->school,
             'counter' => $request->counter ?? 0,
             'status' => 'pending',
             'isApproved' => false,
         ]);
-
+    
         return response()->json([
             'message' => 'Vendor store created successfully',
             'store' => $vendorStore
         ], 201);
     }
+    
+    
 
     //PRODUCTS 
     public function getVendorCategories(Request $request)
