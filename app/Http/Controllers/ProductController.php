@@ -285,7 +285,7 @@ class ProductController extends Controller
 
     public function getproductByCategories(Request $request, $id)
     {
-        $query = Product::where('category_id', $id);
+        $query = Product::with('images')->where('category_id', $id);
 
         // Price range filters
         $priceRanges = [
@@ -343,7 +343,7 @@ class ProductController extends Controller
 
         return response()->json([
             'message' => 'products retrieved successfully',
-            'products' => $products,
+            'products' => $products->images,
             'min_price' => $minPrice,
             'max_price' => $maxPrice
         ], 200);
