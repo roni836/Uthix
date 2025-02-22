@@ -28,52 +28,56 @@ Route::get('categories/{id}', [CategoryController::class, 'show']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-        //  (accessible to all authenticated users)
-        Route::post('/logout', [AuthController::class, 'logout']);
-        Route::get('/profile', [AuthController::class, 'profile']);
-        Route::post('/add-to-cart', [CartController::class, 'addToCart']);
-        Route::get('/cart', [CartController::class, 'getCart']);
-        Route::delete('/cart/clear', [CartController::class, 'clearCart']);
-        Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
+    //  (accessible to all authenticated users)
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::post('/add-to-cart', [CartController::class, 'addToCart']);
+    Route::get('/cart', [CartController::class, 'getCart']);
+    Route::delete('/cart/clear', [CartController::class, 'clearCart']);
+    Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
 
-        Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
-    
-        Route::apiResource('wishlist', WishlistController::class);
-        Route::apiResource('address', AddressController::class);
-        Route::apiResource('orders', OrderController::class);
-        Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']); 
-       
-        Route::apiResource('reviews', ReviewController::class);
-        Route::post('/create-payment', [PaymentController::class, 'createPayment']);
-        Route::post('/verify-payment', [PaymentController::class, 'callback']);
-        Route::apiResource('products', ProductController::class);
+    Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
+
+    Route::apiResource('wishlist', WishlistController::class);
+    Route::apiResource('address', AddressController::class);
+    Route::apiResource('orders', OrderController::class);
+    Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']);
+
+    Route::apiResource('reviews', ReviewController::class);
+    Route::post('/create-payment', [PaymentController::class, 'createPayment']);
+    Route::post('/verify-payment', [PaymentController::class, 'callback']);
+    // Route::apiResource('products', ProductController::class);
 
     // Admin routes
-    Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard',function(){
+    Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard', function () {
         return response()->json(['message' => 'admin API is working!']);
     });
-    Route::middleware([RoleMiddleware::class . ':instructor'])->get('/instructor-dashboard',function(){
+    Route::middleware([RoleMiddleware::class . ':instructor'])->get('/instructor-dashboard', function () {
         return response()->json(['message' => 'instructor API is working!']);
     });
-    Route::middleware([RoleMiddleware::class . ':seller'])->get('/seller-dashboard',function(){
+    Route::middleware([RoleMiddleware::class . ':seller'])->get('/seller-dashboard', function () {
         return response()->json(['message' => 'seller API is working!']);
     });
-    Route::middleware([RoleMiddleware::class . ':student'])->get('/student-dashboard',function(){
+    Route::middleware([RoleMiddleware::class . ':student'])->get('/student-dashboard', function () {
         return response()->json(['message' => 'student API is working!']);
     });
-    Route::middleware([RoleMiddleware::class . ':admin'])->group(function() {
-        Route::apiResource('categories', CategoryController::class);
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::put('categories/{id}', [CategoryController::class, 'update']);
+        Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
         Route::post('/admin/products', [ProductController::class, 'store'])->name('books.store');
-    });
-     Route::middleware([RoleMiddleware::class . ':seller'])->group(function() {
+        Route::put('/admin/products/{id}', [ProductController::class, 'update']); // Update product
+        Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']); // Delete product
+            });
+    Route::middleware([RoleMiddleware::class . ':seller'])->group(function () {
         Route::post('/vendor/products', [ProductController::class, 'store']);
         Route::get('/vendor/categories', [VendorController::class, 'getVendorCategories']);
-Route::get('/get/vendor/products', [VendorController::class, 'getVendorProducts']);
-Route::get('/vendor/dashboard', [VendorController::class, 'getVendorDashboard']);
-Route::post('/vendor-store', [VendorController::class, 'store']);  // Create Store
+        Route::get('/get/vendor/products', [VendorController::class, 'getVendorProducts']);
+        Route::put('/vendor/products/{id}', [ProductController::class, 'update']); // Update product
+        Route::delete('/vendor/products/{product}', [ProductController::class, 'destroy']); // Delete product
+        Route::get('/vendor/dashboard', [VendorController::class, 'getVendorDashboard']);
+        Route::post('/vendor-store', [VendorController::class, 'store']);
 
     });
-
 });
 
 
@@ -84,10 +88,6 @@ Route::get('/test', function () {
 
 
 Route::apiResource('vendors', VendorController::class);
-Route::get('/categories/{id}/products',[ProductController::class,'getproductByCategories']);
+Route::get('/categories/{id}/products', [ProductController::class, 'getproductByCategories']);
 Route::get('/products/filter', [ProductController::class, 'filterProducts']);
 Route::apiResource('coupons', CouponController::class);
-
-
- 
-
