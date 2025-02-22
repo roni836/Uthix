@@ -172,16 +172,16 @@ class VendorController extends Controller
     {
         $user = Auth::user(); // Vendor
 
-        $totalBooks = Product::where('user_id', $user->id)->count();
-        $booksSold = Product::where('user_id', $user->id)->sum('num_of_sales');
+        $totalProducts = Product::where('user_id', $user->id)->count();
+        $productsSold = Product::where('user_id', $user->id)->sum('num_of_sales');
         $averageRating = Product::where('user_id', $user->id)->avg('rating');
 
         return response()->json([
             'message' => 'Dashboard data fetched successfully',
             'data' => [
                 'rating' => round($averageRating, 1),
-                'total_books' => $totalBooks,
-                'books_sold' => $booksSold
+                'total_products' => $totalProducts,
+                'product_sold' => $productsSold
             ]
         ], 200);
     }

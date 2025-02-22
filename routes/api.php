@@ -61,13 +61,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':student'])->get('/student-dashboard', function () {
         return response()->json(['message' => 'student API is working!']);
     });
+
+    //Admin
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::post('categories', [CategoryController::class, 'store']);
         Route::put('categories/{id}', [CategoryController::class, 'update']);
         Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
         Route::post('/admin/products', [ProductController::class, 'store'])->name('books.store');
         Route::put('/admin/products/{id}', [ProductController::class, 'update']); // Update product
         Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']); // Delete product
+        Route::apiResource('coupons', CouponController::class);
+
             });
+
+            //Seller
     Route::middleware([RoleMiddleware::class . ':seller'])->group(function () {
         Route::post('/vendor/products', [ProductController::class, 'store']);
         Route::get('/vendor/categories', [VendorController::class, 'getVendorCategories']);
@@ -80,14 +87,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 });
 
-
 Route::get('/test', function () {
     return response()->json(['message' => 'API is working!']);
 });
 
 
 
+
 Route::apiResource('vendors', VendorController::class);
 Route::get('/categories/{id}/products', [ProductController::class, 'getproductByCategories']);
 Route::get('/products/filter', [ProductController::class, 'filterProducts']);
-Route::apiResource('coupons', CouponController::class);
