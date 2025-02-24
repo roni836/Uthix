@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\User;
 use App\Models\ProductImage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -61,6 +62,88 @@ class ProductController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
+        
+         try {     
+             // Create the Product
+             $product = Product::create([
+                 'title' => $request->title,
+                 'author' => $request->author,
+                 'category_id' => $request->category_id,
+                 'user_id' => $user->id,
+                 'isbn' => $request->isbn,
+                 'language' => $request->language ?? 'English',
+                 'pages' => $request->pages,
+                 'description' => $request->description,
+                 'rating' => $request->rating ?? 0.00,
+                 'price' => $request->price,
+                 'discount_price' => $request->discount_price,
+                 'discount_type' => $request->discount_type,
+                 'stock' => $request->stock,
+                 'min_qty' => $request->min_qty ?? 1,
+                 'is_featured' => $request->is_featured ?? false,
+                 'is_published' => $request->is_published ?? true,
+                 'num_of_sales' => $request->num_of_sales ?? 0,
+                 'slug' => Str::slug($request->title),
+             ]);
+     
+             // Store Multiple Images
+             if ($request->hasFile('images')) {
+                 foreach ($request->file('images') as $image) {
+                     $imageName = time() . rand(1000, 9999) . '.' . $image->extension();
+                     $image->storeAs('image/products', $imageName, 'public');
+     
+                     ProductImage::create([
+                         'product_id' => $product->id,
+                         'image_path' => $imageName,
+                     ]);
+                 }
+             }
+     
+             return response()->json([
+                 'message' => 'Product created successfully!',
+                 'product' => $product,
+                 'images' => $product->images // Returning images with response
+             ], 201);
+         } catch (\Exception $e) {
+             return response()->json([
+                 'message' => 'Something went wrong.',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
+     }
+     
+     public function adminStore(Request $request)
+     {     
+         // Validation
+         $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'isbn' => 'nullable|string|max:20|unique:products,isbn',
+            'language' => 'nullable|string|max:50',
+            'pages' => 'nullable|integer|min:1',
+            'description' => 'nullable|string',
+            'rating' => 'nullable|numeric|min:0|max:5',
+            'price' => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|lt:price',
+            'discount_type' => 'nullable|string|in:percentage,fixed',
+            'stock' => 'required|integer|min:0',
+            'min_qty' => 'required|integer|min:1',
+            'is_featured' => 'boolean',
+            'is_published' => 'boolean',
+            'num_of_sales' => 'integer|min:0',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password,
+            'role' => $request->role,
+        ]);
         
          try {     
              // Create the Product
