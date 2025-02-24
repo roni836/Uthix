@@ -151,6 +151,10 @@ class ProductController extends Controller
          if (!$product) {
              return response()->json(['message' => 'Product not found.'], 404);
          }
+         // Admin can update any product, Seller can update only their own
+    if ($user->role === 'seller' && $product->user_id !== $user->id) {
+        return response()->json(['message' => 'You do not have permission to update this product.'], 403);
+    }
      
          // Validation rules
          $request->validate([
@@ -250,32 +254,38 @@ class ProductController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(Product $product)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        if ($user->role === 'seller' && $product->user_id !== $user->id) {
+    // Admin can delete any product
+    if ($user->role === 'admin') {
+        $product->delete();
+        return response()->json(['message' => 'Product deleted successfully by admin.'], 200);
+    }
+
+    // Seller can only delete their own products
+    if ($user->role === 'seller') {
+        if ($product->user_id !== $user->id) {
             return response()->json([
                 'message' => 'You do not have permission to delete this product.',
             ], 403);
         }
 
-        if ($user->role !== 'admin' && $user->role !== 'seller') {
-            return response()->json([
-                'message' => 'You do not have permission to delete a product.',
-            ], 403);
-        }
-        try {
-            $product->delete();
-            return response()->json(['message' => 'product deleted successfully'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'product not deleted successfully'], 500);
-        }
+        $product->delete();
+        return response()->json(['message' => 'Product deleted successfully by seller.'], 200);
     }
+
+    // If the user is neither admin nor seller
+    return response()->json([
+        'message' => 'You do not have permission to delete this product.',
+    ], 403);
+}
+
 
 
     public function getproductByCategories(Request $request, $id)
     {
-        $query = Product::where('category_id', $id);
+        $query = Product::with('images')->where('category_id', $id);
 
         // Price range filters
         $priceRanges = [
@@ -333,7 +343,7 @@ class ProductController extends Controller
 
         return response()->json([
             'message' => 'products retrieved successfully',
-            'products' => $products,
+            'products' => $products->images,
             'min_price' => $minPrice,
             'max_price' => $maxPrice
         ], 200);
