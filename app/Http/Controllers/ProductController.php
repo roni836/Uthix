@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -32,42 +33,36 @@ class ProductController extends Controller
      public function store(Request $request)
      {
          $user = Auth::user();
-         if ($user->role === 'vendor') {
+         if ($user->role === 'seller') {
             $request->merge(['user_id' => $user->id]);
         }
      
          // Validation
-         $request->validate([
-             'title' => ['required', 'string', 'max:255'],
-             'author' => ['required', 'string', 'max:255'],
-             'category_id' => ['required', 'exists:categories,id'],
-             'user_id' => ['nullable', 'exists:users,id'],
-             'isbn' => ['nullable', 'string', 'max:20', 'unique:products,isbn'],
-             'language' => ['nullable', 'string', 'max:50'],
-             'pages' => ['nullable', 'integer', 'min:1'],
-             'description' => ['nullable', 'string'],
-             'thumbnail_img' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
-             'rating' => ['nullable', 'numeric', 'min:0', 'max:5'],
-             'price' => ['required', 'numeric', 'min:0'],
-             'discount_price' => ['nullable', 'numeric', 'lt:price'],
-             'discount_type' => ['nullable', 'string', 'in:percentage,fixed'],
-             'stock' => ['required', 'integer', 'min:0'],
-             'min_qty' => ['required', 'integer', 'min:1'],
-             'is_featured' => ['boolean'],
-             'is_published' => ['boolean'],
-             'num_of_sales' => ['integer', 'min:0'],
-             'images.*' => ['image', 'mimes:jpg,jpeg,png', 'max:2048'], // Multiple image validation
-         ]);
-     
-         try {
-             // Store Thumbnail Image
-             $thumbnailImage = null;
-             if ($request->hasFile('thumbnail_img')) {
-                 $image = $request->file('thumbnail_img');
-                 $thumbnailImage = time() . '.' . $image->extension();
-                 $image->storeAs('image/products', $thumbnailImage, 'public');
-             }
-     
+         $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'isbn' => 'nullable|string|max:20|unique:products,isbn',
+            'language' => 'nullable|string|max:50',
+            'pages' => 'nullable|integer|min:1',
+            'description' => 'nullable|string',
+            'rating' => 'nullable|numeric|min:0|max:5',
+            'price' => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|lt:price',
+            'discount_type' => 'nullable|string|in:percentage,fixed',
+            'stock' => 'required|integer|min:0',
+            'min_qty' => 'required|integer|min:1',
+            'is_featured' => 'boolean',
+            'is_published' => 'boolean',
+            'num_of_sales' => 'integer|min:0',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+        
+         try {     
              // Create the Product
              $product = Product::create([
                  'title' => $request->title,
@@ -78,7 +73,6 @@ class ProductController extends Controller
                  'language' => $request->language ?? 'English',
                  'pages' => $request->pages,
                  'description' => $request->description,
-                 'thumbnail_img' => $thumbnailImage,
                  'rating' => $request->rating ?? 0.00,
                  'price' => $request->price,
                  'discount_price' => $request->discount_price,

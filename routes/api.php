@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ShipRocketController;
 use App\Http\Controllers\VendorController;
 
 use App\Http\Controllers\WishlistController;
@@ -97,3 +98,11 @@ Route::get('/test', function () {
 Route::apiResource('vendors', VendorController::class);
 Route::get('/categories/{id}/products', [ProductController::class, 'getproductByCategories']);
 Route::get('/products/filter', [ProductController::class, 'filterProducts']);
+Route::apiResource('coupons', CouponController::class);
+
+
+// shiprocket apis not tested
+
+Route::post('/create-order', [ShiprocketController::class, 'createOrder']);
+Route::get('/track-order/{order_id}', [ShipRocketController::class, 'trackOrder']);
+
