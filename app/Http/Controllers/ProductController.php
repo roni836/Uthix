@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\User;
 use App\Models\ProductImage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -33,7 +34,7 @@ class ProductController extends Controller
      public function store(Request $request)
      {
          $user = Auth::user();
-         if ($user->role === 'seller') {
+         if (in_array($user->role, ['seller', 'admin'])) {
             $request->merge(['user_id' => $user->id]);
         }
      
@@ -110,8 +111,6 @@ class ProductController extends Controller
              ], 500);
          }
      }
-     
-
 
     /**
      * Display the specified resource.
