@@ -336,7 +336,7 @@ class ProductController extends Controller
 
         return response()->json([
             'message' => 'products retrieved successfully',
-            'products' => $products->images,
+            'products' => $products,
             'min_price' => $minPrice,
             'max_price' => $maxPrice
         ], 200);
