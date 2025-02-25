@@ -76,7 +76,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
             });
 
-            //Seller
+    //Seller
     Route::middleware([RoleMiddleware::class . ':seller'])->group(function () {
         Route::post('/vendor/products', [ProductController::class, 'store']);
         Route::get('/vendor/categories', [VendorController::class, 'getVendorCategories']);
@@ -86,6 +86,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/dashboard', [VendorController::class, 'getVendorDashboard']);
         Route::post('/vendor-store', [VendorController::class, 'store']);
         Route::get('/vendor/review/{product_id}', [ReviewController::class, 'vendorIndex']);
+        Route::get('/vendor/review-image/{product_id}', [ReviewController::class, 'allReviewImage']);
 
     });
 });
