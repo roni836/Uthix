@@ -85,6 +85,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/vendor/products/{product}', [ProductController::class, 'destroy']); // Delete product
         Route::get('/vendor/dashboard', [VendorController::class, 'getVendorDashboard']);
         Route::post('/vendor-store', [VendorController::class, 'store']);
+        Route::get('/vendor/review/{product_id}', [ReviewController::class, 'vendorIndex']);
 
     });
 });
