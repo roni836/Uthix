@@ -29,6 +29,23 @@ class ReviewController extends Controller
             'reviews' => $reviews
         ]);
     }
+
+    public function vendorIndex($product_id)
+    {
+        $user = Auth::user();
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        $reviews = Review::where('product_id', $product_id)->get();
+    
+        return response()->json([
+            'status' => true,
+            'message' => 'User reviews fetched successfully',
+            'reviews' => $reviews
+        ]);
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -49,7 +66,7 @@ class ReviewController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        
+
         // Create Review
         $review = Review::create([
             'product_id' => $request->product_id,
