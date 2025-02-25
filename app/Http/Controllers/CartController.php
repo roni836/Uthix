@@ -12,43 +12,54 @@ class CartController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function addToCart(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-        ]);
-    
-        $user = Auth::user();
 
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Unauthorized user'
-            ], 401);
-        }
-    
-        $product = Product::findOrFail($request->product_id);
-        $cartItem = Cart::where('user_id', $user->id)
-            ->where('product_id', $product->id)
-            ->first();
-    
-        if ($cartItem) {
-            $cartItem->quantity += $request->quantity;
-            $cartItem->save();
-        } else {
-            $cartItem = Cart::create([
-                'user_id' => $user->id,
-                'product_id' => $product->id,
-                'quantity' => $request->quantity
-            ]);
-        }
-    
+  public function addToCart(Request $request)
+{
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'quantity' => 'nullable|integer', // Optional quantity, default will be 1
+    ]);
+
+    $user = Auth::user();
+    if (!$user) {
         return response()->json([
-            'status'  => true,
-            'message' => 'Product added to cart successfully',
-            'cartItem' => $cartItem,
-        ], 200);
+            'status' => false,
+            'message' => 'Unauthorized user'
+        ], 401);
     }
+
+    $product = Product::findOrFail($request->product_id);
+    $cartItem = Cart::where('user_id', $user->id)
+        ->where('product_id', $product->id)
+        ->first();
+
+    if ($cartItem) {
+        // If cart item exists, update quantity
+        $cartItem->quantity += $request->quantity ?? 1;
+
+        // Remove item if quantity becomes 0
+        if ($cartItem->quantity <= 0) {
+            $cartItem->delete();
+
+   
+
+     
+    } else {
+        // If product is new, set quantity to 1 by default
+        $cartItem = Cart::create([
+            'user_id' => $user->id,
+            'product_id' => $product->id,
+            'quantity' => 1 // Default to 1
+        ]);
+    }
+
+    return response()->json([
+        'status'  => true,
+        'message' => 'Product added to cart successfully',
+        'cartItem' => $cartItem,
+    ], 200);
+}
+
     
 
     public function getCart()
