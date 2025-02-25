@@ -6,6 +6,7 @@ use App\Models\Review;
 use App\Models\ReviewImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ReviewController extends Controller
 {
@@ -14,9 +15,20 @@ class ReviewController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        $reviews = Review::where('user_id', $user->id)->get();
+    
+        return response()->json([
+            'status' => true,
+            'message' => 'User reviews fetched successfully',
+            'reviews' => $reviews
+        ]);
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -25,13 +37,19 @@ class ReviewController extends Controller
         $user = Auth::user();
 
         // Validate request
-        $request->validate([
-            'product_id' => ['required', 'exists:products,id'],
-            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+        $validator = Validator::make($request->all(), [
+            'product_id' => ['bail', 'required', 'exists:products,id'],
+            'rating' => ['bail', 'required', 'integer', 'min:1', 'max:5'],
             'review' => ['nullable', 'string'],
-            'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'], // Multiple images
+            'images' => ['sometimes', 'array'], // Ensures 'images' is an array if present
+            'images.*' => ['sometimes', 'image', 'mimes:jpg,jpeg,png', 'max:2048'], // Validate each image in array
         ]);
-
+        
+        // Check validation and return errors if any
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        
         // Create Review
         $review = Review::create([
             'product_id' => $request->product_id,
