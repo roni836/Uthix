@@ -103,6 +103,12 @@ Route::apiResource('coupons', CouponController::class);
 
 // shiprocket apis not tested
 
-Route::post('/create-order', [ShiprocketController::class, 'createOrder']);
-Route::get('/track-order/{order_id}', [ShipRocketController::class, 'trackOrder']);
+// Route::post('/create-order', [ShiprocketController::class, 'createOrder']);
+// Route::get('/track-order/{order_id}', [ShipRocketController::class, 'trackOrder']);
+
+Route::post('/shiprocket/pickup-location', [ShiprocketController::class, 'addPickupLocation']);
+Route::post('/shiprocket/create-order', [ShiprocketController::class, 'createOrder']);
+Route::get('/shiprocket/track/{awb}', [ShiprocketController::class, 'trackOrder']);
+
+Route::post('/shiprocket/webhook', [ShiprocketController::class, 'handleWebhook']);
 

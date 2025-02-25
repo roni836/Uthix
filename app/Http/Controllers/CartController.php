@@ -16,10 +16,10 @@ class CartController extends Controller
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1'
         ]);
     
         $user = Auth::user();
+
         if (!$user) {
             return response()->json([
                 'status' => false,
