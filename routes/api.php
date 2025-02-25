@@ -22,7 +22,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/all-categories', [CategoryController::class, 'getAllCategories']);
 Route::get('categories/{id}', [CategoryController::class, 'show']);
 Route::get('products', [ProductController::class, 'index']);
@@ -66,7 +66,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //Admin
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
-        Route::post('categories', [CategoryController::class, 'store']);
+        Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
         Route::put('categories/{id}', [CategoryController::class, 'update']);
         Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
         Route::post('/admin/products', [ProductController::class, 'store'])->name('books.store');
