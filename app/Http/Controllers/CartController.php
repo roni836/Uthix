@@ -12,6 +12,7 @@ class CartController extends Controller
     /**
      * Display a listing of the resource.
      */
+
   public function addToCart(Request $request)
 {
     $request->validate([
@@ -39,13 +40,10 @@ class CartController extends Controller
         // Remove item if quantity becomes 0
         if ($cartItem->quantity <= 0) {
             $cartItem->delete();
-            return response()->json([
-                'status' => true,
-                'message' => 'Product removed from cart',
-            ], 200);
-        }
 
-        $cartItem->save();
+   
+
+     
     } else {
         // If product is new, set quantity to 1 by default
         $cartItem = Cart::create([
