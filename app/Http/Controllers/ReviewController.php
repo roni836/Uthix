@@ -46,6 +46,35 @@ class ReviewController extends Controller
             'reviews' => $reviews
         ]);
     }
+
+    public function allReviewImage($product_id)
+{
+    $user = Auth::user();
+
+    if (!$user) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    // Fetch all review images for the given product ID
+    $reviewImages = ReviewImage::whereIn('review_id', function ($query) use ($product_id) {
+        $query->select('id')->from('reviews')->where('product_id', $product_id);
+    })->get();
+
+    if ($reviewImages->isEmpty()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'No review images found for this product.',
+            'reviewImages' => []
+        ]);
+    }
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Review images fetched successfully.',
+        'reviewImages' => $reviewImages
+    ]);
+}
+
     /**
      * Store a newly created resource in storage.
      */
@@ -55,8 +84,8 @@ class ReviewController extends Controller
 
         // Validate request
         $validator = Validator::make($request->all(), [
-            'product_id' => ['bail', 'required', 'exists:products,id'],
-            'rating' => ['bail', 'required', 'integer', 'min:1', 'max:5'],
+            'product_id' => ['required', 'exists:products,id'],
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'review' => ['nullable', 'string'],
             'images' => ['sometimes', 'array'], // Ensures 'images' is an array if present
             'images.*' => ['sometimes', 'image', 'mimes:jpg,jpeg,png', 'max:2048'], // Validate each image in array
