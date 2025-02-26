@@ -31,6 +31,31 @@ class OrderController extends Controller
             'orders' => $orders
         ], 200);
     }
+    
+    public function vendorOrderIndex()
+    {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        // Get all order IDs where the vendor's products are included
+        $orderIds = OrderItem::whereHas('product', function ($query) use ($user) {
+            $query->where('vendor_id', $user->id); // Assuming 'vendor_id' is stored in the products table
+        })->pluck('order_id')->unique();
+
+        // Fetch all orders that contain the vendor's products
+        $orders = Order::whereIn('id', $orderIds)->with(['orderItems.product'])->get();
+
+        return response()->json([
+            'status' => true,
+            'orders' => $orders
+        ], 200);
+    }
 
     /**
      * Store a newly created resource in storage.
