@@ -79,6 +79,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/dashboard', [VendorController::class, 'getVendorDashboard']);
         Route::post('/vendor-store', [VendorController::class, 'store']);
         Route::get('/vendor/review/{product_id}', [ReviewController::class, 'vendorIndex']);
+        Route::get('/vendor/all-orders', [OrderController::class, 'vendorOrderIndex']);
         Route::get('/vendor/review-image/{product_id}', [ReviewController::class, 'allReviewImage']);
 
     });
