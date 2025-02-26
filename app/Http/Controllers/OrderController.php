@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\str;
@@ -35,37 +36,35 @@ class OrderController extends Controller
     public function vendorOrderIndex()
     {
         $user = Auth::user();
-    
+
         if (!$user) {
             return response()->json([
                 'status' => false,
                 'message' => 'Unauthorized',
             ], 401);
         }
-    
-        // Find the vendor related to the authenticated user
-        $vendor = $user->vendor;
-    
-        if (!$vendor) {
+
+        // Ensure user is a vendor by checking if they have products
+        $productIds = Product::where('user_id', $user->id)->pluck('id');
+
+        if ($productIds->isEmpty()) {
             return response()->json([
                 'status' => false,
-                'message' => 'Vendor not found',
+                'message' => 'No orders found for this vendor.',
             ], 404);
         }
-    
-        // Get all product IDs that belong to this vendor
-        $productIds = $vendor->products()->pluck('id');
-    
-        // Get orders where the order items include these products
+
+        // Fetch orders that contain the vendor's products
         $orders = Order::whereHas('orderItems', function ($query) use ($productIds) {
             $query->whereIn('product_id', $productIds);
-        })->with('orderItems.product')->get();
-    
+        })->with(['orderItems.product'])->get();
+
         return response()->json([
             'status' => true,
             'orders' => $orders
         ], 200);
     }
+
     
 
     /**
