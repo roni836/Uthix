@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
             $table->decimal('price', 15, 2);
-            $table->decimal('total_price', 15, 2)->nullable(); // quantity * price
+            $table->decimal('total_price', 15, 2)->default(0.00); // Ensure default value
             $table->timestamps();
         });
     }
