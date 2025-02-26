@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 //     return view('welcome');
 // });
 
-Route::get('/', function () {
-    return view('admin/index');
-});
+
 
 Route::get('/login', function () {
     return view('auth.login');  
@@ -18,6 +16,9 @@ Route::get('/login', function () {
 
 // Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard'); 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/', function () {
+        return view('admin/index');
+    });
 
 Route::get('/manage-user', [AdminController::class, 'manageUser'])->name('manage.user'); 
 Route::get('/insert-user', [AdminController::class, 'insertUser'])->name('insert.user'); 
