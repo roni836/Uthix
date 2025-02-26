@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
@@ -33,12 +32,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //  (accessible to all authenticated users)
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
-    Route::post('/add-to-cart', [CartController::class, 'addToCart']);
-    Route::get('/cart', [CartController::class, 'getCart']);
-    Route::delete('/cart/clear', [CartController::class, 'clearCart']);
-    Route::delete('/cart/remove/{cartId}', [CartController::class, 'removeFromCart']);
-
-    Route::put('/cart/update/{cartId}', [CartController::class, 'updateCart']);
 
     Route::apiResource('wishlist', WishlistController::class);
     Route::apiResource('address', AddressController::class);
