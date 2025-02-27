@@ -17,7 +17,7 @@ Route::get('/login', function () {
 // Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard'); 
 
  
-Route::middleware(['auth:sanctum'])->group(function () {
+// Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', function () {
         return view('admin/index');
     });
@@ -29,7 +29,10 @@ Route::get('/manage-vendor', [AdminController::class, 'manageVendor'])->name('ma
 Route::get('/manage-category', [AdminController::class, 'manageCategory'])->name('manage.category'); 
 Route::get('/insert-product', [AdminController::class, 'insertProduct'])->name('insert.product'); 
 Route::get('/manage-product', [AdminController::class, 'manageProduct'])->name('manage.product'); 
-});
+Route::get('/manage-coupon', [AdminController::class, 'manageCoupon'])->name('manage.coupon'); 
+Route::get('/insert-coupon', [AdminController::class, 'insertCoupon'])->name('insert.coupon'); 
+
+// });
 
 Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');

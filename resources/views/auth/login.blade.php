@@ -65,101 +65,50 @@
 </head>
 
 <body>
-<div class="container">
-    <div class="card">
-        <h5 class="card-header">Login</h5>
-        <form id="loginForm" class="card-body">
-            @csrf  {{-- CSRF token for security --}}
-            <div class="row mb-3">
-                <label class="col-sm-3 col-form-label" for="email">Email</label>
-                <div class="col-sm-9">
-                    <input type="email" id="email" name="email" class="form-control" placeholder="john.doe@example.com" required />
-                </div>
+   <!-- Form Alignment -->
+   <div class="card">
+    {{-- <h5 class="card-header">Form Alignment</h5> --}}
+    <div class="card-body">
+      <div class="d-flex align-items-center justify-content-center h-px-500">
+        <form class="w-px-500 border rounded p-3 p-md-5">
+          <h3 class="mb-6">Sign In</h3>
+          <div class="row mb-6">
+            <label class="col-sm-3 col-form-label" for="form-alignment-username">Username</label>
+            <div class="col-sm-9">
+              <input type="text" id="form-alignment-username" class="form-control" placeholder="john.doe" />
             </div>
+          </div>
 
-            <div class="row mb-3">
-                <label class="col-sm-3 col-form-label" for="password">Password</label>
-                <div class="col-sm-9">
-                    <input type="password" id="password" name="password" class="form-control" placeholder="********" required />
-                </div>
+          <div class="row mb-6 form-password-toggle">
+            <label class="col-sm-3 col-form-label" for="form-alignment-password">Password</label>
+            <div class="col-sm-9">
+              <div class="input-group input-group-merge">
+                <input
+                  type="password"
+                  id="form-alignment-password"
+                  class="form-control"
+                  placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                  aria-describedby="form-alignment-password2" />
+                <span class="input-group-text cursor-pointer" id="form-alignment-password2"
+                  ><i class="ti ti-eye-off"></i
+                ></span>
+              </div>
             </div>
-
-            <div class="row mb-3">
-                <label class="col-sm-3 col-form-label" for="role">Select Role</label>
-                <div class="col-sm-9">
-                    <select id="role" name="role" class="form-control">
-                        <option value="student">Student</option>
-                        <option value="admin">Admin</option>
-                        <option value="seller">Seller</option>
-                        <option value="instructor">Instructor</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row justify-content-end">
-                <div class="col-sm-9">
-                    <button type="submit" class="btn btn-primary me-4">Login</button>
-                </div>
-            </div>
+          </div>
+          <div class="mb-6">
+            <label class="form-check m-0">
+              <input type="checkbox" class="form-check-input" />
+              <span class="form-check-label">Remember me</span>
+            </label>
+          </div>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Login</button>
+          </div>
         </form>
+      </div>
     </div>
-</div>
-
-<script>
-    $(document).ready(function() {
-        $("#loginForm").submit(function(e) {
-            e.preventDefault(); // Prevent page reload
-
-            let formData = {
-                email: $("#email").val(),
-                password: $("#password").val(),
-                role: $("#role").val(),
-            };
-
-            $.ajax({
-                type: "POST",
-                url: "{{ route('login.post') }}",  // Ensure this route exists
-                data: JSON.stringify(formData),  
-                contentType: "application/json",
-                headers: { "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content") }, // CSRF token
-                success: function(response) {
-                    swal("Success", "Login successful!", "success");
-
-                    // Store token in localStorage
-                    localStorage.setItem("access_token", response.access_token);
-
-                    // Redirect user based on role
-                    switch(response.role) {
-                        case "admin":
-                            window.location.href = "{{ url('/') }}";
-                            break;
-                        case "student":
-                            window.location.href = "{{ url('/student-dashboard') }}";
-                            break;
-                        case "seller":
-                            window.location.href = "{{ url('/seller-dashboard') }}";
-                            break;
-                        case "instructor":
-                            window.location.href = "{{ url('/instructor-dashboard') }}";
-                            break;
-                        default:
-                            window.location.href = "{{ url('/') }}";
-                    }
-                },
-                error: function(xhr) {
-                    let errorMessage = xhr.responseJSON?.message || "Login failed!";
-                    swal("Error", errorMessage, "error");
-                }
-            });
-        });
-    });
-</script>
+  </div>
 
 
-
-
-
-
-    
 </body>
 </html>

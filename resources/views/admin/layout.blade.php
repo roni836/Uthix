@@ -234,22 +234,45 @@
                                 </a>
                                 <ul class="menu-sub">
                                     <li class="menu-item">
-                                        <a href="{{route('manage.product')}}" class="menu-link">
+                                        <a href="{{ route('manage.product') }}" class="menu-link">
                                             <div data-i18n="Product List">Product List</div>
                                         </a>
                                     </li>
                                     <li class="menu-item">
-                                        <a href="{{route('insert.product')}}" class="menu-link">
+                                        <a href="{{ route('insert.product') }}" class="menu-link">
                                             <div data-i18n="Add Product">Add Product</div>
                                         </a>
                                     </li>
                                     <li class="menu-item">
-                                        <a href="{{route('manage.category')}}" class="menu-link">
+                                        <a href="{{ route('manage.category') }}" class="menu-link">
                                             <div data-i18n="Category List">Category List</div>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
+
+                            <li class="menu-item">
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <div data-i18n="Coupon">Coupon</div>
+                                </a>
+                                <ul class="menu-sub">
+                                    <li class="menu-item">
+                                        <a href="{{ route('manage.coupon') }}" class="menu-link">
+                                            <div data-i18n="Coupon List">Coupon List</div>
+                                        </a>
+                                    </li>
+  <li class="menu-item">
+                                        <a href="{{ route('insert.coupon') }}" class="menu-link">
+                                            <div data-i18n="Add Coupon">Add  Coupon</div>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+
+
+
                             <li class="menu-item">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <div data-i18n="Order">Order</div>
