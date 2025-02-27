@@ -227,12 +227,14 @@ class AuthController extends Controller
     //     $request->user()->tokens()->delete();
     //     return response()->json(['message' => 'User logged out successfully']);
     // }
+    
     public function logout(Request $request)
-{
-    // Delete the token used to authenticate the request
-    $request->user()->currentAccessToken()->delete();
+    {
+        // Delete the token used to authenticate the request
+        $request->user()->currentAccessToken()->delete();
+        $request->user()->tokens()->delete();
 
-    return response()->json(['message' => 'User logged out successfully']);
-}
+        return response()->json(['message' => 'User logged out successfully']);
+    }
 
 }
