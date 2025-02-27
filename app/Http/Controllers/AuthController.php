@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\TwilioService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -183,6 +184,32 @@ class AuthController extends Controller
             'role' => $role
         ]);
     }
+    public function adminLogin(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|string|email|max:255|exists:users,email',
+        'password' => 'required|string|min:6',
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    $credentials = $request->only('email', 'password');
+    
+    // Authenticate only admins
+    $user = User::where('email', $credentials['email'])->where('role', 'admin')->first();
+    
+    if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        return redirect()->back()->with('error', 'Unauthorized login attempt');
+    }
+
+    // Log in the admin
+    Auth::login($user);
+
+    return redirect('/')->with('success', 'You are successfully logged in');
+}
+
     
     // Get Authenticated User
     public function profile(Request $request)

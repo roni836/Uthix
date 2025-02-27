@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Artisan;
@@ -17,22 +19,25 @@ Route::get('/login', function () {
 // Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard'); 
 
  
-// Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+
+   
     Route::get('/', function () {
-        return view('admin/index');
-    });
-
-Route::get('/manage-user', [AdminController::class, 'manageUser'])->name('manage.user'); 
-Route::get('/insert-user', [AdminController::class, 'insertUser'])->name('insert.user'); 
-Route::get('/insert-vendor', [AdminController::class, 'insertVendor'])->name('insert.vendor'); 
-Route::get('/manage-vendor', [AdminController::class, 'manageVendor'])->name('manage.vendor'); 
-Route::get('/manage-category', [AdminController::class, 'manageCategory'])->name('manage.category'); 
-Route::get('/insert-product', [AdminController::class, 'insertProduct'])->name('insert.product'); 
-Route::get('/manage-product', [AdminController::class, 'manageProduct'])->name('manage.product'); 
-Route::get('/manage-coupon', [AdminController::class, 'manageCoupon'])->name('manage.coupon'); 
-Route::get('/insert-coupon', [AdminController::class, 'insertCoupon'])->name('insert.coupon'); 
-
-// });
+        return view('admin.index');  
+    })->name('admin.dashboard');
+    Route::get('/manage-user', [AdminController::class, 'manageUser'])->name('manage.user'); 
+    Route::get('/insert-user', [AdminController::class, 'insertUser'])->name('insert.user'); 
+    Route::get('/insert-vendor', [AdminController::class, 'insertVendor'])->name('insert.vendor'); 
+    Route::get('/manage-vendor', [AdminController::class, 'manageVendor'])->name('manage.vendor'); 
+    Route::get('/manage-category', [AdminController::class, 'manageCategory'])->name('manage.category'); 
+    Route::get('/insert-product', [AdminController::class, 'insertProduct'])->name('insert.product'); 
+    Route::get('/manage-product', [AdminController::class, 'manageProduct'])->name('manage.product'); 
+    Route::get('/manage-coupon', [AdminController::class, 'manageCoupon'])->name('manage.coupon'); 
+    Route::get('/insert-coupon', [AdminController::class, 'insertCoupon'])->name('insert.coupon'); 
+});
+});
+Route::post('/admin-login', [AuthController::class, 'adminLogin'])->name('admin.login');
 
 Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
