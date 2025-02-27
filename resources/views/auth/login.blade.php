@@ -71,7 +71,7 @@
         {{-- <h5 class="card-header">Form Alignment</h5> --}}
         <div class="card-body">
             <div class="d-flex align-items-center justify-content-center h-px-500">
-                <form class="w-px-500 border rounded p-3 p-md-5" action="{{ route('admin.login') }}" method="POST">
+                <form class="w-px-500 border rounded p-3 p-md-5" id="adminLoginForm" method="POST">
                     <h3 class="mb-6">Sign In</h3>
                     @csrf
                     <div class="row mb-6">
@@ -109,6 +109,35 @@
     </div>
 
 
+    <script>
+        $(document).ready(function() {
+            $("#adminLoginForm").submit(function(e) {
+                e.preventDefault();
+    
+                let formData = $(this).serialize();
+    
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('admin.login') }}",
+                    data: formData,
+                    dataType: "JSON",
+                    success: function(response) {
+                        if (response.success) {
+                            // Store token in localStorage
+                            localStorage.setItem("auth_token", response.token);
+    
+                            // Redirect to the admin dashboard
+                            window.location.href = "{{ url('/') }}";
+                        }
+                    },
+                    error: function(xhr) {
+                        swal("Error", xhr.responseJSON.error, "error");
+                    }
+                });
+            });
+        });
+    </script>
+    
 </body>
 
 </html>

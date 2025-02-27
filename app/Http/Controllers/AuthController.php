@@ -192,22 +192,27 @@ class AuthController extends Controller
     ]);
 
     if ($validator->fails()) {
-        return redirect()->back()->withErrors($validator)->withInput();
+        return response()->json(['error' => $validator->errors()], 422);
     }
 
     $credentials = $request->only('email', 'password');
-    
-    // Authenticate only admins
-    $user = User::where('email', $credentials['email'])->where('role', 'admin')->first();
-    
-    if (!$user || !Hash::check($credentials['password'], $user->password)) {
-        return redirect()->back()->with('error', 'Unauthorized login attempt');
+
+    // Check if the user exists
+    $user = User::where('email', $credentials['email'])->first();
+
+    if (!$user || $user->role !== 'admin' || !Hash::check($credentials['password'], $user->password)) {
+        return response()->json(['error' => 'Unauthorized login attempt'], 401);
     }
 
-    // Log in the admin
+    // Log in the admin and generate token
     Auth::login($user);
+    $token = $user->createToken('auth_token')->plainTextToken;
 
-    return redirect('/')->with('success', 'You are successfully logged in');
+    return response()->json([
+        'success' => true,
+        'message' => 'Login successful',
+        'token' => $token
+    ]);
 }
 
     

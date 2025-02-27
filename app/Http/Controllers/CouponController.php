@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class CouponController extends Controller
 {
@@ -33,30 +34,33 @@ class CouponController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'code' => 'required|string|max:4|unique:coupons,code', 
-        'discount_type' => 'required|in:percentage,fixed,freeShipping',
-        'discount_value' => 'required|numeric|between:0,9999.99',
-        'expiration_date' => 'required|date',
-        'status' => 'nullable|boolean'
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'code' => 'required|string|max:4|unique:coupons,code', 
+            'discount_type' => 'required|in:percentage,fixed,freeShipping',
+            'discount_value' => 'required|numeric|between:0,9999.99',
+            'expiration_date' => 'required|date',
+            'status' => 'nullable|boolean'
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        // Store coupon in database
+        $coupon = Coupon::create($request->all());
+        if(!$coupon){
+            return response()->json([
+                'status'=>false,
+                'message'=>'coupon not found'
+            ],404);
+        }
 
-    // Store coupon in database
-    $coupon = Coupon::create($request->all());
-    if(!$coupon){
         return response()->json([
-            'status'=>false,
-            'message'=>'coupon not found'
-        ],404);
+            'status' => true,
+            'message' => 'Coupon created successfully',
+            'data' => $coupon
+        ], 201);
     }
-
-    return response()->json([
-        'status' => true,
-        'message' => 'Coupon created successfully',
-        'data' => $coupon
-    ], 201);
-}
 
     /**
      * Display the specified resource.
