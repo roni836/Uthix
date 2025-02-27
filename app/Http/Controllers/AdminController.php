@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use App\Models\Vendor;
 use App\Models\Category;
 use App\Models\Product;
@@ -42,6 +43,13 @@ class AdminController extends Controller
     public function manageProduct(){
         $products = Product::get();
         return view('admin.manageProduct', compact('products'));
+    }
+    public function manageCoupon(){
+        $coupons = Coupon::get();
+        return view('admin.coupon.manageCoupon', compact('coupons'));
+    }
+    public function insertCoupon(){
+        return view('admin.coupon.insertCoupon');
     }
     
 }

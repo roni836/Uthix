@@ -95,7 +95,6 @@ Route::get('/test', function () {
 Route::apiResource('vendors', VendorController::class);
 Route::get('/categories/{id}/products', [ProductController::class, 'getproductByCategories']);
 Route::get('/products/filter', [ProductController::class, 'filterProducts']);
-Route::apiResource('coupons', CouponController::class);
 
 
 // shiprocket apis not tested
