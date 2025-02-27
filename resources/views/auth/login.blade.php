@@ -9,6 +9,7 @@
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <title>@yield('title') - {{ env('APP_NAME') }}</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <meta name="description" content="" />
 
@@ -65,50 +66,49 @@
 </head>
 
 <body>
-   <!-- Form Alignment -->
-   <div class="card">
-    {{-- <h5 class="card-header">Form Alignment</h5> --}}
-    <div class="card-body">
-      <div class="d-flex align-items-center justify-content-center h-px-500">
-        <form class="w-px-500 border rounded p-3 p-md-5">
-          <h3 class="mb-6">Sign In</h3>
-          <div class="row mb-6">
-            <label class="col-sm-3 col-form-label" for="form-alignment-username">Username</label>
-            <div class="col-sm-9">
-              <input type="text" id="form-alignment-username" class="form-control" placeholder="john.doe" />
-            </div>
-          </div>
+    <!-- Form Alignment -->
+    <div class="card">
+        {{-- <h5 class="card-header">Form Alignment</h5> --}}
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-center h-px-500">
+                <form class="w-px-500 border rounded p-3 p-md-5" action="{{ route('admin.login') }}" method="POST">
+                    <h3 class="mb-6">Sign In</h3>
+                    @csrf
+                    <div class="row mb-6">
+                        <label class="col-sm-3 col-form-label" for="form-alignment-username">Username</label>
+                        <div class="col-sm-9">
+                            <input type="email" name="email" id="form-alignment-username" class="form-control"
+                                placeholder="john.doe" />
+                        </div>
+                    </div>
 
-          <div class="row mb-6 form-password-toggle">
-            <label class="col-sm-3 col-form-label" for="form-alignment-password">Password</label>
-            <div class="col-sm-9">
-              <div class="input-group input-group-merge">
-                <input
-                  type="password"
-                  id="form-alignment-password"
-                  class="form-control"
-                  placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                  aria-describedby="form-alignment-password2" />
-                <span class="input-group-text cursor-pointer" id="form-alignment-password2"
-                  ><i class="ti ti-eye-off"></i
-                ></span>
-              </div>
+                    <div class="row mb-6 form-password-toggle">
+                        <label class="col-sm-3 col-form-label" for="form-alignment-password">Password</label>
+                        <div class="col-sm-9">
+                            <div class="input-group input-group-merge">
+                                <input type="password" name="password" id="form-alignment-password" class="form-control"
+                                    placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                    aria-describedby="form-alignment-password2" />
+                                <span class="input-group-text cursor-pointer" id="form-alignment-password2"><i
+                                        class="ti ti-eye-off"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="form-check m-0">
+                            <input type="checkbox" class="form-check-input" />
+                            <span class="form-check-label">Remember me</span>
+                        </label>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
             </div>
-          </div>
-          <div class="mb-6">
-            <label class="form-check m-0">
-              <input type="checkbox" class="form-check-input" />
-              <span class="form-check-label">Remember me</span>
-            </label>
-          </div>
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Login</button>
-          </div>
-        </form>
-      </div>
+        </div>
     </div>
-  </div>
 
 
 </body>
+
 </html>
