@@ -81,6 +81,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/review/{product_id}', [ReviewController::class, 'vendorIndex']);
         Route::get('/vendor/all-orders', [OrderController::class, 'vendorOrderIndex']);
         Route::get('/vendor/review-image/{product_id}', [ReviewController::class, 'allReviewImage']);
+        Route::get('/vendor/profile', [VendorController::class, 'editSeller']);
+        Route::post('/vendor/profile', [VendorController::class, 'updateSeller']);
 
     });
 });
