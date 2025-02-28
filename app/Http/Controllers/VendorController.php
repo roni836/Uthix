@@ -185,4 +185,83 @@ class VendorController extends Controller
             ]
         ], 200);
     }
+
+    public function editSeller()
+    {
+        $user = Auth::user();
+        $data = Vendor::where('user_id', $user->id)->first();
+
+        return response()->json([
+            'message' => 'Vendor data fetched successfully',
+            'data' => $data
+        ], 200);
+    }
+
+    public function updateSeller(Request $request)
+    {
+        $user = Auth::user();
+        $vendor = Vendor::where('user_id', $user->id)->first();
+
+        if (!$vendor) {
+            return response()->json(['error' => 'Vendor not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'store_name' => 'required|string|max:255',
+            'store_address' => 'required|string',
+            'mobile' => 'required',
+            'gender' => 'required|in:male,female,others',
+            'dob' => 'nullable|date',
+            'address' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'school' => 'nullable|string',
+            'counter' => 'nullable|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->messages()
+            ], 422);
+        }
+
+        // **Handle Logo Upload**
+        $logoPath = $vendor->logo; // Retain old logo if not updated
+
+        if ($request->hasFile('logo')) {
+            $image = $request->file('logo');
+
+            if (!$image->isValid()) {
+                return response()->json(['error' => 'Uploaded image is not valid.'], 400);
+            }
+
+            // Generate unique filename and store the file
+            $logoPath = 'images/logos/' . time() . '.' . $image->extension();
+            $image->storeAs('public', $logoPath);
+
+        }
+
+        // **Update Vendor Information**
+        $vendor->update([
+            'user_id' => $user->id,
+            'name' => $user->name,
+            'mobile' => $request->mobile,
+            'gender' => $request->gender,
+            'dob' => $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null,
+            'address' => $request->address,
+            'store_name' => $request->store_name,
+            'store_address' => $request->store_address,
+            'logo' => $logoPath,
+            'school' => $request->school,
+            'counter' => $request->counter ?? 0,
+            'status' => 'pending',
+            'isApproved' => false,
+        ]);
+
+        return response()->json([
+            'message' => 'Vendor updated successfully',
+            'store' => $vendor
+        ], 200);
+    }
+
 }
