@@ -197,71 +197,136 @@ class VendorController extends Controller
         ], 200);
     }
 
+    // public function updateSeller(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $vendor = Vendor::where('user_id', $user->id)->first();
+
+    //     if (!$vendor) {
+    //         return response()->json(['error' => 'Vendor not found'], 404);
+    //     }
+
+    //     $validator = Validator::make($request->all(), [
+    //         'store_name' => 'required|string|max:255',
+    //         'store_address' => 'required|string',
+    //         'mobile' => 'required',
+    //         'gender' => 'required|in:male,female,others',
+    //         'dob' => 'nullable|date',
+    //         'address' => 'nullable|string',
+    //         'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    //         'school' => 'nullable|string',
+    //         'counter' => 'nullable|integer',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => 422,
+    //             'errors' => $validator->messages()
+    //         ], 422);
+    //     }
+
+    //     // **Handle Logo Upload**
+    //     $logoPath = $vendor->logo; // Retain old logo if not updated
+
+    //     if ($request->hasFile('logo')) {
+    //         $image = $request->file('logo');
+
+    //         if (!$image->isValid()) {
+    //             return response()->json(['error' => 'Uploaded image is not valid.'], 400);
+    //         }
+
+    //         // Generate unique filename and store the file
+    //         $logoPath = 'images/logos/' . time() . '.' . $image->extension();
+    //         $image->storeAs('public', $logoPath);
+
+    //     }
+
+    //     // **Update Vendor Information**
+    //     $vendor->update([
+    //         'user_id' => $user->id,
+    //         'name' => $user->name,
+    //         'mobile' => $request->mobile,
+    //         'gender' => $request->gender,
+    //         'dob' => $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null,
+    //         'address' => $request->address,
+    //         'store_name' => $request->store_name,
+    //         'store_address' => $request->store_address,
+    //         'logo' => $logoPath,
+    //         'school' => $request->school,
+    //         'counter' => $request->counter ?? 0,
+    //         'status' => 'pending',
+    //         'isApproved' => false,
+    //     ]);
+
+    //     return response()->json([
+    //         'message' => 'Vendor updated successfully',
+    //         'store' => $vendor
+    //     ], 200);
+    // }
+
+
     public function updateSeller(Request $request)
     {
         $user = Auth::user();
         $vendor = Vendor::where('user_id', $user->id)->first();
-
+    
         if (!$vendor) {
             return response()->json(['error' => 'Vendor not found'], 404);
         }
-
+    
+        // Allowed fields for updating
+        $allowedFields = ['name', 'mobile', 'email', 'gender', 'dob', 'address', 'school', 'counter', 'password'];
+        $inputFields = array_intersect_key($request->all(), array_flip($allowedFields));
+    
+        // Ensure at least one field is provided for update
+        if (count($inputFields) === 0) {
+            return response()->json([
+                'error' => 'At least one field must be provided for update.'
+            ], 422);
+        }
+    
+        // Validation rules
         $validator = Validator::make($request->all(), [
-            'store_name' => 'required|string|max:255',
-            'store_address' => 'required|string',
-            'mobile' => 'required',
-            'gender' => 'required|in:male,female,others',
-            'dob' => 'nullable|date',
-            'address' => 'nullable|string',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'school' => 'nullable|string',
-            'counter' => 'nullable|integer',
+            'name' => 'string|max:255',
+            'mobile' => 'digits:10',
+            'email' => 'email|unique:users,email,' . $user->id,  // Fixed: Email should be checked for the user
+            'gender' => 'in:male,female,others',
+            'dob' => 'date',
+            'address' => 'string',
+            'school' => 'string',
+            'counter' => 'integer',
+            'password' => 'nullable|string|min:6',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json([
                 'status' => 422,
                 'errors' => $validator->messages()
             ], 422);
         }
-
-        // **Handle Logo Upload**
-        $logoPath = $vendor->logo; // Retain old logo if not updated
-
-        if ($request->hasFile('logo')) {
-            $image = $request->file('logo');
-
-            if (!$image->isValid()) {
-                return response()->json(['error' => 'Uploaded image is not valid.'], 400);
-            }
-
-            // Generate unique filename and store the file
-            $logoPath = 'images/logos/' . time() . '.' . $image->extension();
-            $image->storeAs('public', $logoPath);
-
+    
+        // Handle password separately (hash before saving)
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
         }
-
-        // **Update Vendor Information**
-        $vendor->update([
-            'user_id' => $user->id,
-            'name' => $user->name,
-            'mobile' => $request->mobile,
-            'gender' => $request->gender,
-            'dob' => $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null,
-            'address' => $request->address,
-            'store_name' => $request->store_name,
-            'store_address' => $request->store_address,
-            'logo' => $logoPath,
-            'school' => $request->school,
-            'counter' => $request->counter ?? 0,
-            'status' => 'pending',
-            'isApproved' => false,
-        ]);
-
+    
+        // Update user fields
+        foreach ($inputFields as $key => $value) {
+            if (in_array($key, ['name', 'email', 'password', 'mobile'])) {
+                $user->$key = $value;
+            } else {
+                $vendor->$key = $value;
+            }
+        }
+    
+        $user->save();
+        $vendor->save();
+    
         return response()->json([
-            'message' => 'Vendor updated successfully',
-            'store' => $vendor
+            'message' => 'Profile updated successfully',
+            'user' => $user,
+            'vendor' => $vendor
         ], 200);
     }
-
+    
 }
