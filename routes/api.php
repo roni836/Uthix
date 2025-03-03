@@ -3,12 +3,15 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShipRocketController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\VendorController;
 
 use App\Http\Controllers\WishlistController;
@@ -19,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+Route::apiResource('subject', SubjectController::class);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -83,6 +87,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/review-image/{product_id}', [ReviewController::class, 'allReviewImage']);
         Route::get('/vendor/profile', [VendorController::class, 'editSeller']);
         Route::post('/vendor/profile', [VendorController::class, 'updateSeller']);
+
+    });
+     Route::middleware([RoleMiddleware::class . ':instructor'])->group(function () {
+        // Route::apiResource('/instructor', [InstructorController::class]);
+        Route::apiResource('instructor', InstructorController::class);
+        Route::apiResource('classroom', ClassroomController::class);
+
 
     });
 });
