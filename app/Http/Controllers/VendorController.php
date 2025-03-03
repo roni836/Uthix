@@ -80,7 +80,7 @@ class VendorController extends Controller
         $validator = Validator::make($request->all(), [
             'store_name' => 'required|string|max:255',
             'store_address' => 'required|string',
-            'mobile' => 'required|unique:vendors,mobile',
+            // 'mobile' => 'required|unique:vendors,mobile',
             'gender' => 'required|in:male,female,others',
             'dob' => 'nullable|date',
             'address' => 'required|string',
@@ -113,8 +113,8 @@ class VendorController extends Controller
         // Store Data
         $vendorStore = Vendor::create([
             'user_id' => $user->id,
-            'name' => $user->name,
-            'mobile' => $request->mobile,
+            // 'name' => $user->name,
+            // 'mobile' => $request->mobile,
             'gender' => $request->gender,
             'dob' => $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null,
             'address' => $request->address,
@@ -287,8 +287,8 @@ class VendorController extends Controller
     
         // Validation rules
         $validator = Validator::make($request->all(), [
-            'name' => 'string|max:255',
-            'mobile' => 'digits:10',
+            // 'name' => 'string|max:255',
+            // 'mobile' => 'digits:10',
             'email' => 'email|unique:users,email,' . $user->id,  // Fixed: Email should be checked for the user
             'gender' => 'in:male,female,others',
             'dob' => 'date',

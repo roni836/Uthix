@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('mobile')->unique();
+            // $table->string('name');
+            // $table->string('mobile')->unique();
             $table->enum('gender', ['male', 'female', 'others']);
             $table->date('dob');
             $table->text('address');
