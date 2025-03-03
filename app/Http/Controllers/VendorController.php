@@ -287,8 +287,8 @@ class VendorController extends Controller
     
         // Validation rules
         $validator = Validator::make($request->all(), [
-            'name' => 'string|max:255',
-            'mobile' => 'digits:10',
+            // 'name' => 'string|max:255',
+            // 'mobile' => 'digits:10',
             'email' => 'email|unique:users,email,' . $user->id,  // Fixed: Email should be checked for the user
             'gender' => 'in:male,female,others',
             'dob' => 'date',
