@@ -11,9 +11,11 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShipRocketController;
+use App\Http\Controllers\StudentClassroomController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\VendorController;
-
+use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Http\Request;
@@ -70,8 +72,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/admin/products/{id}', [ProductController::class, 'update']); // Update product
         Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']); // Delete product
         Route::apiResource('coupons', CouponController::class);
+    });
 
-            });
+    Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
+        Route::apiResource('student', StudentController::class);
+        Route::apiResource('student-classroom', StudentClassroomController::class);
+        Route::get('all-classroom', [ClassroomController::class,'allClassroom']);
+    });
 
     //Seller
     Route::middleware([RoleMiddleware::class . ':seller'])->group(function () {
@@ -87,7 +94,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/review-image/{product_id}', [ReviewController::class, 'allReviewImage']);
         Route::get('/vendor/profile', [VendorController::class, 'editSeller']);
         Route::post('/vendor/profile', [VendorController::class, 'updateSeller']);
-
     });
      Route::middleware([RoleMiddleware::class . ':instructor'])->group(function () {
         // Route::apiResource('/instructor', [InstructorController::class]);
@@ -123,3 +129,15 @@ Route::get('/shiprocket/track/{awb}', [ShiprocketController::class, 'trackOrder'
 
 Route::post('/shiprocket/webhook', [ShiprocketController::class, 'handleWebhook']);
 
+// zoom meeting intergration
+
+Route::get('/zoom/redirect', [ZoomController::class, 'redirectToZoom']);
+Route::get('/zoom/callback', [ZoomController::class, 'handleZoomCallback']);
+
+// Zoom Meeting Endpoints (require prior OAuth authentication)
+// Route::post('/zoom/meetings', [ZoomController::class, 'createMeeting']);
+// Route::get('/zoom/meetings', [ZoomController::class, 'listMeetings']);
+// Route::get('/zoom/meetings/upcoming', [ZoomController::class, 'upcomingMeetings']);
+// Route::get('/zoom/meetings/{meetingId}', [ZoomController::class, 'shareMeeting']);
+
+Route::get('/zoom/create-meeting', [ZoomController::class, 'createMeeting']);
