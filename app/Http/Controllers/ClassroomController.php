@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chapter;
 use App\Models\ClassModel;
 use App\Models\Classroom;
 use Illuminate\Http\Request;
@@ -89,7 +90,7 @@ class ClassroomController extends Controller
 
 
 
-    public function createNewClass(Request $request)
+    public function createNewChapter(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'classroom_id' => 'required|exists:classrooms,id',
@@ -109,7 +110,7 @@ class ClassroomController extends Controller
             ], 422);
         }
     
-        $class = ClassModel::create([
+        $class = Chapter::create([
             'classroom_id' => $request->classroom_id,  
             'title' => $request->title,               
             'date' => $request->date,                 

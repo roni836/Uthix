@@ -93,7 +93,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Route::apiResource('/instructor', [InstructorController::class]);
         Route::apiResource('instructor', InstructorController::class);
         Route::apiResource('classroom', ClassroomController::class);
-        Route::post('/class', [ClassroomController::class, 'createNewClass'])->name('class.store');
+        Route::post('/class-chapter', [ClassroomController::class, 'createNewChapter'])->name('class.store');
 
     });
 });
