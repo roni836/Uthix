@@ -128,4 +128,23 @@ class ClassroomController extends Controller
         ], 201);
     }
     
+    public function manageClasses()
+    {
+        $user = Auth::user();
+    
+        $classes = Chapter::whereIn('classroom_id', function ($query) use ($user) {
+                        $query->select('id')
+                              ->from('classrooms')
+                              ->where('instructor_id', $user->id);
+                    })
+                    ->with(['classroom'])
+                    ->get();
+    
+        return response()->json([
+            'status' => true,
+            'data' => $classes
+        ]);
+    }
+    
+   
 }
