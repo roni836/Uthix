@@ -153,6 +153,7 @@ class ClassroomController extends Controller
                               ->from('classrooms')
                               ->where('subject_id', $subject_id);
                     })
+                    ->with(['classroom.instructor'])
                     ->with(['classroom.subject'])
                     ->get();
     
