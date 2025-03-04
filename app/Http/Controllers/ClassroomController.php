@@ -137,7 +137,23 @@ class ClassroomController extends Controller
                               ->from('classrooms')
                               ->where('instructor_id', $user->id);
                     })
-                    ->with(['classroom'])
+                    ->with(['classroom.subject'])
+                    ->get();
+    
+        return response()->json([
+            'status' => true,
+            'data' => $classes
+        ]);
+    }
+
+    public function subjectClasses($subject_id)
+    {
+        $classes = Chapter::whereIn('classroom_id', function ($query) use ($subject_id) {
+                        $query->select('id')
+                              ->from('classrooms')
+                              ->where('subject_id', $subject_id);
+                    })
+                    ->with(['classroom.subject'])
                     ->get();
     
         return response()->json([
