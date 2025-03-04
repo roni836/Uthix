@@ -114,9 +114,9 @@ class ClassroomController extends Controller
         $validator = Validator::make($request->all(), [
             'classroom_id' => 'required|exists:classrooms,id',
             'title' => 'required|string|max:255',
-            'date' => 'required|date',
-            'time' => 'required',
-            'timezone' => 'required|string|max:50',
+            'date' => 'nullable|date',
+            'time' => 'nullable',
+            'timezone' => 'nullable|string|max:50',
             'repeat_days' => 'nullable|array',
             'reminder_time' => 'nullable|integer|min:0',
             'description' => 'required|string',
