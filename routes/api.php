@@ -77,7 +77,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
         Route::apiResource('student', StudentController::class);
         Route::apiResource('student-classroom', StudentClassroomController::class);
-        Route::get('all-classroom', ClassroomController::class);
+        Route::get('all-classroom', [ClassroomController::class,'allClassroom']);
     });
 
     //Seller
