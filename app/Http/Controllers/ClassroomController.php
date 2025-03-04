@@ -137,7 +137,7 @@ class ClassroomController extends Controller
                               ->from('classrooms')
                               ->where('instructor_id', $user->id);
                     })
-                    ->with(['classroom'])
+                    ->with(['classroom.subject'])
                     ->get();
     
         return response()->json([
