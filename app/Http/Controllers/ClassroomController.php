@@ -16,7 +16,26 @@ class ClassroomController extends Controller
      */
     public function index()
     {
-        //
+        
+    }
+
+    public function allClassroom()
+    {
+        $user = Auth::user();
+        $classrooms = Classroom::all();
+
+        if (!$classrooms) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No Data found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'classrooms' => $classrooms, // Corrected key name
+        ], 200);
+
     }
 
     /**
