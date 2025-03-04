@@ -11,6 +11,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShipRocketController;
+use App\Http\Controllers\StudentClassroomController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\ZoomController;
@@ -70,6 +72,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/admin/products/{id}', [ProductController::class, 'update']); // Update product
         Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']); // Delete product
         Route::apiResource('coupons', CouponController::class);
+    });
+
+    Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
+        Route::apiResource('student', StudentController::class);
+        Route::apiResource('student-classroom', StudentClassroomController::class);
+        Route::get('all-classroom', ClassroomController::class);
     });
 
     //Seller
