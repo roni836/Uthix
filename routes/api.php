@@ -102,6 +102,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/class-chapter', [ClassroomController::class, 'createNewChapter'])->name('class.store');
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
         Route::get('/subject-classes/{id}', [ClassroomController::class, 'subjectClasses'])->name('subject.classes');
+        Route::post('/annocment', [InstructorController::class, 'createAnnocment'])->name('annocment.store');
+        Route::get('/chapters/{chapter_id}/announcements', [InstructorController::class, 'getAnnouncementsByChapter'])->name('announcement.manage');
 
     });
 });
