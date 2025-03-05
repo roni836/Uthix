@@ -33,7 +33,7 @@ class StudentClassroomController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $student = Student::find($user->id);
+        $student = Student::where('user_id',$user->id)->first();
 
         $validator = Validator::make($request->all(), [
             'status' => 'nullable|boolean'
