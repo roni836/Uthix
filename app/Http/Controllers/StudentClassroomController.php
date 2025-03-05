@@ -13,7 +13,7 @@ class StudentClassroomController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $student = Student::find($user->id);
+        $student = Student::where('user_id',$user->id)->first();
 
         $students = StudentClassroom::where('student_id',$student->id)->get();
 
