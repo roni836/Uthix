@@ -19,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('category')->get();
+        $products = Product::with('category', 'firstImage')->get();
         return response()->json([
             'message' => 'products added successfully',
             'products' => $products
@@ -56,6 +56,8 @@ class ProductController extends Controller
             'is_featured' => 'boolean',
             'is_published' => 'boolean',
             'num_of_sales' => 'integer|min:0',
+            'images' => 'nullable|array', 
+
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
         
@@ -89,8 +91,8 @@ class ProductController extends Controller
              // Store Multiple Images
              if ($request->hasFile('images')) {
                  foreach ($request->file('images') as $image) {
-                     $imageName = time() . rand(1000, 9999) . '.' . $image->extension();
-                     $image->storeAs('image/products', $imageName, 'public');
+                    $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                    $image->storeAs('image/products', $imageName, 'public');
      
                      ProductImage::create([
                          'product_id' => $product->id,
@@ -278,7 +280,7 @@ class ProductController extends Controller
 
     public function getproductByCategories(Request $request, $id)
     {
-        $query = Product::with('images')->where('category_id', $id);
+        $query = Product::with('firstImage')->where('category_id', $id);
 
         // Price range filters
         $priceRanges = [
