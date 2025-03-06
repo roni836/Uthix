@@ -45,7 +45,7 @@ class ClassroomController extends Controller
     {
         $user = Auth::user();
         $validator = Validator::make($request->all(), [
-            // 'instructor_id' => 'required|exists:instructors,id',
+            'instructor_id' => 'required|exists:instructors,id',
             'class_name' => 'required|string|max:255',
             'section' => 'required|string|max:255',
             'subject_id' => 'required|exists:subjects,id',
@@ -64,7 +64,7 @@ class ClassroomController extends Controller
         }
 
         $classroom = Classroom::create([
-            'instructor_id' => $user->name,
+            'instructor_id' => $request->instructor_id,
             'class_name' => $request->class_name,
             'section' => $request->section,
             'subject_id' => $request->subject_id,
