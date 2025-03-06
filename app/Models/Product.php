@@ -22,5 +22,8 @@ class Product extends Model
 {
     return $this->hasMany(ProductImage::class, 'product_id');
 }
-
+public function firstImage()
+{
+    return $this->hasOne(ProductImage::class)->orderBy('id');
+}
 }
