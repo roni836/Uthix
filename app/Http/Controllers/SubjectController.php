@@ -49,20 +49,31 @@ class SubjectController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Subject $subject)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Subject $subject)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|unique:subjects,name,' . $subject->id,
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'error' => $validator->errors()
+            ], 422);
+        }
+
+        // Update subject
+        $subject->update([
+            'name' => $request->name,
+            'is_active' => $request->is_active ?? $subject->is_active,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Subject updated successfully',
+            'data' => $subject
+        ], 200);
     }
 
     /**
@@ -70,6 +81,10 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject)
     {
-        //
-    }
-}
+        $subject->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Subject deleted successfully'
+        ], 200);
+    }}
