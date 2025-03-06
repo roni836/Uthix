@@ -15,8 +15,10 @@ class StudentClassroomController extends Controller
         $user = Auth::user();
         $student = Student::where('user_id',$user->id)->first();
 
-        $students = StudentClassroom::where('student_id',$student->id)->get();
-
+        $students = StudentClassroom::where('student_id', $student->id)
+        ->with('classroom')
+        ->get();
+    
         if (!$students) {
             return response()->json([
                 'status' => false,

@@ -22,8 +22,8 @@ class ClassroomController extends Controller
     public function allClassroom()
     {
         $user = Auth::user();
-        $classrooms = Classroom::all();
-
+        $classrooms = Classroom::with('instructor')->get();
+        
         if (!$classrooms) {
             return response()->json([
                 'status' => false,
