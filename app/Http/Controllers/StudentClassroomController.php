@@ -13,12 +13,12 @@ class StudentClassroomController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $student = Student::where('user_id',$user->id)->first();
+        $student = Student::where('user_id', $user->id)->first();
 
         $students = StudentClassroom::where('student_id', $student->id)
-        ->with('classroom')
-        ->get();
-    
+            ->with('classroom.instructor.user') // Fetch Classroom → Instructor → User
+            ->get();
+
         if (!$students) {
             return response()->json([
                 'status' => false,
@@ -35,7 +35,7 @@ class StudentClassroomController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $student = Student::where('user_id',$user->id)->first();
+        $student = Student::where('user_id', $user->id)->first();
 
         $validator = Validator::make($request->all(), [
             'status' => 'nullable|boolean'
