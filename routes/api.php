@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\InstructorController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -49,6 +50,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/verify-payment', [PaymentController::class, 'callback']);
     // Route::apiResource('products', ProductController::class);
 
+    Route::post('/send-message', [MessageController::class, 'sendMessage']);
+    Route::get('/get-messages', [MessageController::class, 'getMessages']);
+    Route::get('/get-conversation/{receiverId}', [MessageController::class, 'getConversation']);
+    Route::put('/mark-as-read/{messageId}', [MessageController::class, 'markAsRead']);
+    Route::delete('/delete-message/{messageId}', [MessageController::class, 'deleteMessage']);
+    
     // Admin routes
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard', function () {
         return response()->json(['message' => 'admin API is working!']);
