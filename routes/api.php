@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClassroomController;
@@ -18,13 +19,13 @@ use App\Http\Controllers\VendorController;
 use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\RoleMiddleware;
+use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-Route::apiResource('subject', SubjectController::class);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -72,6 +73,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/admin/products/{id}', [ProductController::class, 'update']); // Update product
         Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']); // Delete product
         Route::apiResource('coupons', CouponController::class);
+        Route::apiResource('subject', SubjectController::class);
+
     });
 
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
@@ -102,8 +105,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/class-chapter', [ClassroomController::class, 'createNewChapter'])->name('class.store');
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
         Route::get('/subject-classes/{id}', [ClassroomController::class, 'subjectClasses'])->name('subject.classes');
-        Route::post('/annocment', [InstructorController::class, 'createAnnocment'])->name('annocment.store');
-        Route::get('/chapters/{chapter_id}/announcements', [InstructorController::class, 'getAnnouncementsByChapter'])->name('announcement.manage');
+        Route::post('/annocment', [AnnouncementController::class, 'createAnnouncement'])->name('annocment.store');
+        Route::get('/classroom/{chapter_id}/announcements', [AnnouncementController::class, 'getAnnouncementsByClass'])->name('announcement.manage');
 
     });
 });
