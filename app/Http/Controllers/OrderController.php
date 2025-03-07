@@ -26,7 +26,7 @@ class OrderController extends Controller
 
             ], 401);
         }
-        $orders = Order::where('user_id', $user->id)->with('orderItems')->with('orderItems')->get();
+        $orders = Order::where('user_id', $user->id)->where('is_ordered', true)->with('orderItems.product')->get();
         return response()->json([
             'status' => true,
             'orders' => $orders
@@ -265,7 +265,7 @@ class OrderController extends Controller
                 'message' => 'unauthorized',
             ], 401);
         }
-        $order = Order::with('orderItems')->find($id);
+        $order = Order::with('orderItems.product')->find($id);
         $order->load('user', 'address');
 
         if (!$order) {
