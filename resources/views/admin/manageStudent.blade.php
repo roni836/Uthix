@@ -52,25 +52,27 @@
 
                         <!-- Hoverable Table rows -->
                         <div class="card">
-                            <h5 class="card-header">Manage Vendors</h5>
+                            <h5 class="card-header">Manage Students</h5>
                             <div class="table-responsive text-nowrap">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>S.no</th>
                                             <th>Name</th>
+                                            <th>Class</th>
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
-                                        @if ($vendors->isEmpty())
+                                        @if ($users->isEmpty())
                                             <tr>
                                                 <td colspan="5" class="text-center mt-5">
                                                     No Data found
                                                 </td>
                                             </tr>
                                         @else
-                                            @foreach ($vendors as $i => $item)
+                                            @foreach ($users as $i => $item)
                                                 <tr>
                                                     <td>{{ $i + 1 }}.</td>
                                                     <td>{{ $item->user->name }}</td>

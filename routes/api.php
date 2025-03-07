@@ -86,7 +86,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']); // Delete product
         Route::apiResource('coupons', CouponController::class);
         Route::apiResource('subject', SubjectController::class);
-
+        Route::post('/admin-student', [StudentController::class, 'adminStore'])->name('admin.student.store');
+        Route::post('/admin-instructor', [InstructorController::class, 'adminStore'])->name('admin.instructor.store');
+        Route::post('/admin-vendor', [VendorController::class, 'adminStore'])->name('admin.vendor.store');
     });
 
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
@@ -97,6 +99,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //Seller
     Route::middleware([RoleMiddleware::class . ':seller'])->group(function () {
+        Route::apiResource('vendors', VendorController::class);
         Route::post('/vendor/products', [ProductController::class, 'store']);
         Route::get('/vendor/categories', [VendorController::class, 'getVendorCategories']);
         Route::get('/get/vendor/products', [VendorController::class, 'getVendorProducts']);
@@ -130,7 +133,6 @@ Route::get('/test', function () {
 
 
 
-Route::apiResource('vendors', VendorController::class);
 Route::get('/categories/{id}/products', [ProductController::class, 'getproductByCategories']);
 Route::get('/products/filter', [ProductController::class, 'filterProducts']);
 
