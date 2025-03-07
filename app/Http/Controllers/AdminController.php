@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Coupon;
 use App\Models\Vendor;
 use App\Models\Category;
+use App\Models\Instructor;
 use App\Models\Product;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -13,12 +15,13 @@ class AdminController extends Controller
         return view('admin.index');
     }
 
-    public function manageUser(){
-        return view('admin.manageUser');
+    public function manageStudent(){
+        $users = Student::with('user')->get();
+        return view('admin.manageStudent', compact('users'));
     }
     
-    public function insertUser(){
-        return view('admin.insertUser');
+    public function insertStudent(){
+        return view('admin.insertStudent');
     }
 
     public function manageVendor(){
@@ -28,6 +31,15 @@ class AdminController extends Controller
     
     public function insertVendor(){
         return view('admin.insertVendor');
+    }
+
+    public function manageInstructor(){
+        $instructors = Instructor::with('user')->get();
+        return view('admin.manageInstructor', compact('instructors'));
+    }
+    
+    public function insertInstructor(){
+        return view('admin.insertInstructor');
     }
 
     public function manageCategory(){

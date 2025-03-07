@@ -19,58 +19,52 @@ class VendorController extends Controller
         return response()->json(Vendor::all(), 200);
     }
 
-    // public function store(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'name' => 'required|string',
-    //         'password' => 'required|min:6',
-    //         'mobile' => 'required|unique:vendors,mobile',
-    //         'gender' => 'required|in:male,female,others',
-    //         'dob' => 'required|date',
-    //         'address' => 'required|string',
-    //         'store_name' => 'required|string',
-    //         'store_address' => 'required|string',
-    //         'logo' => 'nullable|string',
-    //         'school' => 'nullable|string',
-    //         'counter' => 'nullable',
-    //     ]);
+    public function adminStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'email' => 'required|unique:users,email',
+            'gender' => 'required|in:male,female,others',
+            'dob' => 'required|date',
+            'address' => 'required|string',
+            'store_name' => 'required|string',
+            'store_address' => 'required|string',
+            'logo' => 'nullable|string',
+            'school' => 'nullable|string',
+            'counter' => 'nullable',
+        ]);
 
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status' => 422,
-    //             'error' => $validator->messages()
-    //         ], 422);
-    //     }
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'error' => $validator->messages()
+            ], 422);
+        }
 
-    //     // Step 1: Create User
-    //     // $user = User::create([
-    //     //     'name' => $request->name,
-    //     //     'email' => $request->email,
-    //     //     'password' => Hash::make($request->password),
-    //     //     'role' => 'seller'
-    //     // ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            // 'phone' => $request->phone,
+            'password' => Hash::make($request->password ?? '123456789'),
+            'role' => 'seller'
+        ]);
 
-    //     $user = Auth::user();
+        $vendor = Vendor::create([
+            'user_id' => $user->id,
+            'gender' => $request->gender,
+            'dob' => $request->dob,
+            'address' => $request->address,
+            'store_name' => $request->store_name,
+            'store_address' => $request->store_address,
+            'logo' => $request->logo,
+            'school' => $request->school,
+            'counter' => $request->counter ?? 0,
+            'isApproved' => $request->isApproved ?? false,
+            'status' => $request->status ?? 'pending',
+        ]);
 
-    //     // Step 2: Create Vendor linked to User
-    //     $vendor = Vendor::create([
-    //         'user_id' => $user->id,
-    //         'name' => $request->name,
-    //         'mobile' => $request->mobile,
-    //         'gender' => $request->gender,
-    //         'dob' => $request->dob,
-    //         'address' => $request->address,
-    //         'store_name' => $request->store_name,
-    //         'store_address' => $request->store_address,
-    //         'logo' => $request->logo,
-    //         'school' => $request->school,
-    //         'counter' => $request->counter ?? 0,
-    //         'isApproved' => $request->isApproved ?? false,
-    //         'status' => $request->status ?? 'pending',
-    //     ]);
-
-    //     return response()->json(['user' => $user, 'vendor' => $vendor, 'message' => 'Vendor Created Successfully'], 201);
-    // }
+        return response()->json(['user' => $user, 'vendor' => $vendor, 'message' => 'Vendor Created Successfully'], 201);
+    }
 
     public function store(Request $request)
     {
@@ -80,7 +74,6 @@ class VendorController extends Controller
         $validator = Validator::make($request->all(), [
             'store_name' => 'required|string|max:255',
             'store_address' => 'required|string',
-            // 'mobile' => 'required|unique:vendors,mobile',
             'gender' => 'required|in:male,female,others',
             'dob' => 'nullable|date',
             'address' => 'required|string',
@@ -113,8 +106,6 @@ class VendorController extends Controller
         // Store Data
         $vendorStore = Vendor::create([
             'user_id' => $user->id,
-            // 'name' => $user->name,
-            // 'mobile' => $request->mobile,
             'gender' => $request->gender,
             'dob' => $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null,
             'address' => $request->address,

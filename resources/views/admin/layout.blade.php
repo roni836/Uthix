@@ -72,7 +72,7 @@
 
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
-                    <a href="index.html" class="app-brand-link">
+                    <a href="{{url('')}}" class="app-brand-link">
                         <span class="app-brand-logo demo">
                             <svg width="32" height="22" viewBox="0 0 32 22" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -115,13 +115,13 @@
                                 </a>
                                 <ul class="menu-sub">
                                     <li class="menu-item">
-                                        <a href="{{ url('insert-user') }}" class="menu-link">
-                                            <div data-i18n="Add User">Add User</div>
+                                        <a href="{{ url('insert-student') }}" class="menu-link">
+                                            <div data-i18n="Add Student">Add Student</div>
                                         </a>
                                     </li>
                                     <li class="menu-item">
-                                        <a href="{{ url('manage-user') }}" class="menu-link">
-                                            <div data-i18n="User List">User List</div>
+                                        <a href="{{ url('manage-student') }}" class="menu-link">
+                                            <div data-i18n="Student List">Student List</div>
                                         </a>
                                     </li>
                                 </ul>
@@ -132,13 +132,13 @@
                                 </a>
                                 <ul class="menu-sub">
                                     <li class="menu-item">
-                                        <a href="app-ecommerce-product-add.html" class="menu-link">
-                                            <div data-i18n="Add Product">Add Product</div>
+                                        <a href="{{ url('insert-instructor') }}" class="menu-link">
+                                            <div data-i18n="Add Instructor">Add Instructor</div>
                                         </a>
                                     </li>
                                     <li class="menu-item">
-                                        <a href="" class="menu-link">
-                                            <div data-i18n="Category List">Category List</div>
+                                        <a href="{{ url('manage-instructor') }}" class="menu-link">
+                                            <div data-i18n="Instructor List">Instructor List</div>
                                         </a>
                                     </li>
                                 </ul>
@@ -149,13 +149,13 @@
                                 </a>
                                 <ul class="menu-sub">
                                     <li class="menu-item">
-                                        <a href="app-ecommerce-product-add.html" class="menu-link">
-                                            <div data-i18n="Add Product">Add Product</div>
+                                        <a href="{{ url('insert-vendor') }}" class="menu-link">
+                                            <div data-i18n="Add Vendor">Add Vendor</div>
                                         </a>
                                     </li>
                                     <li class="menu-item">
-                                        <a href="app-ecommerce-category-list.html" class="menu-link">
-                                            <div data-i18n="Category List">Category List</div>
+                                        <a href="{{ url('manage-vendor') }}" class="menu-link">
+                                            <div data-i18n="Vendor List">Vendor List</div>
                                         </a>
                                     </li>
                                 </ul>

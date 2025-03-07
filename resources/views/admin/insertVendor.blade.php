@@ -571,7 +571,7 @@
                                                     <div class="input-group input-group-merge">
                                                         <span id="basic-icon-default-phone2" class="input-group-text"><i
                                                                 class="ti ti-phone"></i></span>
-                                                        <input type="text" name="mobile" id="basic-icon-default-phone"
+                                                        <input type="text" name="phone" id="basic-icon-default-phone"
                                                             class="form-control phone-mask" placeholder="658 799 8941"
                                                             aria-label="658 799 8941"
                                                             aria-describedby="basic-icon-default-phone2" />
@@ -800,16 +800,19 @@
                 e.preventDefault();
 
                 let formData = new FormData(this);
-
+                let token = localStorage.getItem("auth_token");
                 // Send AJAX request
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('vendors.store') }}",
+                    url: "{{ route('admin.vendor.store') }}",
                     data: formData,
                     dataType: "JSON",
                     contentType: false,
                     cache: false,
                     processData: false,
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     success: function(response) {
                         swal("Success", response.message, "success");
                         $("#insertVendor").trigger("reset");
