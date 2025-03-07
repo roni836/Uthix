@@ -9,38 +9,50 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    public function getParentCategories()
+    {
+        $parentCategories = Category::whereNull('parent_category_id')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $parentCategories
+        ]);
+    }
+  
+    
     public function getAllCategories(Request $request)
     {
-        
+
         $query = Category::query();
-        if($request->has('search')){
-            $searchcategories=$request->input('search');
-            $query->where(function($q) use ($searchcategories){
-                $q->where('cat_title','like', '%'.$searchcategories. '%');
+        if ($request->has('search')) {
+            $searchcategories = $request->input('search');
+            $query->where(function ($q) use ($searchcategories) {
+                $q->where('cat_title', 'like', '%' . $searchcategories . '%');
             });
         }
         $categories = $query->get();
-        
-         // If no products found
-    // if ($categories->isEmpty()) {
-    //     return response()->json([
-    //         'message' => 'No categories found',
-    //         'categories' => []
-    //     ], 204);
-    // }
-    //     return response()->json([
-    //         'message' => 'Categories search successfully',
-    //         'categories' => $categories
-    //     ], 200);
-    return response()->json([
-        'message' => $categories->isEmpty() ? 'No categories found' : 'Categories searched successfully',
-        'categories' => $categories
-    ], 200);
+
+        // If no products found
+        // if ($categories->isEmpty()) {
+        //     return response()->json([
+        //         'message' => 'No categories found',
+        //         'categories' => []
+        //     ], 204);
+        // }
+        //     return response()->json([
+        //         'message' => 'Categories search successfully',
+        //         'categories' => $categories
+        //     ], 200);
+        return response()->json([
+            'message' => $categories->isEmpty() ? 'No categories found' : 'Categories searched successfully',
+            'categories' => $categories
+        ], 200);
     }
 
     /**
@@ -54,9 +66,9 @@ class CategoryController extends Controller
         //         'message' => 'Unauthorized. Please log in.'
         //     ], 401);
         // }
-    
+
         // $user = Auth::user();
-    
+
         // if ($user->role !== 'admin') {
         //     return response()->json([
         //         'message' => 'Access denied. Only admins can create categories.'
@@ -93,15 +105,14 @@ class CategoryController extends Controller
             $category->cat_image = $imageName;
             $category->save();
 
-            $parentCategory = $category->parent_category_id 
-            ? Category::find($category->parent_category_id) 
-            : null;
+            $parentCategory = $category->parent_category_id
+                ? Category::find($category->parent_category_id)
+                : null;
             return response()->json([
                 'message' => 'Category created successfully',
                 'category' => $category,
-                'parent_category'=>$parentCategory
+                'parent_category' => $parentCategory
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Something went wrong.',
@@ -109,7 +120,22 @@ class CategoryController extends Controller
             ], 500);
         }
     }
-    public function show($id)
+    public function getCategoriesByParent($id)
+    {
+        $category = Category::where('parent_category_id', $id)->first();
+        // dd($category);
+        if (!$category) {
+            return response()->json([
+                'message' => 'Category not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Category retrieved successfully',
+            'category' => $category
+        ], 200);
+    }
+     public function show($id)
     {
         $category = Category::where('id', $id)->first();
 
@@ -126,101 +152,100 @@ class CategoryController extends Controller
     }
 
 
-  
+
     public function update(Request $request, $id)
-{
- 
-    if (!Auth::check()) {
-        return response()->json([
-            'message' => 'Unauthorized. Please log in.'
-        ], 401);
-    }
+    {
 
-    $user = Auth::user();
-
-    if ($user->role !== 'admin') {
-        return response()->json([
-            'message' => 'Access denied. Only admins can update categories.'
-        ], 403);
-    }
-    Log::info('Update request received', $request->except('cat_image'));
-
-    // Find category by ID
-    $category = Category::findOrFail($id);
-
-    // Validation rules
-    $validator = Validator::make($request->all(), [
-        'cat_title' => 'nullable|string|max:255',
-        'cat_description' => 'nullable|string',
-        // 'parent_category_id' => 'nullable|integer|exists:categories,id',
-        'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    ]);
-
-    if ($validator->fails()) {
-        Log::error('Validation failed', ['errors' => $validator->errors()->toArray()]);
-        return response()->json([
-            'message' => 'Validation failed',
-            'errors' => $validator->errors(),
-        ], 422);
-    }
-
-    try {
-        $updateData = [];
-
-        // Check and update fields if present
-        if ($request->has('cat_title')) {
-            $updateData['cat_title'] = $request->input('cat_title');
-            $updateData['cat_slug'] = Str::slug($request->input('cat_title'));
+        if (!Auth::check()) {
+            return response()->json([
+                'message' => 'Unauthorized. Please log in.'
+            ], 401);
         }
 
-        if ($request->has('cat_description')) {
-            $updateData['cat_description'] = $request->input('cat_description');
+        $user = Auth::user();
+
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'message' => 'Access denied. Only admins can update categories.'
+            ], 403);
+        }
+        Log::info('Update request received', $request->except('cat_image'));
+
+        // Find category by ID
+        $category = Category::findOrFail($id);
+
+        // Validation rules
+        $validator = Validator::make($request->all(), [
+            'cat_title' => 'nullable|string|max:255',
+            'cat_description' => 'nullable|string',
+            // 'parent_category_id' => 'nullable|integer|exists:categories,id',
+            'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            Log::error('Validation failed', ['errors' => $validator->errors()->toArray()]);
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
-        // if ($request->has('parent_category_id')) {
-        //     $updateData['parent_category_id'] = $request->input('parent_category_id');
-        // }
+        try {
+            $updateData = [];
 
-        // Handle image update
-        if ($request->hasFile('cat_image')) {
-            $image = $request->file('cat_image');
-
-            if ($image->isValid()) {
-                // Delete old image if exists
-                if (!empty($category->cat_image)) {
-                    Storage::disk('public')->delete('image/category/' . $category->cat_image);
-                }
-
-                // Store new image
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('image/category', $imageName, 'public');
-                $updateData['cat_image'] = $imageName;
-            } else {
-                throw new \Exception('Uploaded file is not valid.');
+            // Check and update fields if present
+            if ($request->has('cat_title')) {
+                $updateData['cat_title'] = $request->input('cat_title');
+                $updateData['cat_slug'] = Str::slug($request->input('cat_title'));
             }
+
+            if ($request->has('cat_description')) {
+                $updateData['cat_description'] = $request->input('cat_description');
+            }
+
+            // if ($request->has('parent_category_id')) {
+            //     $updateData['parent_category_id'] = $request->input('parent_category_id');
+            // }
+
+            // Handle image update
+            if ($request->hasFile('cat_image')) {
+                $image = $request->file('cat_image');
+
+                if ($image->isValid()) {
+                    // Delete old image if exists
+                    if (!empty($category->cat_image)) {
+                        Storage::disk('public')->delete('image/category/' . $category->cat_image);
+                    }
+
+                    // Store new image
+                    $imageName = time() . '.' . $image->getClientOriginalExtension();
+                    $image->storeAs('image/category', $imageName, 'public');
+                    $updateData['cat_image'] = $imageName;
+                } else {
+                    throw new \Exception('Uploaded file is not valid.');
+                }
+            }
+
+            // Only update if there is something to update
+            if (!empty($updateData)) {
+                $category->update($updateData);
+            }
+
+            return response()->json([
+                'message' => 'Category updated successfully',
+                'category' => $category
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Update failed', ['error' => $e->getMessage()]);
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        // Only update if there is something to update
-        if (!empty($updateData)) {
-            $category->update($updateData);
-        }
-
-        return response()->json([
-            'message' => 'Category updated successfully',
-            'category' => $category
-        ], 200);
-
-    } catch (\Exception $e) {
-        Log::error('Update failed', ['error' => $e->getMessage()]);
-        return response()->json([
-            'message' => 'Something went wrong',
-            'error' => $e->getMessage(),
-        ], 500);
     }
-}
 
-    
-    
+
+
     public function destroy(Category $category)
     {
         if (!Auth::check()) {
@@ -228,12 +253,12 @@ class CategoryController extends Controller
                 'message' => 'Unauthorized. Please log in.'
             ], 401);
         }
-    
+
         $user = Auth::user();
-    
+
         if ($user->role !== 'admin') {
             return response()->json([
-                'status'=>false,
+                'status' => false,
                 'message' => 'Access denied. Only admins can delete categories.'
             ], 403);
         }
@@ -244,4 +269,14 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Category not deleted successfully'], 500);
         }
     }
+    
+
 }
+
+
+
+
+
+
+
+

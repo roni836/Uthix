@@ -206,7 +206,8 @@ class OrderController extends Controller
         // Find the active cart order
         $order = Order::where('user_id', $user->id)
             ->where('is_ordered', false)
-            ->with('orderItems.product') // Load order items and product details
+            ->with(['orderItems.product.firstImage']) // Load order items and product details
+            
             ->first();
 
         if (!$order) {
