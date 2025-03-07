@@ -21,4 +21,13 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+   // Define relationship for Parent Category
+  
+
+   // Define relationship for Child Categories
+   public function children()
+   {
+       return $this->hasMany(Category::class, 'parent_category_id');
+   }
+
 }

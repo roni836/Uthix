@@ -19,15 +19,15 @@ class WishlistController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $wishlists = Wishlist::where('user_id', $user->id)->get();
+        $wishlists = Wishlist::with(['product.firstImage'])->where('user_id', $user->id)->get();
 
         return response()->json([
             'status' => true,
             'message' => 'User wishlist fetched successfully',
-            'wishlists' => $wishlists->pluck('product'),
+            'wishlists' => $wishlists,
         ]);
     }
-
+    
     /**
      * Store a newly created resource in storage.
      */

@@ -34,6 +34,8 @@ Route::get('/all-categories', [CategoryController::class, 'getAllCategories']);
 Route::get('categories/{id}', [CategoryController::class, 'show']);
 Route::get('products', [ProductController::class, 'index']);
 
+Route::get('/parent-categories', [CategoryController::class, 'getParentCategories']);
+Route::get('/categories/{id}', [CategoryController::class, 'getCategoriesByParent']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
