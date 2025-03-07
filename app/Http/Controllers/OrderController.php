@@ -26,7 +26,7 @@ class OrderController extends Controller
 
             ], 401);
         }
-        $orders = Order::where('user_id', $user->id)->with('orderItems')->with('orderItems')->get();
+        $orders = Order::where('user_id', $user->id)->where('is_ordered', true)->with('orderItems.product')->get();
         return response()->json([
             'status' => true,
             'orders' => $orders
@@ -140,6 +140,56 @@ class OrderController extends Controller
             'status' => true,
             'message' => 'Item added to cart successfully',
         ], 201);
+    }
+
+    public function removeFromCart($id)
+    {
+        $user = Auth::user(); // Get authenticated user
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        // Find the cart order for the user
+        $order = Order::where('user_id', $user->id)
+            ->where('is_ordered', false)
+            ->first();
+
+        if (!$order) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No active cart found',
+            ], 404);
+        }
+
+        // Find the order item
+        $orderItem = OrderItem::where('order_id', $order->id)
+            ->where('id', $id)
+            ->first();
+
+        if (!$orderItem) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Item not found in cart',
+            ], 404);
+        }
+
+        // Delete the item from the cart
+        $orderItem->delete();
+
+        // Recalculate total amount after removal
+        $totalAmount = OrderItem::where('order_id', $order->id)->sum('total_price');
+        $order->update(['total_amount' => $totalAmount]);
+
+        // If no items left in the cart, delete the order
+        if ($totalAmount == 0) {
+            $order->delete();
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Item removed from cart successfully',
+        ], 200);
     }
 
     public function viewCart()
@@ -265,7 +315,7 @@ class OrderController extends Controller
                 'message' => 'unauthorized',
             ], 401);
         }
-        $order = Order::with('orderItems')->find($id);
+        $order = Order::with('orderItems.product')->find($id);
         $order->load('user', 'address');
 
         if (!$order) {
