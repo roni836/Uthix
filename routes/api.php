@@ -44,6 +44,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('address', AddressController::class);
     Route::apiResource('orders', OrderController::class);
     Route::post('add-to-cart', [OrderController::class,'addToCart']);
+    Route::delete('remove-from-cart/{id}', [OrderController::class,'removeFromCart']);
     Route::get('view-cart', [OrderController::class,'viewCart']);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']);
 
