@@ -29,7 +29,23 @@ class CouponController extends Controller
             'coupons' => $coupons, // Corrected key name
         ], 200);
     }
+    public function manageCoupon()
+    {
+        
+        $coupons = Coupon::all(); 
     
+        if (!$coupons) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No coupons found'
+            ], 404);
+        }
+    
+        return response()->json([
+            'status' => true,
+            'coupons' => $coupons, // Corrected key name
+        ], 200);
+    }
     /**
      * Store a newly created resource in storage.
      */
