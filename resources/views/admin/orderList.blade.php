@@ -1,5 +1,5 @@
 @extends('admin.layout')
-@section('title', 'Manage Books')
+@section('title', 'Manage Orders')
 @section('content')
 
     <!-- Layout wrapper -->
@@ -558,6 +558,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
+                                        
                                         @foreach($orders as $data)
                                         <tr>
                                             <td>

@@ -19,4 +19,5 @@ public function product(){
 public function user(){
     return $this->belongsTo(User::class);
 }
+
 }

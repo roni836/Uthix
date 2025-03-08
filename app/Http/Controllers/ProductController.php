@@ -132,6 +132,22 @@ class ProductController extends Controller
             'product' => $product
         ], 200);
     }
+    
+    public function productView($id)
+    {
+        $product = Product::with(['images', 'reviews.user', 'reviews.images'])->find($id);
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'product not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'product retrieved successfully',
+            'product' => $product
+        ], 200);
+    }
 
     /**
      * Update the specified resource in storage.

@@ -37,7 +37,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/manage-product', [AdminController::class, 'manageProduct'])->name('manage.product');
         Route::get('/manage-coupon', [AdminController::class, 'manageCoupon'])->name('manage.coupon');
         Route::get('/insert-coupon', [AdminController::class, 'insertCoupon'])->name('insert.coupon');
-        Route::get('/all-orders', [OrderController::class, 'allOrders'])->name('orders.all');
+        Route::get('/all-orders', [AdminController::class, 'allOrders'])->name('orders.all');
+        Route::get('/admin-orders', [AdminController::class, 'adminOrders'])->name('admin.orders');
 
     });
 });

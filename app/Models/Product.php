@@ -26,4 +26,8 @@ public function firstImage()
 {
     return $this->hasOne(ProductImage::class)->orderBy('id');
 }
+public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

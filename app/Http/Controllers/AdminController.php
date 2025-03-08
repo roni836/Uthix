@@ -80,6 +80,22 @@ class AdminController extends Controller
 
         return view('admin.orderList', compact('orders'));
     }
+    
+    public function adminOrders()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->back()->json([
+                'status' => false,
+                'message' => 'Unauthorized',
+
+            ], 401);
+        }
+        $orders = Order::where('user_id', $user->id)->where('is_ordered', true)->with('orderItems.product')->get();
+
+        return view('admin.adminOrders', compact('orders'));
+    }
+
 
     
     

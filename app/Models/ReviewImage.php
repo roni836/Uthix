@@ -13,5 +13,6 @@ class ReviewImage extends Model
     public function reviews()  {
         return $this->belongsTo(Review::class);
     }
+    
 
 }

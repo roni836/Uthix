@@ -279,13 +279,13 @@
                                 </a>
                                 <ul class="menu-sub">
                                     <li class="menu-item">
-                                        <a href="app-ecommerce-order-list.html" class="menu-link">
-                                            <div data-i18n="Order List">Order List</div>
+                                        <a href="{{url('/all-orders')}}" class="menu-link">
+                                            <div data-i18n="Order List">All Order</div>
                                         </a>
                                     </li>
                                     <li class="menu-item">
-                                        <a href="app-ecommerce-order-details.html" class="menu-link">
-                                            <div data-i18n="Order Details">Order Details</div>
+                                        <a href="{{url('/admin-orders')}}" class="menu-link">
+                                            <div data-i18n="Order Details">Admin Orders</div>
                                         </a>
                                     </li>
                                 </ul>
