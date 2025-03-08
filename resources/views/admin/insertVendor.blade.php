@@ -650,7 +650,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row mb-6">
+                                            {{-- <div class="row mb-6">
                                                 <label class="col-sm-2 col-form-label"
                                                     for="basic-icon-default-fullname">Logo</label>
                                                 <div class="col-sm-10">
@@ -663,7 +663,7 @@
                                                             aria-describedby="basic-icon-default-fullname2" />
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="row mb-6">
                                                 <label class="col-sm-2 col-form-label"
                                                     for="basic-icon-default-company">School</label>
