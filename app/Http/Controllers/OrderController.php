@@ -33,6 +33,7 @@ class OrderController extends Controller
         ], 200);
     }
 
+
     public function vendorOrderIndex()
     {
         $user = Auth::user();
@@ -207,7 +208,7 @@ class OrderController extends Controller
         $order = Order::where('user_id', $user->id)
             ->where('is_ordered', false)
             ->with(['orderItems.product.firstImage']) // Load order items and product details
-            
+
             ->first();
 
         if (!$order) {

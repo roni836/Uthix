@@ -5,9 +5,11 @@ use App\Models\Coupon;
 use App\Models\Vendor;
 use App\Models\Category;
 use App\Models\Instructor;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -63,5 +65,22 @@ class AdminController extends Controller
     public function insertCoupon(){
         return view('admin.coupon.insertCoupon');
     }
+
+    public function allOrders()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->back()->json([
+                'status' => false,
+                'message' => 'Unauthorized',
+
+            ], 401);
+        }
+        $orders = Order::where('is_ordered', true)->with('orderItems.product')->get();
+
+        return view('admin.orderList', compact('orders'));
+    }
+
+    
     
 }
