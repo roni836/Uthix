@@ -38,6 +38,7 @@ Route::get('/parent-categories', [CategoryController::class, 'getParentCategorie
 Route::get('/categories/{id}', [CategoryController::class, 'getCategoriesByParent']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/manage-coupon', [CouponController::class,'manageCoupon']);
 
     //  (accessible to all authenticated users)
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -61,7 +62,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/get-conversation/{receiverId}', [MessageController::class, 'getConversation']);
     Route::put('/mark-as-read/{messageId}', [MessageController::class, 'markAsRead']);
     Route::delete('/delete-message/{messageId}', [MessageController::class, 'deleteMessage']);
-    
+    Route::get('/subject-classes/{id}', [ClassroomController::class, 'subjectClasses'])->name('subject.classes');
+    Route::get('/classroom/{chapter_id}/announcements', [AnnouncementController::class, 'getAnnouncementsByClass'])->name('announcement.manage');
+
     // Admin routes
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard', function () {
         return response()->json(['message' => 'admin API is working!']);
@@ -119,9 +122,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('classroom', ClassroomController::class);
         Route::post('/class-chapter', [ClassroomController::class, 'createNewChapter'])->name('class.store');
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
-        Route::get('/subject-classes/{id}', [ClassroomController::class, 'subjectClasses'])->name('subject.classes');
         Route::post('/annocment', [AnnouncementController::class, 'createAnnouncement'])->name('annocment.store');
-        Route::get('/classroom/{chapter_id}/announcements', [AnnouncementController::class, 'getAnnouncementsByClass'])->name('announcement.manage');
 
     });
 });

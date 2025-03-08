@@ -15,6 +15,7 @@ class AnnouncementController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
+            'instructor_id' => 'required|exists:instructors,id',
             'classroom_id' => 'required|exists:classrooms,id',
             'due_date' => 'nullable|date',
             'attachment_file' => 'nullable|array',
@@ -29,7 +30,7 @@ class AnnouncementController extends Controller
         }
     
         $announcement = Announcement::create([
-            'instructor_id' => Auth::id(),
+            'instructor_id' => $request->instructor_id,
             'classroom_id' => $request->classroom_id,
             'title' => $request->title,
             'due_date' => $request->due_date,
