@@ -241,9 +241,7 @@ class OrderController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
             'shipping_charge' => 'nullable|numeric|min:0',
-            'payment_method' => 'required|string|in:cod,upi',
             'coupon_id' => 'nullable|exists:coupons,id',
-            'payment_status' => 'nullable|string|in:success,failed,pending',
         ]);
 
         if ($validator->fails()) {
@@ -280,8 +278,6 @@ class OrderController extends Controller
             'status' => 'pending',
             'total_amount' => $totalAmount,
             'shipping_charge' => $request->shipping_charge ?? 0.00,
-            'payment_status' => $request->payment_method === 'cod' ? 'unpaid' : 'paid',
-            'payment_method' => $request->payment_method,
             'tracking_number' => null,
             'coupon_id' => $request->coupon_id,
         ]);

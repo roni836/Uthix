@@ -59,9 +59,17 @@ class CouponController extends Controller
             'status' => 'nullable|boolean'
         ]);
     
+        // if ($validator->fails()) {
+        //     return redirect()->back()->withErrors($validator)->withInput();
+        // }
+
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return response()->json([
+                'status' => false,
+                'error' => $validator->errors()
+            ], 422);
         }
+
         // Store coupon in database
         $coupon = Coupon::create($request->all());
         if(!$coupon){

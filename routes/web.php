@@ -26,10 +26,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', function () {
         return view('admin.index');  
     })->name('admin.dashboard');
-    Route::get('/manage-user', [AdminController::class, 'manageUser'])->name('manage.user'); 
-    Route::get('/insert-user', [AdminController::class, 'insertUser'])->name('insert.user'); 
+    Route::get('/manage-student', [AdminController::class, 'manageStudent'])->name('manage.student'); 
+    Route::get('/insert-student', [AdminController::class, 'insertStudent'])->name('insert.student'); 
     Route::get('/insert-vendor', [AdminController::class, 'insertVendor'])->name('insert.vendor'); 
     Route::get('/manage-vendor', [AdminController::class, 'manageVendor'])->name('manage.vendor'); 
+    Route::get('/insert-instructor', [AdminController::class, 'insertInstructor'])->name('insert.instructor'); 
+    Route::get('/manage-instructor', [AdminController::class, 'manageInstructor'])->name('manage.instructor'); 
     Route::get('/manage-category', [AdminController::class, 'manageCategory'])->name('manage.category'); 
     Route::get('/insert-product', [AdminController::class, 'insertProduct'])->name('insert.product'); 
     Route::get('/manage-product', [AdminController::class, 'manageProduct'])->name('manage.product'); 
