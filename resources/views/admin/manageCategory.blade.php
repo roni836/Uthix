@@ -680,7 +680,7 @@
                 e.preventDefault();
 
                 let formData = new FormData(this);
-
+                let token = localStorage.getItem("auth_token");
                 // Send AJAX request
                 $.ajax({
                     type: "POST",
@@ -690,6 +690,9 @@
                     contentType: false,
                     cache: false,
                     processData: false,
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     success: function(response) {
                         swal("Success", response.message, "success");
                         $("#insertCategory").trigger("reset");
