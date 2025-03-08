@@ -557,12 +557,12 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
+                                    {{-- {{dd($orders)}} --}}
                                     <tbody class="table-border-bottom-0">
-                                        
                                         @foreach($orders as $data)
                                         <tr>
                                             <td>
-                                                <span class="fw-medium">{{$data->orderItem->product->title ?? "N/a"}}</span>
+                                                <span class="fw-medium">{{$data->orderItes->product->title ?? "N/a"}}</span>
                                             </td>
                                             <td>{{$data->orderItem->product->author ?? "N/a"}}</td>
                                             <td>{{$data->orderItem->product->isbn ?? "N/a"}}</td>
