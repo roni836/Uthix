@@ -64,7 +64,11 @@ public function getAnnouncementsByClass($classroom_id)
 {
     $announcements = Announcement::where('classroom_id', $classroom_id)
                         ->orderBy('created_at', 'desc')
+                        ->with(['classroom.instructor.user'])
+                        
                         ->get();
+        
+                       
 
     return response()->json([
         'status' => true,

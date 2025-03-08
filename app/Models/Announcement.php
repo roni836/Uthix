@@ -11,4 +11,12 @@ class Announcement extends Model
     {
         return $this->hasMany(Attachment::class, 'announcement_id');
     }
+    public function instructor()
+    {
+        return $this->belongsTo(Instructor::class);
+    }
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class);
+    }
 }
