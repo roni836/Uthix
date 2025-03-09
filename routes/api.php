@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\AssignmentUploadController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClassroomController;
@@ -99,6 +101,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('student', StudentController::class);
         Route::apiResource('student-classroom', StudentClassroomController::class);
         Route::get('all-classroom', [ClassroomController::class,'allClassroom']);
+        Route::post('/student/assignments/upload', [AssignmentUploadController::class, 'store']);
+
     });
 
     //Seller
@@ -124,6 +128,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/class-chapter', [ClassroomController::class, 'createNewChapter'])->name('class.store');
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
         Route::post('/annocment', [AnnouncementController::class, 'createAnnouncement'])->name('annocment.store');
+        Route::post('/assignments', [AssignmentController::class, 'store']);
 
     });
 });
