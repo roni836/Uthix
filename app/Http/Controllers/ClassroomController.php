@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Chapter;
 use App\Models\ClassModel;
 use App\Models\Classroom;
+use App\Models\Instructor;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -151,19 +153,37 @@ class ClassroomController extends Controller
     {
         $user = Auth::user();
     
-        $classes = Chapter::whereIn('classroom_id', function ($query) use ($user) {
-                        $query->select('id')
-                              ->from('classrooms')
-                              ->where('instructor_id', $user->id);
-                    })
-                    ->with(['classroom.subject'])
-                    ->get();
+        // Step 1: Get the Instructor ID from User
+        $instructorId = Instructor::where('user_id', $user->id)->value('id');
+    
+        if (!$instructorId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Instructor not found'
+            ], 404);
+        }
+    
+        // Step 2: Fetch all Chapters related to Instructor's Classrooms
+        $chapters = Chapter::whereHas('classroom', function ($query) use ($instructorId) {
+                            $query->where('instructor_id', $instructorId);
+                        })
+                        ->with(['classroom.subject']) // Fetch classroom and subject data
+                        ->get();
+    
+        if ($chapters->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No chapters found'
+            ], 404);
+        }
     
         return response()->json([
             'status' => true,
-            'data' => $classes
+            'data' => $chapters
         ]);
     }
+    
+    
 
     public function subjectClasses($subject_id)
     {

@@ -55,8 +55,13 @@ class User extends Authenticatable
         return $this->hasOne(Vendor::class);
     }
 
+    // public function instructor()
+    // {
+    //     return $this->hasOne(Instructor::class);
+    // }
     public function instructor()
-    {
-        return $this->hasOne(Instructor::class);
-    }
+{
+    return $this->hasOne(Instructor::class, 'user_id');
+}
+
 }
