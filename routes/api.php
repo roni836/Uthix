@@ -129,6 +129,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
         Route::post('/annocment', [AnnouncementController::class, 'createAnnouncement'])->name('annocment.store');
         Route::post('/assignments', [AssignmentController::class, 'store']);
+        Route::get('/assignments/{assignmentId}/submissions', [AssignmentController::class, 'getSubmissions']);
+        Route::get('/assignments/{assignmentId}/submission', [AssignmentUploadController::class, 'viewSubmissions']);
 
     });
 });
