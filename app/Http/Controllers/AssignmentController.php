@@ -91,6 +91,8 @@ class AssignmentController extends Controller
     /**
      * Display the specified resource.
      */
+
+    //  get signle assignment by id
     public function getSubmissions($assignmentId)
     {
         $assignment = Assignment::with(['uploads.student'])->find($assignmentId);
@@ -127,7 +129,5 @@ class AssignmentController extends Controller
         ], 200);
     }
     
-    
-
-  
+   
 }

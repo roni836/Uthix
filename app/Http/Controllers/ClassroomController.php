@@ -111,13 +111,50 @@ class ClassroomController extends Controller
 
 
 
-    public function createNewChapter(Request $request)
+    // public function createNewChapter(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'classroom_id' => 'required|exists:classrooms,id',
+    //         'title' => 'required|string|max:255',
+    //         'date' => 'nullable|date',
+    //         'time' => 'nullable',
+    //         'timezone' => 'nullable|string|max:50',
+    //         'repeat_days' => 'nullable|array',
+    //         'reminder_time' => 'nullable|integer|min:0',
+    //         'description' => 'required|string',
+    //     ]);
+    
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'errors' => $validator->messages(),
+    //         ], 422);
+    //     }
+    
+    //     $class = Chapter::create([
+    //         'classroom_id' => $request->classroom_id,  
+    //         'title' => $request->title,               
+    //         'date' => $request->date,                 
+    //         'time' => $request->time,                 
+    //         'timezone' => $request->timezone,          
+    //         'repeat_days' => json_encode($request->repeat_days), 
+    //         'reminder_time' => $request->reminder_time ?? 1, 
+    //         'description' => $request->description,   
+    //     ]);
+    
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'Class created successfully',
+    //         'data' => $class
+    //     ], 201);
+    // }
+    
+    public function createNewChapter(Request $request, $classroom_id)
     {
         $validator = Validator::make($request->all(), [
-            'classroom_id' => 'required|exists:classrooms,id',
             'title' => 'required|string|max:255',
             'date' => 'nullable|date',
-            'time' => 'nullable',
+            'time' => 'nullable|date_format:H:i:s', // Ensure correct format
             'timezone' => 'nullable|string|max:50',
             'repeat_days' => 'nullable|array',
             'reminder_time' => 'nullable|integer|min:0',
@@ -131,24 +168,34 @@ class ClassroomController extends Controller
             ], 422);
         }
     
-        $class = Chapter::create([
-            'classroom_id' => $request->classroom_id,  
+        // Ensure the classroom exists
+        if (!Classroom::find($classroom_id)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Classroom not found'
+            ], 404);
+        }
+    
+        // Create the Chapter
+        $chapter = Chapter::create([
+            'classroom_id' => $classroom_id,  
             'title' => $request->title,               
             'date' => $request->date,                 
             'time' => $request->time,                 
             'timezone' => $request->timezone,          
-            'repeat_days' => json_encode($request->repeat_days), 
+            'repeat_days' => json_encode($request->repeat_days ?? []), 
             'reminder_time' => $request->reminder_time ?? 1, 
             'description' => $request->description,   
         ]);
     
         return response()->json([
             'status' => true,
-            'message' => 'Class created successfully',
-            'data' => $class
+            'message' => 'Chapter created successfully',
+            'data' => $chapter
         ], 201);
     }
     
+ 
     public function manageClasses()
     {
         $user = Auth::user();
