@@ -23,5 +23,10 @@ public function attachments()
     {
         return $this->belongsTo(Classroom::class);
     }
+    public function uploads()
+{
+    return $this->hasMany(AssignmentUpload::class, 'assignment_id');
+}
+
 
 }

@@ -11,6 +11,7 @@ class AssignmentUpload extends Model
     {
         return $this->belongsTo(User::class, 'student_id')->select('id', 'name');
     }
+    
     public function assignment()
     {
         return $this->belongsTo(Assignment::class, 'assignment_id');

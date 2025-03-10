@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('assignment_attachments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('assignment_id')->nullable()->constrained('assignments')->onDelete('cascade'); 
-    $table->foreignId('assignment_upload_id')->nullable()->constrained('assignment_uploads')->onDelete('cascade'); 
-    $table->string('attachment_file', 255);
+            $table->foreignId('assignment_upload_id')->nullable()->constrained('assignment_uploads')->onDelete('cascade'); 
+            $table->string('attachment_file', 255);
             $table->timestamps();
         });
     }
