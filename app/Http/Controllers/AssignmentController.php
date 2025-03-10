@@ -15,10 +15,29 @@ class AssignmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
+    public function getInstructorAssignments()
+{
+    $instructorId = Instructor::where('user_id', auth()->id())->value('id');
+
+    if (!$instructorId) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Instructor not found.',
+        ], 404);
     }
+
+    $assignments = Assignment::where('instructor_id', $instructorId)
+        ->with('attachments')
+        ->orderBy('created_at', 'desc') 
+        ->get();
+
+    return response()->json([
+        'status' => true,
+        'total_assignments' => $assignments->count(),
+        'assignments' => $assignments,
+    ], 200);
+}
+
 
     /**
      * Store a newly created resource in storage.
@@ -110,19 +129,5 @@ class AssignmentController extends Controller
     
     
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Assignment $assignment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Assignment $assignment)
-    {
-        //
-    }
+  
 }

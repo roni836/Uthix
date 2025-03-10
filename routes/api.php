@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\GradeController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
@@ -129,8 +130,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
         Route::post('/annocment', [AnnouncementController::class, 'createAnnouncement'])->name('annocment.store');
         Route::post('/assignments', [AssignmentController::class, 'store']);
+        Route::get('/assignments', [AssignmentController::class, 'getInstructorAssignments']);
         Route::get('/assignments/{assignmentId}/submissions', [AssignmentController::class, 'getSubmissions']);
         Route::get('/assignments/{assignmentId}/submission', [AssignmentUploadController::class, 'viewSubmissions']);
+        Route::post('/instructor/grade/{uploadId}', [GradeController::class, 'storeGrades']);
 
     });
 });
