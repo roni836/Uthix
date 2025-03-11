@@ -8,13 +8,32 @@ class Classroom extends Model
 {
     protected $guarded = [];
 
-    public function subject()
-    {
-        return $this->belongsTo(Subject::class, 'subject_id');
-    }
+    // public function subject()
+    // {
+    //     return $this->belongsTo(Subject::class, 'subject_id');
+    // }
+    //  public function chapters()
+    // {
+    //     return $this->belongsTo(Chapter::class, 'chapter_id');
+    // }
 
+    // public function instructor()
+    // {
+    //     return $this->belongsTo(Instructor::class);
+    // }
     public function instructor()
-    {
-        return $this->belongsTo(Instructor::class);
-    }
+{
+    return $this->belongsTo(Instructor::class, 'instructor_id');
+}
+
+public function subject()
+{
+    return $this->belongsTo(Subject::class, 'subject_id');
+}
+
+public function chapters()
+{
+    return $this->hasMany(Chapter::class, 'classroom_id');
+}
+
 }

@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assignments', function (Blueprint $table) {
+        Schema::create('grade_details', function (Blueprint $table) {
             $table->id();
-            $table->id();
-            $table->foreignId('instructor_id')->constrained()->onDelete('cascade');
-            $table->foreignId('classroom_id')->constrained()->onDelete('cascade');
-            $table->string('title')->nullable();
-            $table->date('due_date')->nullable(); 
+            $table->foreignId('grade_id')->constrained('grades')->onDelete('cascade');
+         $table->string('criterion'); // Example: 'Course Engagement', 'Problem Solving'
+              $table->enum('grade', ['Excellent', 'Well Done', 'Basic']);
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assignments');
+        Schema::dropIfExists('grade_details');
     }
 };
