@@ -12,9 +12,9 @@ class AssignmentUpload extends Model
         return $this->belongsTo(User::class, 'student_id')->select('id', 'name');
     }
     
-    public function assignment()
+    public function announcement()
     {
-        return $this->belongsTo(Assignment::class, 'assignment_id');
+        return $this->belongsTo(Announcement::class, 'announcement_id');
     }
 
     public function classroom()

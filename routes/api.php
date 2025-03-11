@@ -128,10 +128,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('classroom', ClassroomController::class);
         Route::post('/class-chapter/{classroom_id}', [ClassroomController::class, 'createNewChapter'])->name('class.store');
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
-        Route::post('/annocment', [AnnouncementController::class, 'createAnnouncement'])->name('annocment.store');
-        Route::post('/assignments', [AssignmentController::class, 'store']);
-        Route::get('/assignments', [AssignmentController::class, 'getInstructorAssignments']);
-        Route::get('/assignments/{assignmentId}/submissions', [AssignmentController::class, 'getSubmissions']);
+        Route::post('/announcement', [AnnouncementController::class, 'createAnnouncement'])->name('annocment.store');
+        // Route::post('/assignments', [AnnouncementController::class, 'store']);
+        Route::get('/assignments', [AnnouncementController::class, 'getInstructorAssignments']);
+        Route::get('/assignments/{assignmentId}/submissions', [AnnouncementController::class, 'getSubmissions']);
         Route::get('/assignments/{assignmentId}/submission', [AssignmentUploadController::class, 'viewSubmissions']);
         Route::post('/instructor/grade/{uploadId}', [GradeController::class, 'storeGrades']);
 
