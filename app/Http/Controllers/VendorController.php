@@ -180,7 +180,7 @@ class VendorController extends Controller
     public function editSeller()
     {
         $user = Auth::user();
-        $data = Vendor::where('user_id', $user->id)->first();
+        $data = Vendor::where('user_id', $user->id)->with('user')->first();
 
         return response()->json([
             'message' => 'Vendor data fetched successfully',
