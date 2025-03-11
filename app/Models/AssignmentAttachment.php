@@ -11,5 +11,9 @@ class AssignmentAttachment extends Model
     {
         return $this->belongsTo(AssignmentUpload::class, 'assignment_upload_id');
     }
-    
+    public function announcement()
+{
+    return $this->belongsTo(Announcement::class, 'announcement_id');
+}
+
 }

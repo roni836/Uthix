@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Assignment;
+use App\Models\Announcement; // ✅ Announcement Model
 use App\Models\AssignmentAttachment;
 use App\Models\AssignmentUpload;
 use App\Models\Student;
@@ -27,9 +27,9 @@ class AssignmentUploadController extends Controller
         $studentId = Student::where('user_id', auth()->id())->value('id');
 
         $validator = Validator::make($request->all(), [
-            'assignment_id' => 'required|exists:assignments,id',
+            'announcement_id' => 'required|exists:announcements,id', // ✅ Announcement ka use kiya hai
             'classroom_id' => 'required|exists:classrooms,id',
-            'files.*' => 'required|file|max:2048|mimes:pdf,doc,docx,png,jpg,jpeg', // Multiple files
+            'attachments.*' => 'required|file|max:2048|mimes:pdf,doc,docx,png,jpg,jpeg',
             'title' => 'nullable|string|max:255',
             'comment' => 'nullable|string',
         ]);
@@ -39,7 +39,7 @@ class AssignmentUploadController extends Controller
         }
 
         $assignmentUpload = AssignmentUpload::create([
-            'assignment_id' => $request->assignment_id,
+            'announcement_id' => $request->announcement_id, 
             'student_id' => $studentId,
             'classroom_id' => $request->classroom_id,
             'submitted_at' => now(),
@@ -48,69 +48,67 @@ class AssignmentUploadController extends Controller
             'status' => 'pending',
         ]);
 
-       
-
+        // ✅ File Upload Handling
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                $filePath = $file->store('attachments', 'public'); 
-        
+                $filePath = $file->store('attachments', 'public');
+
                 AssignmentAttachment::create([
-                    'assignment_upload_id' => $assignmentUpload->id, // ✅ Correct
-                    'assignment_id' => $request->assignment_id, // ✅ Correct
+                    'assignment_upload_id' => $assignmentUpload->id,
+                    'announcement_id' => $request->announcement_id, // ✅ Updated field
                     'attachment_file' => $filePath,
                 ]);
             }
         }
-    
+
         return response()->json([
             'message' => 'Assignment uploaded successfully with attachments!',
-            'assignment_upload' => $assignmentUpload->load('attachments')
+            'assignment_upload' => $assignmentUpload->load('attachments'),
         ], 201);
     }
+
     /**
-     * Display the specified resource.
+     * Display the submitted assignments.
      */
-    public function viewSubmissions($assignmentId)
-{
-    $assignment = Assignment::with(['uploads.student', 'uploads.attachments' ,'classroom'])
-        ->where('id', $assignmentId)
-        ->first();
+    public function viewSubmissions($announcementId)
+    {
+        $announcement = Announcement::with(['uploads.student', 'uploads.attachments', 'uploads.classroom'])
+            ->where('id', $announcementId)
+            ->first();
 
-    if (!$assignment) {
+        if (!$announcement) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Announcement not found.',
+            ], 404);
+        }
+
         return response()->json([
-            'status' => false,
-            'message' => 'Assignment not found.',
-        ], 404);
+            'status' => true,
+            'total_submissions' => $announcement->uploads->count(),
+            'uploads' => $announcement->uploads->map(function ($upload) {
+                return [
+                    'id' => $upload->id,
+                    'student' => [
+                        'id' => $upload->student->id,
+                        'name' => $upload->student->name,
+                        'profile_image' => $upload->student->profile_image ?? null,
+                        'class' => $upload->classroom->class_name ?? 'N/A',
+                        'section' => $upload->classroom->section ?? 'N/A',
+                    ],
+                    'submitted_at' => $upload->submitted_at,
+                    'status' => $upload->status,
+                    'title' => $upload->title,
+                    'comment' => $upload->comment,
+                    'attachments' => $upload->attachments->map(function ($file) {
+                        return [
+                            'id' => $file->id,
+                            'file_name' => basename($file->attachment_file),
+                            'file_url' => asset('storage/' . $file->attachment_file),
+                        ];
+                    }),
+                ];
+            }),
+        ], 200);
     }
-
-    return response()->json([
-        'status' => true,
-        'total_submissions' => $assignment->uploads->count(),
-        'uploads' => $assignment->uploads->map(function ($upload) {
-            return [
-                'id' => $upload->id,
-                'student' => [
-                    'id' => $upload->student->id,
-                    'name' => $upload->student->name,
-                    'profile_image' => $upload->student->profile_image ?? null,
-                    'class' => $upload->classroom->class_name ?? 'N/A',
-                    'section' => $upload->classroom->section ?? 'N/A',
-                ],
-                'submitted_at' => $upload->submitted_at,
-                'status' => $upload->status,
-                'title' => $upload->title,
-                'comment' => $upload->comment,
-                'attachments' => $upload->attachments->map(function ($file) {
-                    return [
-                        'id' => $file->id,
-                        'file_name' => $file->file_name,
-                        'file_url' => url('storage/' . $file->attachment_file),
-                    ];
-                }),
-            ];
-        }),
-    ], 200);
-}
-
-
 }

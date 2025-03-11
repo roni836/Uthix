@@ -16,7 +16,30 @@ class ClassroomController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() {}
+
+   
+        public function index()
+        {
+            $instructorId = Instructor::where('user_id', auth()->id())->value('id');
+        
+            if (!$instructorId) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Instructor not found'
+                ], 404);
+            }
+        
+            $classrooms = Classroom::where('instructor_id', $instructorId)->get();
+        
+            return response()->json([
+                'status' => true,
+                'message' => 'Classrooms fetched successfully',
+                'data' => $classrooms
+            ], 200);
+        }
+                
+    
+
 
     public function allClassroom()
     {
@@ -244,4 +267,5 @@ class ClassroomController extends Controller
             'data' => $classes
         ]);
     }
+
 }
