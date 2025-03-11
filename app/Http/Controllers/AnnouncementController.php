@@ -64,8 +64,8 @@ public function getAnnouncementsByClass($classroom_id)
 {
     $announcements = Announcement::where('classroom_id', $classroom_id)
                         ->orderBy('created_at', 'desc')
-                        ->with(['classroom.instructor.user'])
-                        
+                        ->whereHas('attachments') 
+                        ->with(['attachments', 'classroom.instructor.user'])
                         ->get();
         
                        
