@@ -16,16 +16,13 @@ class ClassroomController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        
-    }
+    public function index() {}
 
     public function allClassroom()
     {
         $user = Auth::user();
         $classrooms = Classroom::with('instructor')->get();
-        
+
         if (!$classrooms) {
             return response()->json([
                 'status' => false,
@@ -37,7 +34,6 @@ class ClassroomController extends Controller
             'status' => true,
             'classrooms' => $classrooms, // Corrected key name
         ], 200);
-
     }
 
     /**
@@ -123,14 +119,14 @@ class ClassroomController extends Controller
     //         'reminder_time' => 'nullable|integer|min:0',
     //         'description' => 'required|string',
     //     ]);
-    
+
     //     if ($validator->fails()) {
     //         return response()->json([
     //             'status' => false,
     //             'errors' => $validator->messages(),
     //         ], 422);
     //     }
-    
+
     //     $class = Chapter::create([
     //         'classroom_id' => $request->classroom_id,  
     //         'title' => $request->title,               
@@ -141,14 +137,14 @@ class ClassroomController extends Controller
     //         'reminder_time' => $request->reminder_time ?? 1, 
     //         'description' => $request->description,   
     //     ]);
-    
+
     //     return response()->json([
     //         'status' => true,
     //         'message' => 'Class created successfully',
     //         'data' => $class
     //     ], 201);
     // }
-    
+
     public function createNewChapter(Request $request, $classroom_id)
     {
         $validator = Validator::make($request->all(), [
@@ -160,14 +156,14 @@ class ClassroomController extends Controller
             'reminder_time' => 'nullable|integer|min:0',
             'description' => 'required|string',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
                 'errors' => $validator->messages(),
             ], 422);
         }
-    
+
         // Ensure the classroom exists
         if (!Classroom::find($classroom_id)) {
             return response()->json([
@@ -175,79 +171,77 @@ class ClassroomController extends Controller
                 'message' => 'Classroom not found'
             ], 404);
         }
-    
+
         // Create the Chapter
         $chapter = Chapter::create([
-            'classroom_id' => $classroom_id,  
-            'title' => $request->title,               
-            'date' => $request->date,                 
-            'time' => $request->time,                 
-            'timezone' => $request->timezone,          
-            'repeat_days' => json_encode($request->repeat_days ?? []), 
-            'reminder_time' => $request->reminder_time ?? 1, 
-            'description' => $request->description,   
+            'classroom_id' => $classroom_id,
+            'title' => $request->title,
+            'date' => $request->date,
+            'time' => $request->time,
+            'timezone' => $request->timezone,
+            'repeat_days' => json_encode($request->repeat_days ?? []),
+            'reminder_time' => $request->reminder_time ?? 1,
+            'description' => $request->description,
         ]);
-    
+
         return response()->json([
             'status' => true,
             'message' => 'Chapter created successfully',
             'data' => $chapter
         ], 201);
     }
-    
- 
+
+
     public function manageClasses()
     {
         $user = Auth::user();
-    
+
         // Step 1: Get the Instructor ID from User
         $instructorId = Instructor::where('user_id', $user->id)->value('id');
-    
+
         if (!$instructorId) {
             return response()->json([
                 'status' => false,
                 'message' => 'Instructor not found'
             ], 404);
         }
-    
+
         // Step 2: Fetch all Chapters related to Instructor's Classrooms
         $chapters = Chapter::whereHas('classroom', function ($query) use ($instructorId) {
-                            $query->where('instructor_id', $instructorId);
-                        })
-                        ->with(['classroom.subject']) // Fetch classroom and subject data
-                        ->get();
-    
+            $query->where('instructor_id', $instructorId);
+        })
+            ->with(['classroom.subject']) // Fetch classroom and subject data
+            ->get();
+
         if ($chapters->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'message' => 'No chapters found'
             ], 404);
         }
-    
+
         return response()->json([
             'status' => true,
             'data' => $chapters
         ]);
     }
-    
-    
+
+
 
     public function subjectClasses($subject_id)
     {
         $classes = Chapter::whereIn('classroom_id', function ($query) use ($subject_id) {
-                        $query->select('id')
-                              ->from('classrooms')
-                              ->where('subject_id', $subject_id);
-                    })
-                    ->with(['classroom.instructor.user'])
-                    ->with(['classroom.subject'])
-                    ->get();
-    
+            $query->select('id')
+                ->from('classrooms')
+                ->where('subject_id', $subject_id);
+        })
+            ->with(['classroom.instructor.user'])
+            ->with(['classroom.subject'])
+            ->get();
+
         return response()->json([
             'status' => true,
             'data' => $classes
         ]);
     }
-    
-   
 }
