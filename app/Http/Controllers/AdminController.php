@@ -45,9 +45,11 @@ class AdminController extends Controller
     }
 
     public function manageCategory(){
-        $category = Category::get();
-        return view('admin.manageCategory', compact('category'));
+        $data['category'] = Category::get(); 
+        $data['categories'] = Category::whereNull('parent_category_id')->get(); 
+        return view('admin.manageCategory', $data);
     }
+    
     
     public function insertProduct(){
         $category = Category::get();

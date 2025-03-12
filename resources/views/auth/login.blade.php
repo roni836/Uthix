@@ -67,7 +67,7 @@
 
 <body>
     <!-- Form Alignment -->
-    <div class="container ">
+    <div class="container d-flex align-items-center justify-content-center vh-100">
         <div class="card">
             {{-- <h5 class="card-header">Form Alignment</h5> --}}
             <div class="card-body">

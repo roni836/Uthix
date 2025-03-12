@@ -102,6 +102,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('student', StudentController::class);
         Route::apiResource('student-classroom', StudentClassroomController::class);
         Route::get('all-classroom', [ClassroomController::class,'allClassroom']);
+        Route::get('grade/{uploadId}', [GradeController::class,'getGrades']);
         Route::post('/student/assignments/upload', [AssignmentUploadController::class, 'store']);
 
     });
