@@ -68,20 +68,32 @@ class AdminController extends Controller
         return view('admin.coupon.insertCoupon');
     }
 
-    public function allOrders()
-    {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->back()->json([
-                'status' => false,
-                'message' => 'Unauthorized',
+    // public function allOrders()
+    // {
+    //     $user = Auth::user();
+    //     if (!$user) {
+    //         return redirect()->back()->json([
+    //             'status' => false,
+    //             'message' => 'Unauthorized',
 
-            ], 401);
-        }
-        $orders = Order::where('is_ordered', true)->with('orderItems.product')->get();
+    //         ], 401);
+    //     }
+    //     $orders = Order::where('is_ordered', true)->with('orderItems.product')->get();
 
+    //     return view('admin.orderList', compact('orders'));
+    // }
+    public function allOrders(){
+        $orders = Order::with('user', 'coupon', 'address')->get();
         return view('admin.orderList', compact('orders'));
     }
+
+
+    public function orderDetails($id)
+{
+    $order = Order::with('orderItems.product', 'user', 'coupon', 'address')->findOrFail($id);
+    return view('admin.order.orderDetails', compact('order'));
+}
+
     
     public function adminOrders()
     {
