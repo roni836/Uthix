@@ -537,7 +537,8 @@
                                                         alt="Category Image" width="100"></td>
                                                 <td>{{ $data->cat_description }}</td>
 
-                                                <td><span class="badge bg-label-primary me-1">{{$data->status}}</span></td>
+                                                <td><span class="badge bg-label-primary me-1">{{ $data->status }}</span>
+                                                </td>
                                                 <td>
                                                     <div class="dropdown">
                                                         <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
@@ -547,13 +548,10 @@
                                                         <div class="dropdown-menu">
                                                             <a class="dropdown-item" href="javascript:void(0);"><i
                                                                     class="ti ti-pencil me-1"></i> Edit</a>
-                                                            <form action="">
-                                                                <button class="dropdown-item delete-category"
-                                                                    href="javascript:void(0);"
-                                                                    data-id="{{ $data->id }}">
-                                                                    <i class="ti ti-trash me-1"></i> Delete
-                                                                </button>
-                                                            </form>
+                                                            <button class="dropdown-item delete-category"
+                                                                href="javascript:void(0);" data-id="{{ $data->id }}">
+                                                                <i class="ti ti-trash me-1"></i> Delete
+                                                            </button>
 
                                                         </div>
                                                     </div>
@@ -633,7 +631,7 @@
 
                         <div class="mb-3">
                             <label for="parent_category_id" class="form-label">Parent Category</label>
-                            <select name="parent_category_id" id="parent_category_id" class="form-control" required>
+                            <select name="parent_category_id" id="parent_category_id" class="form-control">
                                 <option value="">Select Parent Category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->cat_title }}</option>
@@ -692,29 +690,81 @@
                 });
             });
 
+            $(document).on('click', '.delete-category', function() {
+                let id = $(this).data('id');
+                let token = localStorage.getItem("auth_token");
 
-            // $(document).on('click', '.delete-category', function() {
-            //     let id = $(this).data('id'); // Get category ID from button
+                if (confirm("Are you sure you want to delete this Data?")) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: `/api/categories/${id}`, // Correct URL formatting
+                        headers: {
+                            "Authorization": "Bearer " + token
+                        },
+                        success: function(response) {
+                            swal("Success", response.message, "success");
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error deleting Data:', error);
+                            alert('Something went wrong. Please try again.');
+                        }
+                    });
+                }
+            });
 
-            //     if (confirm("Are you sure you want to delete this Data?")) {
-            //         $.ajax({
-            //             type: 'DELETE',
-            //             url: `${@json(url('/api/categories/'))}${id}`, // Fix URL
-            //             headers: {
-            //                 "Authorization": "Bearer " + token
-            //             },
-            //             success: function(response) {
-            //                 swal("Success", response.message,
-            //                     "success"); // SweetAlert success message
-            //                 location.reload(); // Reload page
-            //             },
-            //             error: function(xhr, status, error) {
-            //                 console.error('Error deleting Data:', error);
-            //                 alert('Something went wrong. Please try again.');
-            //             }
-            //         });
-            //     }
+            // $(document).on('click', '.editBtn', function() {
+            //     let id = $(this).data('id');
+            //     $.ajax({
+            //         type: 'GET',
+            //         url: `{{ url('/api/hire-plan/view/${id}') }}`,
+            //         success: function(response) {
+            //             $('#id').val(response.data.id);
+            //             $('#name').val(response.data.name);
+            //             $('#features').val(response.data.features);
+            //             $('#price').val(response.data.price);
+            //             $('#default-modal').removeClass('hidden');
+            //         },
+            //         error: function(xhr, status, error) {
+            //             console.error('Error fetching  details for editing:', error);
+            //         }
+            //     });
             // });
+
+            // $('#editForm').submit(function(e) {
+            //     e.preventDefault();
+            //     let id = $('#id').val();
+            //     let formData = {
+            //         name: $('#name').val(),
+            //         features: $('#features').val(),
+            //         price: $('#price').val(),
+            //     };
+
+            //     // let features = $("#features").val().split("\n");
+
+            //     // features = features.filter(feature => feature.trim() !== '');
+            //     // formData.append('features', JSON.stringify(features));
+            //     $.ajax({
+            //         type: 'PUT',
+            //         url: `{{ url('/api/hire-plan/edit/${id}') }}`,
+            //         data: formData,
+            //         success: function(response) {
+            //             swal("Success", response.message, "message");
+            //             $('#default-modal').addClass('hidden');
+            //             swal("Success", response.message, "message");
+            //             callingPlans();
+            //         },
+            //         error: function(xhr, status, error) {
+            //             console.error('Error updating Data:', error);
+            //         }
+            //     });
+            // });
+
+            // // Cancel edit Doctor button click handler
+            // $('#cancelEdit').click(function() {
+            //     $('#default-modal').addClass('hidden');
+            // });
+
         });
     </script>
 

@@ -24,8 +24,8 @@ class CategoryController extends Controller
             'data' => $parentCategories
         ]);
     }
-  
-    
+
+
     public function getAllCategories(Request $request)
     {
 
@@ -135,7 +135,7 @@ class CategoryController extends Controller
             'category' => $category
         ], 200);
     }
-     public function show($id)
+    public function show($id)
     {
         $category = Category::where('id', $id)->first();
 
@@ -244,10 +244,9 @@ class CategoryController extends Controller
         }
     }
 
-
-
-    public function destroy(Category $category)
+    public function destroy($id)
     {
+
         if (!Auth::check()) {
             return response()->json([
                 'message' => 'Unauthorized. Please log in.'
@@ -262,21 +261,19 @@ class CategoryController extends Controller
                 'message' => 'Access denied. Only admins can delete categories.'
             ], 403);
         }
-        try {
+
+        $category  = Category::find($id);
+        if ($category) {
             $category->delete();
-            return response()->json(['message' => 'Category deleted successfully'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Category not deleted successfully'], 500);
+            return response()->json([
+                'status' => 200,
+                'message' => "Category Deleted"
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 500,
+                'message' => "No Hire Found"
+            ], 500);
         }
     }
-    
-
 }
-
-
-
-
-
-
-
-
