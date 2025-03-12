@@ -40,7 +40,7 @@ class ProductController extends Controller
      
          // Validation
          $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:255|unique:products,title',
             'author' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'isbn' => 'nullable|string|max:20|unique:products,isbn',
