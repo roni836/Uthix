@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Grade;
 use App\Models\GradeDetail;
 use App\Models\Instructor;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -49,6 +50,25 @@ class GradeController extends Controller
             'status' => true,
             'message' => 'Grading submitted successfully!',
             'grade' => $grade->load('gradeDetails'),
+        ]);
+    }
+
+    public function getGrades($uploadId)
+    {
+        $studentId=Student::where('user_id',auth()->id())->value('id');
+        $grade = Grade::where('assignment_upload_id', $uploadId)
+            ->whereHas('assignmentUpload', function ($query) use ($studentId) {
+                $query->where('student_id', $studentId);
+            })
+            ->with('gradeDetails')
+            ->first();
+
+        if (!$grade) {
+            return response()->json(['error' => 'Grades not found'], 404);
+        }   
+        return response()->json([
+            'status' => true,
+            'grade' => $grade,
         ]);
     }
     

@@ -11,4 +11,10 @@ class Grade extends Model
     {
         return $this->hasMany(GradeDetail::class, 'grade_id');
     }
+    // In App\Models\Grade.php
+public function assignmentUpload()
+{
+    return $this->belongsTo(AssignmentUpload::class, 'assignment_upload_id'); 
+}
+
 }
