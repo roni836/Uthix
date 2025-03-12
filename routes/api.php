@@ -87,7 +87,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
         Route::put('categories/{id}', [CategoryController::class, 'update']);
-        Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
+        Route::delete('categories/{id}', [CategoryController::class, 'destroy']);
         Route::post('/admin/products', [ProductController::class, 'store'])->name('books.store');
         Route::put('/admin/products/{id}', [ProductController::class, 'update']); // Update product
         Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']); // Delete product
