@@ -75,7 +75,7 @@ class VendorController extends Controller
             'store_name' => 'required|string|max:255',
             'store_address' => 'required|string',
             'gender' => 'required|in:male,female,others',
-            'dob' => 'nullable|date',
+            'dob' => 'required|date',
             'address' => 'required|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate logo as an image
             'school' => 'nullable|string',
