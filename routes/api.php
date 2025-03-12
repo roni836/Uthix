@@ -172,4 +172,4 @@ Route::get('/zoom/callback', [ZoomController::class, 'handleZoomCallback']);
 // Route::get('/zoom/meetings/upcoming', [ZoomController::class, 'upcomingMeetings']);
 // Route::get('/zoom/meetings/{meetingId}', [ZoomController::class, 'shareMeeting']);
 
-Route::get('/zoom/create-meeting', [ZoomController::class, 'createMeeting']);
+Route::get('', [ZoomController::class, 'createMeeting']);
