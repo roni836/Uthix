@@ -33,7 +33,7 @@
                         <!-- /Search -->
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
-                         
+
 
                             <!-- Style Switcher -->
                             <li class="nav-item dropdown-style-switcher dropdown">
@@ -513,7 +513,8 @@
                         <div class="card">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h5 class="mb-0">Manage Category</h5>
-                                <button type="submit" class="btn btn-primary hover" data-bs-toggle="modal" data-bs-target="#default-modal">Add New Category</button>
+                                <button type="submit" class="btn btn-primary hover" data-bs-toggle="modal"
+                                    data-bs-target="#default-modal">Add New Category</button>
                             </div>
                             <div class="table-responsive text-nowrap">
                                 <table class="table table-hover">
@@ -522,34 +523,42 @@
                                             <th>Title</th>
                                             <th>Image</th>
                                             <th>Description</th>
-                                            {{-- <th>Status</th> --}}
+                                            <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
-                                        @foreach($category as $data)
-                                        <tr>
-                                            <td>
-                                                <span class="fw-medium">{{$data->cat_title}}</span>
-                                            </td>
-                                            <td><img src="{{ asset('storage/image/category/' . $data->cat_image) }}" alt="Category Image" width="100"></td>                                            <td>{{$data->cat_description}}</td>
-                                            
-                                            {{-- <td><span class="badge bg-label-primary me-1">{{$data->status}}</span></td> --}}
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown">
-                                                        <i class="ti ti-dots-vertical"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ti ti-pencil me-1"></i> Edit</a>
-                                                        <a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ti ti-trash me-1"></i> Delete</a>
+                                        @foreach ($category as $data)
+                                            <tr>
+                                                <td>
+                                                    <span class="fw-medium">{{ $data->cat_title }}</span>
+                                                </td>
+                                                <td><img src="{{ asset('storage/image/category/' . $data->cat_image) }}"
+                                                        alt="Category Image" width="100"></td>
+                                                <td>{{ $data->cat_description }}</td>
+
+                                                <td><span class="badge bg-label-primary me-1">{{$data->status}}</span></td>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                            data-bs-toggle="dropdown">
+                                                            <i class="ti ti-dots-vertical"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="javascript:void(0);"><i
+                                                                    class="ti ti-pencil me-1"></i> Edit</a>
+                                                            <form action="">
+                                                                <button class="dropdown-item delete-category"
+                                                                    href="javascript:void(0);"
+                                                                    data-id="{{ $data->id }}">
+                                                                    <i class="ti ti-trash me-1"></i> Delete
+                                                                </button>
+                                                            </form>
+
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -607,39 +616,51 @@
 
 
     <!-- Bootstrap Modal -->
-<div class="modal fade" id="default-modal" tabindex="-1" aria-labelledby="editHirePlanModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editHirePlanModalLabel">Add New Category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="insertCategory" method="POST" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Title</label>
-                        <input type="text" id="name" name="cat_title" class="form-control" required>
-                    </div>
+    <div class="modal fade" id="default-modal" tabindex="-1" aria-labelledby="editHirePlanModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editHirePlanModalLabel">Add New Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="insertCategory" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Title</label>
+                            <input type="text" id="name" name="cat_title" class="form-control" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="cat_description" class="form-label">Description</label>
-                        <textarea name="cat_description" id="cat_description" rows="3" class="form-control" required></textarea>
-                    </div>
+                        <div class="mb-3">
+                            <label for="parent_category_id" class="form-label">Parent Category</label>
+                            <select name="parent_category_id" id="parent_category_id" class="form-control" required>
+                                <option value="">Select Parent Category</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->cat_title }}</option>
+                                @endforeach
+                            </select>
 
-                    <div class="mb-3">
-                        <label for="cat_image" class="form-label">Category Image</label>
-                        <input type="file" id="cat_image" name="cat_image" class="form-control" required >
-                    </div>
+                        </div>
 
-                    <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
+                        <div class="mb-3">
+                            <label for="cat_description" class="form-label">Description</label>
+                            <textarea name="cat_description" id="cat_description" rows="3" class="form-control" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="cat_image" class="form-label">Category Image</label>
+                            <input type="file" id="cat_image" name="cat_image" class="form-control" required>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <script>
         $(document).ready(function() {
@@ -670,6 +691,30 @@
                     }
                 });
             });
+
+
+            // $(document).on('click', '.delete-category', function() {
+            //     let id = $(this).data('id'); // Get category ID from button
+
+            //     if (confirm("Are you sure you want to delete this Data?")) {
+            //         $.ajax({
+            //             type: 'DELETE',
+            //             url: `${@json(url('/api/categories/'))}${id}`, // Fix URL
+            //             headers: {
+            //                 "Authorization": "Bearer " + token
+            //             },
+            //             success: function(response) {
+            //                 swal("Success", response.message,
+            //                     "success"); // SweetAlert success message
+            //                 location.reload(); // Reload page
+            //             },
+            //             error: function(xhr, status, error) {
+            //                 console.error('Error deleting Data:', error);
+            //                 alert('Something went wrong. Please try again.');
+            //             }
+            //         });
+            //     }
+            // });
         });
     </script>
 
