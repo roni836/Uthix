@@ -52,8 +52,8 @@
                                                         <i class="ti ti-dots-vertical"></i>
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ti ti-pencil me-1"></i> Edit</a>
+                                                        {{-- <a class="dropdown-item" href="javascript:void(0);"><i
+                                                                class="ti ti-pencil me-1"></i> Edit</a> --}}
                                                         <a class="dropdown-item" href="{{ route('orders.order-Details', $order->id) }}"><i
                                                                 class="ti ti-trash me-1"></i> View</a>
                                                                 <a class="dropdown-item" href="javascript:void(0);"><i
