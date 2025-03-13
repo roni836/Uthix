@@ -410,7 +410,7 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
-              <a class="dropdown-item mt-0" href="pages-account-settings-account.html">
+              <a class="dropdown-item mt-0" href="javascript:void(0);">
                 <div class="d-flex align-items-center">
                   <div class="flex-shrink-0 me-2">
                     <div class="avatar avatar-online">
@@ -418,8 +418,7 @@
                     </div>
                   </div>
                   <div class="flex-grow-1">
-                    <h6 class="mb-0">John Doe</h6>
-                    <small class="text-muted">Admin</small>
+                    <h6 class="mb-0">Hello, Admin</h6>
                   </div>
                 </div>
               </a>
@@ -428,16 +427,16 @@
               <div class="dropdown-divider my-1 mx-n2"></div>
             </li>
             <li>
-              <a class="dropdown-item" href="pages-profile-user.html">
+              <a class="dropdown-item" href="javascript:void(0);">
                 <i class="ti ti-user me-3 ti-md"></i><span class="align-middle">My Profile</span>
               </a>
             </li>
             <li>
-              <a class="dropdown-item" href="pages-account-settings-account.html">
+              <a class="dropdown-item" href="javascript:void(0);">
                 <i class="ti ti-settings me-3 ti-md"></i><span class="align-middle">Settings</span>
               </a>
             </li>
-            <li>
+            {{-- <li>
               <a class="dropdown-item" href="pages-account-settings-billing.html">
                 <span class="d-flex align-items-center align-middle">
                   <i class="flex-shrink-0 ti ti-file-dollar me-3 ti-md"></i
@@ -447,11 +446,11 @@
                   >
                 </span>
               </a>
-            </li>
+            </li> --}}
             <li>
               <div class="dropdown-divider my-1 mx-n2"></div>
             </li>
-            <li>
+            {{-- <li>
               <a class="dropdown-item" href="pages-pricing.html">
                 <i class="ti ti-currency-dollar me-3 ti-md"></i><span class="align-middle">Pricing</span>
               </a>
@@ -460,7 +459,7 @@
               <a class="dropdown-item" href="pages-faq.html">
                 <i class="ti ti-question-mark me-3 ti-md"></i><span class="align-middle">FAQ</span>
               </a>
-            </li>
+            </li> --}}
             {{-- <li>
                 <div class="d-grid px-2 pt-2 pb-1">
                     <button id="logoutBtn" class="btn btn-sm btn-danger d-flex">
@@ -501,8 +500,8 @@
         $("#logoutBtn").click(function(e) {
             e.preventDefault(); // Prevent page reload
 
-            let token = localStorage.getItem("access_token"); // Get stored token
-
+            let token = localStorage.getItem("auth_token");
+            
             if (!token) {
                 swal("Error", "You are not logged in!", "error");
                 return;
@@ -513,7 +512,6 @@
                 url: "{{ url('/api/logout') }}",  // Ensure correct API route
                 headers: { 
                     "Authorization": "Bearer " + token,
-                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
                 },
                 success: function(response) {
                     swal("Success", response.message, "success");

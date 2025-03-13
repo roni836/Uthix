@@ -171,7 +171,10 @@
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <a href="javascript:void(0);" class="menu-link">
+                                    <div data-i18n="Under working">Under working</div>
+                                </a>
+                                {{-- <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <div data-i18n="Approve Courses">Approve Courses</div>
                                 </a>
                                 <ul class="menu-sub">
@@ -185,9 +188,9 @@
                                             <div data-i18n="Category List">Category List</div>
                                         </a>
                                     </li>
-                                </ul>
+                                </ul> --}}
                             </li>
-                            <li class="menu-item">
+                            {{-- <li class="menu-item">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <div data-i18n="Monitor Course Performance">Monitor Course Performance</div>
                                 </a>
@@ -203,7 +206,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
                     <li class="menu-item">
@@ -284,14 +287,14 @@
                                             <div data-i18n="Order List">All Order</div>
                                         </a>
                                     </li>
-                                    <li class="menu-item">
+                                    {{-- <li class="menu-item">
                                         <a href="{{url('/admin-orders')}}" class="menu-link">
                                             <div data-i18n="Order Details">Admin Orders</div>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                             </li>
-                            <li class="menu-item">
+                            {{-- <li class="menu-item">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <div data-i18n="Customer">Customer</div>
                                 </a>
@@ -370,7 +373,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
                     <!-- e-commerce-app menu end -->
@@ -382,10 +385,15 @@
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="app-academy-dashboard.html" class="menu-link">
-                                    <div data-i18n="Monitor Live Session">Monitor Live Session</div>
+                                <a href="javascript:void(0);" class="menu-link">
+                                    <div data-i18n="Under Working">Under Working</div>
                                 </a>
                             </li>
+                            {{-- <li class="menu-item">
+                                <a href="" class="menu-link">
+                                    <div data-i18n="Monitor Live Session">Monitor Live Session</div>
+                                </a>
+                            </li> --}}
                         </ul>
                     </li>
                     <li class="menu-item">
@@ -395,6 +403,11 @@
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
+                                <a href="javascript:void(0);" class="menu-link">
+                                    <div data-i18n="Under Working">Under Working</div>
+                                </a>
+                            </li>
+                            {{-- <li class="menu-item">
                                 <a href="app-academy-dashboard.html" class="menu-link">
                                     <div data-i18n="Sales Reports">Sales Reports</div>
                                 </a>
@@ -408,7 +421,7 @@
                                 <a href="app-academy-course-details.html" class="menu-link">
                                     <div data-i18n="Vendor Performance">Vendor Performance</div>
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
                     <!-- Academy menu end -->
@@ -419,6 +432,11 @@
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
+                                <a href="javascript:void(0);" class="menu-link">
+                                    <div data-i18n="Under Working">Under Working</div>
+                                </a>
+                            </li>
+                            {{-- <li class="menu-item">
                                 <a href="app-logistics-dashboard.html" class="menu-link">
                                     <div data-i18n="General Settings">General Settings</div>
                                 </a>
@@ -427,7 +445,7 @@
                                 <a href="app-logistics-fleet.html" class="menu-link">
                                     <div data-i18n="Payment Gateway Configuration">Payment Gateway Configuration</div>
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
                     <li class="menu-item">
@@ -437,6 +455,11 @@
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
+                                <a href="javascript:void(0);" class="menu-link">
+                                    <div data-i18n="Under working">Under Working</div>
+                                </a>
+                            </li>
+                            {{-- <li class="menu-item">
                                 <a href="app-logistics-dashboard.html" class="menu-link">
                                     <div data-i18n="General Settings">General Settings</div>
                                 </a>
@@ -450,7 +473,7 @@
                                 <a href="app-logistics-fleet.html" class="menu-link">
                                     <div data-i18n="Shipping Settings">Shipping Settings</div>
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
                 </ul>
