@@ -74,11 +74,11 @@ class CategoryController extends Controller
         //         'message' => 'Access denied. Only admins can create categories.'
         //     ], 403);
         // }
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'cat_title' => 'required|string|max:255',
             'cat_description' => 'required|string',
             'parent_category_id' => 'nullable|exists:categories,id',
-            'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cat_image' => 'nullable|image|max:2048',
         ]);
 
         $imageName = null;
@@ -151,11 +151,9 @@ class CategoryController extends Controller
         ], 200);
     }
 
-
-
     public function update(Request $request, $id)
     {
-
+        // dd($request->file('cat_image'));
         if (!Auth::check()) {
             return response()->json([
                 'message' => 'Unauthorized. Please log in.'
@@ -178,8 +176,8 @@ class CategoryController extends Controller
         $validator = Validator::make($request->all(), [
             'cat_title' => 'nullable|string|max:255',
             'cat_description' => 'nullable|string',
-            // 'parent_category_id' => 'nullable|integer|exists:categories,id',
-            'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'parent_category_id' => 'nullable|integer|exists:categories,id',
+            'cat_image' => 'nullable|image',
         ]);
 
         if ($validator->fails()) {
@@ -190,58 +188,50 @@ class CategoryController extends Controller
             ], 422);
         }
 
-        try {
-            $updateData = [];
+        $updateData = [];
 
-            // Check and update fields if present
-            if ($request->has('cat_title')) {
-                $updateData['cat_title'] = $request->input('cat_title');
-                $updateData['cat_slug'] = Str::slug($request->input('cat_title'));
-            }
-
-            if ($request->has('cat_description')) {
-                $updateData['cat_description'] = $request->input('cat_description');
-            }
-
-            // if ($request->has('parent_category_id')) {
-            //     $updateData['parent_category_id'] = $request->input('parent_category_id');
-            // }
-
-            // Handle image update
-            if ($request->hasFile('cat_image')) {
-                $image = $request->file('cat_image');
-
-                if ($image->isValid()) {
-                    // Delete old image if exists
-                    if (!empty($category->cat_image)) {
-                        Storage::disk('public')->delete('image/category/' . $category->cat_image);
-                    }
-
-                    // Store new image
-                    $imageName = time() . '.' . $image->getClientOriginalExtension();
-                    $image->storeAs('image/category', $imageName, 'public');
-                    $updateData['cat_image'] = $imageName;
-                } else {
-                    throw new \Exception('Uploaded file is not valid.');
-                }
-            }
-
-            // Only update if there is something to update
-            if (!empty($updateData)) {
-                $category->update($updateData);
-            }
-
-            return response()->json([
-                'message' => 'Category updated successfully',
-                'category' => $category
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error('Update failed', ['error' => $e->getMessage()]);
-            return response()->json([
-                'message' => 'Something went wrong',
-                'error' => $e->getMessage(),
-            ], 500);
+        // Check and update fields if present
+        if ($request->has('cat_title')) {
+            $updateData['cat_title'] = $request->input('cat_title');
+            $updateData['cat_slug'] = Str::slug($request->input('cat_title'));
         }
+
+        if ($request->has('cat_description')) {
+            $updateData['cat_description'] = $request->input('cat_description');
+        }
+
+        if ($request->has('parent_category_id')) {
+            $updateData['parent_category_id'] = $request->input('parent_category_id');
+        }
+
+        // Handle image update
+        if ($request->hasFile('cat_image')) {
+            $image = $request->file('cat_image');
+
+            if ($image->isValid()) {
+                // Delete old image if exists
+                if (!empty($category->cat_image)) {
+                    Storage::disk('public')->delete('image/category/' . $category->cat_image);
+                }
+
+                // Store new image
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('image/category', $imageName, 'public');
+                $updateData['cat_image'] = $imageName;
+            } else {
+                throw new \Exception('Uploaded file is not valid.');
+            }
+        }
+
+        // Only update if there is something to update
+        if (!empty($updateData)) {
+            $category->update($updateData);
+        }
+
+        return response()->json([
+            'message' => 'Category updated successfully',
+            'category' => $category
+        ], 200);
     }
 
     public function destroy($id)

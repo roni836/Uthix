@@ -34,7 +34,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/all-categories', [CategoryController::class, 'getAllCategories']);
-Route::get('categories/{id}', [CategoryController::class, 'show']);
+Route::get('/show-category/{id}', [CategoryController::class, 'show']);
 Route::get('products', [ProductController::class, 'index']);
 Route::get('/products/view/{id}', [ProductController::class, 'productView']);
 
