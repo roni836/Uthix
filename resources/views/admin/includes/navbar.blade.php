@@ -75,7 +75,7 @@
                 ></a>
               </div>
             </div>
-            <div class="dropdown-shortcuts-list scrollable-container">
+            {{-- <div class="dropdown-shortcuts-list scrollable-container">
               <div class="row row-bordered overflow-visible g-0">
                 <div class="dropdown-shortcuts-item col">
                   <span class="dropdown-shortcuts-icon rounded-circle mb-3">
@@ -140,7 +140,7 @@
                   <small>Useful Popups</small>
                 </div>
               </div>
-            </div>
+            </div> --}}
           </div>
         </li>
         <!-- Quick links -->
@@ -158,7 +158,7 @@
               <span class="badge rounded-pill bg-danger badge-dot badge-notifications border"></span>
             </span>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end p-0">
+          {{-- <ul class="dropdown-menu dropdown-menu-end p-0">
             <li class="dropdown-menu-header border-bottom">
               <div class="dropdown-header d-flex align-items-center py-3">
                 <h6 class="mb-0 me-auto">Notification</h6>
@@ -394,7 +394,7 @@
                 </a>
               </div>
             </li>
-          </ul>
+          </ul> --}}
         </li>
         <!--/ Notification -->
 
@@ -501,7 +501,7 @@
             e.preventDefault(); // Prevent page reload
 
             let token = localStorage.getItem("auth_token");
-            
+
             if (!token) {
                 swal("Error", "You are not logged in!", "error");
                 return;

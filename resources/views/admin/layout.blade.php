@@ -67,13 +67,17 @@
 
 <body>
     <!-- Layout wrapper -->
+    
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
+
+            @include('admin.includes.navbar')
             <!-- Menu -->
+
 
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
-                    <a href="{{url('')}}" class="app-brand-link">
+                    <a href="{{ url('') }}" class="app-brand-link">
                         <span class="app-brand-logo demo">
                             <svg width="32" height="22" viewBox="0 0 32 22" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -265,9 +269,9 @@
                                             <div data-i18n="Coupon List">Coupon List</div>
                                         </a>
                                     </li>
-  <li class="menu-item">
+                                    <li class="menu-item">
                                         <a href="{{ route('insert.coupon') }}" class="menu-link">
-                                            <div data-i18n="Add Coupon">Add  Coupon</div>
+                                            <div data-i18n="Add Coupon">Add Coupon</div>
                                         </a>
                                     </li>
 
@@ -283,7 +287,7 @@
                                 </a>
                                 <ul class="menu-sub">
                                     <li class="menu-item">
-                                        <a href="{{url('/all-orders')}}" class="menu-link">
+                                        <a href="{{ url('/all-orders') }}" class="menu-link">
                                             <div data-i18n="Order List">All Order</div>
                                         </a>
                                     </li>
