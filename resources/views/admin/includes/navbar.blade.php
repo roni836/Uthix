@@ -158,7 +158,7 @@
               <span class="badge rounded-pill bg-danger badge-dot badge-notifications border"></span>
             </span>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end p-0">
+          {{-- <ul class="dropdown-menu dropdown-menu-end p-0">
             <li class="dropdown-menu-header border-bottom">
               <div class="dropdown-header d-flex align-items-center py-3">
                 <h6 class="mb-0 me-auto">Notification</h6>
@@ -394,7 +394,7 @@
                 </a>
               </div>
             </li>
-          </ul>
+          </ul> --}}
         </li>
         <!--/ Notification -->
 
