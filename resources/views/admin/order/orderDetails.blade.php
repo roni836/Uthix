@@ -512,7 +512,7 @@
         <h3 class="text-lg font-medium">Customer Details</h3>
         <p><strong>Name:</strong> {{ $order->user->name }}</p>
         <p><strong>Email:</strong> {{ $order->user->email }}</p>
-        <p><strong>Phone:</strong> {{ $order->user->phone ?? 'N/A' }}</p>
+        <p><strong>Phone:</strong> {{ $order->user->phone ?? 'Null' }}</p>
         
         <h3 class="text-lg font-medium mt-4">Order Information</h3>
         <p><strong>Status:</strong> {{ ucfirst($order->status) }}</p>
@@ -527,7 +527,7 @@
         <h3 class="text-lg font-medium mt-4">Shipping Details</h3>
         @if ($order->address)
             <p><strong>Address:</strong> {{ $order->address->street }}, {{ $order->address->city }}</p>
-            <p><strong>Pin Code:</strong> {{ $order->address->zip }}</p>
+            <p><strong>Pin Code:</strong> {{ $order->address->postal_code }}</p>
         @else
             <p>No address provided.</p>
         @endif
