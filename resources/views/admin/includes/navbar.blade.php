@@ -75,7 +75,7 @@
                 ></a>
               </div>
             </div>
-            <div class="dropdown-shortcuts-list scrollable-container">
+            {{-- <div class="dropdown-shortcuts-list scrollable-container">
               <div class="row row-bordered overflow-visible g-0">
                 <div class="dropdown-shortcuts-item col">
                   <span class="dropdown-shortcuts-icon rounded-circle mb-3">
@@ -140,7 +140,7 @@
                   <small>Useful Popups</small>
                 </div>
               </div>
-            </div>
+            </div> --}}
           </div>
         </li>
         <!-- Quick links -->
@@ -501,7 +501,7 @@
             e.preventDefault(); // Prevent page reload
 
             let token = localStorage.getItem("auth_token");
-            
+
             if (!token) {
                 swal("Error", "You are not logged in!", "error");
                 return;
