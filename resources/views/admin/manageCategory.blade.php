@@ -32,7 +32,7 @@
                                             <th>Title</th>
                                             <th>Image</th>
                                             <th>Description</th>
-                                            <th>Status</th>
+                                            {{-- <th>Status</th> --}}
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -46,7 +46,7 @@
                                                         alt="Category Image" width="100"></td>
                                                 <td>{{ $data->cat_description }}</td>
 
-                                                <td><span class="badge bg-label-primary me-1">{{ $data->status }}</span>
+                                                {{-- <td><smpan class="badge bg-label-primary me-1">{{ $data->status }}</span> --}}
                                                 </td>
                                                 <td>
                                                     <div class="dropdown">
