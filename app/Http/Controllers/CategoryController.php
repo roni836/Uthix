@@ -153,7 +153,6 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        // dd($request->file('cat_image'));
         if (!Auth::check()) {
             return response()->json([
                 'message' => 'Unauthorized. Please log in.'
