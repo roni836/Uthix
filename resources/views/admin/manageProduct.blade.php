@@ -31,7 +31,7 @@
                                             <th>Author</th>
                                             <th>ISBN</th>
                                             <th>Is Published</th>
-                                            <th>Status</th>
+                                            {{-- <th>Status</th> --}}
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -44,7 +44,7 @@
                                             <td>{{$data->author}}</td>
                                             <td>{{$data->isbn}}</td>
                                             <td>{{$data->is_published}}</td>
-                                            <td><span class="badge bg-label-primary me-1">Active</span></td>
+                                            {{-- <td><span class="badge bg-label-primary me-1">Active</span></td> --}}
                                             <td>
                                                 <div class="dropdown">
                                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow"

@@ -28,6 +28,7 @@
                                             <th>S.no</th>
                                             <th>Name</th>
                                             <th>Class</th>
+                                            <th>Email</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -45,6 +46,7 @@
                                                     <td>{{ $i + 1 }}.</td>
                                                     <td>{{ $item->user->name }}</td>
                                                     <td>{{ $item->class }}</td>
+                                                    <td>{{ $item->user->email }}</td>
                                                     <td><span class="badge bg-label-primary me-1">Active</span></td>
                                                     <td>
                                                         <div class="dropdown">

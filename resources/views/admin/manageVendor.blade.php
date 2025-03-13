@@ -20,11 +20,16 @@
                         <div class="card">
                             <h5 class="card-header">Manage Vendors</h5>
                             <div class="table-responsive text-nowrap">
-                                <table class="table table-hover">
+                                <table class="table table-hover text-capitalize">
                                     <thead>
                                         <tr>
                                             <th>S.no</th>
                                             <th>Name</th>
+                                            <th>Gender</th>
+                                            {{-- <th>dob</th> --}}
+                                            <th>Store name </th>
+                                            <th>Store Address</th>
+                                            {{-- <th>Status</th> --}}
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -40,8 +45,12 @@
                                                 <tr>
                                                     <td>{{ $i + 1 }}.</td>
                                                     <td>{{ $item->user->name }}</td>
-                                                    <td>{{ $item->class }}</td>
-                                                    <td><span class="badge bg-label-primary me-1">Active</span></td>
+                                                    <td>{{ $item->gender }}</td>
+                                                    {{-- <td>{{ $item->dob }}</td> --}}
+                                                    <td>{{ $item->store_name }}</td>
+                                                    <td>{{ $item->store_address }}</td>
+                                                    {{-- <td>{{ $item->class }}</td> --}}
+                                                    {{-- <td><span class="badge bg-label-primary me-1">Active</span></td> --}}
                                                     <td>
                                                         <div class="dropdown">
                                                             <button type="button"
