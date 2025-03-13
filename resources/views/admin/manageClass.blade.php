@@ -22,29 +22,32 @@
 
                         <!-- Hoverable Table rows -->
                         <div class="card">
-                            <h5 class="card-header">Manage Products</h5>
+                            <h5 class="card-header">Manage Classes</h5>
                             <div class="table-responsive text-nowrap">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Title</th>
-                                            <th>Author</th>
-                                            <th>ISBN</th>
-                                            <th>Is Published</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
+                                            <th>Name</th>
+                                            <th>Subject</th>
+                                            <th>Section</th>
+                                            <th>Capacity</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
-                                        @foreach($products as $data)
+                                        @foreach($classes as $data)
                                         <tr>
                                             <td>
-                                                <span class="fw-medium">{{$data->title}}</span>
+                                                <span class="fw-medium">{{$data->class_name}}</span>
                                             </td>
-                                            <td>{{$data->author}}</td>
-                                            <td>{{$data->isbn}}</td>
-                                            <td>{{$data->is_published}}</td>
-                                            <td><span class="badge bg-label-primary me-1">Active</span></td>
+                                            <td>
+                                                <span class="fw-medium">{{$data->subject->name}}</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-medium">{{$data->section}}</span>
+                                                <span class="fw-medium">{{$data->capacity}}</span>
+                                                <span class="fw-medium">{{$data->schedule}}</span>
+                                            </td>
                                             <td>
                                                 <div class="dropdown">
                                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
@@ -53,9 +56,7 @@
                                                     </button>
                                                     <div class="dropdown-menu">
                                                         <a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ti ti-pencil me-1"></i> Edit</a>
-                                                        <a class="dropdown-item" href="javascript:void(0);"><i
-                                                                class="ti ti-trash me-1"></i> Delete</a>
+                                                                class="ti ti-pencil me-1"></i>View detail</a>
                                                     </div>
                                                 </div>
                                             </td>

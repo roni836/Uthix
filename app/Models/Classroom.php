@@ -22,18 +22,17 @@ class Classroom extends Model
     //     return $this->belongsTo(Instructor::class);
     // }
     public function instructor()
-{
-    return $this->belongsTo(Instructor::class, 'instructor_id');
-}
+    {
+        return $this->belongsTo(Instructor::class, 'instructor_id');
+    }
 
-public function subject()
-{
-    return $this->belongsTo(Subject::class, 'subject_id');
-}
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class, 'subject_id');
+    }
 
-public function chapters()
-{
-    return $this->hasMany(Chapter::class, 'classroom_id');
-}
-
+    public function chapters()
+    {
+        return $this->hasMany(Chapter::class, 'classroom_id');
+    }
 }

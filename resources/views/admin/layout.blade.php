@@ -175,21 +175,13 @@
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="javascript:void(0);" class="menu-link">
-                                    <div data-i18n="Under working">Under working</div>
+                                <a href="{{route('manage.class')}}" class="menu-link ">
+                                    <div data-i18n="Class List">Class List</div>
                                 </a>
-                                {{-- <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                    <div data-i18n="Approve Courses">Approve Courses</div>
-                                </a>
-                                <ul class="menu-sub">
-                                    <li class="menu-item">
-                                        <a href="app-ecommerce-product-add.html" class="menu-link">
-                                            <div data-i18n="Add Product">Add Product</div>
-                                        </a>
-                                    </li>
+                                {{-- <ul class="menu-sub">
                                     <li class="menu-item">
                                         <a href="app-ecommerce-category-list.html" class="menu-link">
-                                            <div data-i18n="Category List">Category List</div>
+                                            <div data-i18n="Class List">Class List</div>
                                         </a>
                                     </li>
                                 </ul> --}}
