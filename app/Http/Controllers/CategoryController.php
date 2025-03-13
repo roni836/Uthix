@@ -122,7 +122,7 @@ class CategoryController extends Controller
     }
     public function getCategoriesByParent($id)
     {
-        $category = Category::where('parent_category_id', $id)->first();
+        $category = Category::where('parent_category_id', $id)->get();
         // dd($category);
         if (!$category) {
             return response()->json([
