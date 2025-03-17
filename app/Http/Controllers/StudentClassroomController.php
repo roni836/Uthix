@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class StudentClassroomController extends Controller
 {
-    public function aindex()
+    public function index()
     {
         $user = Auth::user();
         $student = Student::where('user_id', $user->id)->first();
