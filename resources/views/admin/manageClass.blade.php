@@ -31,6 +31,7 @@
                                             <th>Subject</th>
                                             <th>Section</th>
                                             <th>Capacity</th>
+                                            <th>Scchedule</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -44,10 +45,19 @@
                                                 <span class="fw-medium">{{$data->subject->name}}</span>
                                             </td>
                                             <td>
-                                                <span class="fw-medium">{{$data->section}}</span>
-                                                <span class="fw-medium">{{$data->capacity}}</span>
-                                                <span class="fw-medium">{{$data->schedule}}</span>
+                                                <span class="fw-medium">{{$data->section ?? 'NUll'}}</span>
+                                               
                                             </td>
+
+                                             <td>
+                                                <span class="fw-medium">{{$data->capacity ?? 'NULL'}}</span>
+                                            </td>
+
+                                             <td>
+                                                <span class="fw-medium">{{$data->schedule ?? 'NULL'}}</span>
+                                            </td>
+
+                                            
                                             <td>
                                                 <div class="dropdown">
                                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow"

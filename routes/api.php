@@ -38,11 +38,11 @@ Route::get('/show-category/{id}', [CategoryController::class, 'show']);
 Route::get('products', [ProductController::class, 'index']);
 Route::get('/products/view/{id}', [ProductController::class, 'productView']);
 
-Route::get('/parent-categories', [CategoryController::class, 'getParentCategories']);
 Route::get('/categories/{id}', [CategoryController::class, 'getCategoriesByParent']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/manage-coupon', [CouponController::class,'manageCoupon']);
+    Route::get('/parent-categories', [CategoryController::class, 'getParentCategories']);
 
     //  (accessible to all authenticated users)
     Route::post('/logout', [AuthController::class, 'logout']);
