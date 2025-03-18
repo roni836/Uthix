@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('assignment_uploads', function (Blueprint $table) {
             $table->id();
     $table->foreignId('announcement_id')->constrained()->onDelete('cascade');
-    $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
+    $table->foreignId('student_id')->constrained()->onDelete('cascade');
     $table->foreignId('classroom_id')->constrained()->onDelete('cascade');
     $table->timestamp('submitted_at')->nullable();
     $table->enum('status', ['pending', 'graded', 'rejected'])->default('pending');
