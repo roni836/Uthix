@@ -76,10 +76,10 @@
                         <h3 class="mb-6">Sign In</h3>
                         @csrf
                         <div class="row mb-6">
-                            <label class="col-sm-3 col-form-label" for="form-alignment-username">Username</label>
+                            <label class="col-sm-3 col-form-label" for="form-alignment-username">Email</label>
                             <div class="col-sm-9">
                                 <input type="email" name="email" id="form-alignment-username" class="form-control"
-                                    placeholder="john.doe" />
+                                    placeholder="admin@demo.com" />
                             </div>
                         </div>
 
