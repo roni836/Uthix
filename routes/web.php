@@ -22,10 +22,7 @@ Route::get('/login', function () {
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
-
-        Route::get('/', function () {
-            return view('admin.index');
-        })->name('admin.dashboard');
+        Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('/manage-class', [AdminController::class, 'manageClass'])->name('manage.class');
         Route::get('/manage-student', [AdminController::class, 'manageStudent'])->name('manage.student');
         Route::get('/insert-student', [AdminController::class, 'insertStudent'])->name('insert.student');
