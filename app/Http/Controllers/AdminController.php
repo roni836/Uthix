@@ -12,12 +12,43 @@ use App\Models\Product;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        return view('admin.index');
+        $orders = Order::with('user', 'coupon', 'address')->get();
+
+        $orderStats = [
+            'total_orders' => $orders->count(),
+            'pending' => $orders->where('status', 'pending')->count(),
+            'completed' => $orders->where('status', 'completed')->count(),
+            'cancelled' => $orders->where('status', 'canceled')->count(),
+        ];
+
+        // $dailyOrders = Order::select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
+        // ->groupBy('date')
+        // ->orderBy('date', 'ASC')
+        // ->get();
+
+        // $dailyOrders = Order::select(
+        //     DB::raw('DAYNAME(created_at) as day'),
+        //     DB::raw('COUNT(*) as count')
+        // )
+        //     ->groupBy('day')
+        //     ->orderByRaw("FIELD(DAYNAME(created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
+        //     ->get();
+
+        $dailyOrders = Order::select(
+            DB::raw('DAYNAME(created_at) as day'),
+            DB::raw('COUNT(*) as count')
+        )
+            ->groupBy('day')
+            ->orderByRaw("FIELD(DAYNAME(created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
+            ->get();
+
+        return view('admin.index', compact('orders', 'orderStats', 'dailyOrders'));
     }
 
     public function manageStudent()
