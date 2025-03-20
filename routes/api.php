@@ -11,6 +11,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -41,6 +42,10 @@ Route::get('/products/view/{id}', [ProductController::class, 'productView']);
 Route::get('/categories/{id}', [CategoryController::class, 'getCategoriesByParent']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::put('/update-token', [NotificationController::class, 'updateDeviceToken']);
+    Route::post('/send-notification', [NotificationController::class, 'sendNotification']);
+
     Route::get('/manage-coupon', [CouponController::class,'manageCoupon']);
     Route::get('/parent-categories', [CategoryController::class, 'getParentCategories']);
 
@@ -173,3 +178,6 @@ Route::get('/zoom/callback', [ZoomController::class, 'handleZoomCallback']);
 // Route::get('/zoom/meetings/{meetingId}', [ZoomController::class, 'shareMeeting']);
 
 Route::get('/zoom/create-meeting', [ZoomController::class, 'createMeeting']);
+
+
+
