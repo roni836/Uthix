@@ -24,6 +24,7 @@ class User extends Authenticatable
         'phone',
         'role',
         'password',
+        'fcm_token',
         'is_verified',
     ];
 
