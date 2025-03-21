@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/all-orders', [AdminController::class, 'allOrders'])->name('orders.all');
         Route::get('/admin-orders', [AdminController::class, 'adminOrders'])->name('admin.orders');
         Route::get('/admin/orders/{id}', [AdminController::class, 'orderDetails'])->name('orders.order-Details');
+        // Route::get('/api/weekly-orders', [AdminController::class, 'getWeeklyOrders']);
 
     });
 });
