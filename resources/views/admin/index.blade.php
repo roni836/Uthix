@@ -461,7 +461,7 @@
                                     </div>
                                     <div class="card-body">
                                         <p class="mb-2"><strong>Instructor:</strong>
-                                            {{ $class->instructor->user->name }}</p>
+                                            {{ $class->instructor->name }}</p>
                                         <p class="mb-2"><strong>Capacity:</strong> {{ $class->capacity }} students</p>
                                         <p class="mb-2"><strong>Schedule:</strong>
                                             {{ \Carbon\Carbon::parse($class->schedule)->format('d M, Y h:i A') }}</p>
