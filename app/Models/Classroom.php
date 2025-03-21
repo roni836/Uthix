@@ -23,7 +23,7 @@ class Classroom extends Model
     // }
     public function instructor()
     {
-        return $this->belongsTo(Instructor::class, 'instructor_id');
+        return $this->belongsTo(User::class, 'instructor_id')->select('id', 'name');;
     }
 
     public function subject()

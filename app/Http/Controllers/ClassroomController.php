@@ -64,7 +64,7 @@ class ClassroomController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
+        $instructorId = Instructor::where('user_id', auth()->id())->value('id');
         $validator = Validator::make($request->all(), [
             'instructor_id' => 'required|exists:instructors,id',
             'class_name' => 'required|string|max:255',
@@ -85,7 +85,7 @@ class ClassroomController extends Controller
         }
 
         $classroom = Classroom::create([
-            'instructor_id' => $request->instructor_id,
+            'instructor_id' => $instructorId,
             'class_name' => $request->class_name,
             'section' => $request->section,
             'subject_id' => $request->subject_id,
