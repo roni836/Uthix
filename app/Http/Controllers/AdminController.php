@@ -56,13 +56,11 @@ class AdminController extends Controller
         //     ->orderByRaw("FIELD(DAYNAME(created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
         //     ->get();
 
-        $dailyOrders = Order::select(
-            DB::raw('DAYNAME(created_at) as day'),
-            DB::raw('COUNT(*) as count')
-        )
-            ->groupBy('day')
-            ->orderByRaw("FIELD(DAYNAME(created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
-            ->get();
+        $dailyOrders = DB::table('orders')
+    ->selectRaw('DAYNAME(created_at) as day, COUNT(*) as count, MIN(created_at) as min_created_at')
+    ->groupBy(DB::raw('DAYNAME(created_at)'))
+    ->orderByRaw("FIELD(DAYNAME(min_created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
+    ->get();
             $totalSales = OrderItem::sum('total_price') / 1000;
 
             $totalOrders = Order::count();
