@@ -29,7 +29,7 @@ class AdminController extends Controller
         $previousTotalUsers = User::whereMonth('created_at', now()->subMonth()->month)->count();
 
         // Calculate user growth percentage
-        $userGrowth = $previousTotalUsers > 0 
+        $userGrowth = $previousTotalUsers > 0
             ? number_format((($totalUsers - $previousTotalUsers) / $previousTotalUsers) * 100, 2)
             : 0;
         // Percentage calculations
@@ -56,48 +56,63 @@ class AdminController extends Controller
         //     ->orderByRaw("FIELD(DAYNAME(created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
         //     ->get();
 
-        $dailyOrders = DB::table('orders')
-    ->selectRaw('DAYNAME(created_at) as day, COUNT(*) as count, MIN(created_at) as min_created_at')
-    ->groupBy(DB::raw('DAYNAME(created_at)'))
-    ->orderByRaw("FIELD(DAYNAME(min_created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
-    ->get();
-            $totalSales = OrderItem::sum('total_price') / 1000;
-
-            $totalOrders = Order::count();
-    
-            $totalUsers = User::count();
-    
-            $orderPercentage = ($totalOrders > 0) ? round(($totalOrders / max($totalOrders + $totalUsers, 1)) * 100, 1) : 0;
-            $userPercentage = ($totalUsers > 0) ? round(($totalUsers / max($totalOrders + $totalUsers, 1)) * 100, 1) : 0;
-    
-            $lastMonthSales = OrderItem::whereMonth('created_at', now()->subMonth()->month)->sum('total_price') / 1000;
-            $salesGrowth = ($lastMonthSales > 0) 
-                ? round((($totalSales - $lastMonthSales) / $lastMonthSales) * 100, 1) 
-                : 0;
-
-
-                // ✅ Total Sales This Month
-    $totalSalesThisMonth = OrderItem::whereMonth('created_at', Carbon::now()->month)
-    ->whereYear('created_at', Carbon::now()->year)
-    ->sum('total_price');
-
-$daysPassed = Carbon::now()->day;
-$averageDailySales = ($daysPassed > 0) ? round($totalSalesThisMonth / $daysPassed, 2) : 0;
-
-
-//upcoming classes
-$upcomingClasses = Classroom::with(['instructor', 'subject'])
-        ->where('schedule', '>', now())
-        ->where('status', 'active')
-        ->orderBy('schedule', 'asc')
-        ->take(3) 
+        $dailyOrders = DB::table(DB::raw("(SELECT DAYNAME(created_at) as day, COUNT(*) as count, MIN(created_at) as min_created_at FROM orders GROUP BY DAYNAME(created_at)) as subquery"))
+        ->orderByRaw("FIELD(DAYNAME(min_created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
         ->get();
-        return view('admin.index', compact('orders', 'orderStats', 'dailyOrders','totalInstructors','totalStudents','totalSellers','instructorPercentage','studentPercentage','sellerPercentage','totalUsers','userGrowth','totalSales',
+    
+        $totalSales = OrderItem::sum('total_price') / 1000;
+
+        $totalOrders = Order::count();
+
+        $totalUsers = User::count();
+
+        $orderPercentage = ($totalOrders > 0) ? round(($totalOrders / max($totalOrders + $totalUsers, 1)) * 100, 1) : 0;
+        $userPercentage = ($totalUsers > 0) ? round(($totalUsers / max($totalOrders + $totalUsers, 1)) * 100, 1) : 0;
+
+        $lastMonthSales = OrderItem::whereMonth('created_at', now()->subMonth()->month)->sum('total_price') / 1000;
+        $salesGrowth = ($lastMonthSales > 0)
+            ? round((($totalSales - $lastMonthSales) / $lastMonthSales) * 100, 1)
+            : 0;
+
+
+        // ✅ Total Sales This Month
+        $totalSalesThisMonth = OrderItem::whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->sum('total_price');
+
+        $daysPassed = Carbon::now()->day;
+        $averageDailySales = ($daysPassed > 0) ? round($totalSalesThisMonth / $daysPassed, 2) : 0;
+
+
+        //upcoming classes
+        $upcomingClasses = Classroom::with(['instructor', 'subject'])
+            ->where('schedule', '>', now())
+            ->where('status', 'active')
+            ->orderBy('schedule', 'asc')
+            ->take(3)
+            ->get();
+        return view('admin.index', compact(
+            'orders',
+            'orderStats',
+            'dailyOrders',
+            'totalInstructors',
+            'totalStudents',
+            'totalSellers',
+            'instructorPercentage',
+            'studentPercentage',
+            'sellerPercentage',
+            'totalUsers',
+            'userGrowth',
+            'totalSales',
             'totalOrders',
             'totalUsers',
             'orderPercentage',
             'userPercentage',
-            'salesGrowth','totalSalesThisMonth', 'averageDailySales','upcomingClasses'));
+            'salesGrowth',
+            'totalSalesThisMonth',
+            'averageDailySales',
+            'upcomingClasses'
+        ));
     }
 
     // public function getWeeklyOrders()
@@ -110,20 +125,20 @@ $upcomingClasses = Classroom::with(['instructor', 'subject'])
     //     ->groupBy('date')
     //     ->orderBy('date', 'ASC')
     //     ->get();
-    
+
     //     return response()->json($weeklyOrders);
     // }
-    
+
 
     public function manageStudent()
     {
         $users = Student::with('user')->get();
-        return view('admin.manageStudent', compact('users'));
+        return view('admin.student.manageStudent', compact('users'));
     }
 
     public function insertStudent()
     {
-        return view('admin.insertStudent');
+        return view('admin.student.insertStudent');
     }
 
     public function manageVendor()
@@ -159,13 +174,16 @@ $upcomingClasses = Classroom::with(['instructor', 'subject'])
     public function insertProduct()
     {
         $category = Category::get();
-        return view('admin.insertProduct', compact('category'));
+        return view('admin.products.insertProduct', compact('category'));
     }
 
     public function manageProduct()
     {
-        $products = Product::get();
-        return view('admin.manageProduct', compact('products'));
+        $perPage = 8; 
+        $products = Product::simplePaginate($perPage); 
+        $totalPages = ceil(Product::count() / $perPage);
+
+        return view('admin.products.manageProduct', compact('products','totalPages'));
     }
     public function manageCoupon()
     {
@@ -194,7 +212,7 @@ $upcomingClasses = Classroom::with(['instructor', 'subject'])
     public function allOrders()
     {
         $orders = Order::with('user', 'coupon', 'address')->get();
-        return view('admin.orderList', compact('orders'));
+        return view('admin.order.orderList', compact('orders'));
     }
 
     public function orderDetails($id)
@@ -224,4 +242,15 @@ $upcomingClasses = Classroom::with(['instructor', 'subject'])
         $classes = Classroom::with('instructor', 'subject', 'chapters')->get();
         return view('admin.manageClass', compact('classes'));
     }
+
+    public function toggleProductStatus($id)
+{
+    $data = Product::findOrFail($id);
+    $data->is_published = !$data->is_published;
+    $data->save();
+    session()->flash('success', 'Product status updated successfully!');
+
+    return back();
+}
+
 }
