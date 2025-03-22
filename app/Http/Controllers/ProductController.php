@@ -296,7 +296,7 @@ class ProductController extends Controller
 
     public function getproductByCategories(Request $request, $id)
     {
-        $query = Product::with('firstImage')->where('category_id', $id);
+        $query = Product::with('firstImage')->where('category_id', $id)->where('is_published', true);;
 
         // Price range filters
         $priceRanges = [
