@@ -167,7 +167,7 @@ class AdminController extends Controller
     {
         $data['category'] = Category::get();
         $data['categories'] = Category::whereNull('parent_category_id')->get();
-        return view('admin.manageCategory', $data);
+        return view('admin.category.manageCategory', $data);
     }
 
 
