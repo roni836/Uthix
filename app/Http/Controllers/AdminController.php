@@ -167,7 +167,7 @@ class AdminController extends Controller
     {
         $data['category'] = Category::get();
         $data['categories'] = Category::whereNull('parent_category_id')->get();
-        return view('admin.manageCategory', $data);
+        return view('admin.category.manageCategory', $data);
     }
 
 
@@ -222,20 +222,20 @@ class AdminController extends Controller
     }
 
 
-    public function adminOrders()
-    {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->back()->json([
-                'status' => false,
-                'message' => 'Unauthorized',
+    // public function adminOrders()
+    // {
+    //     $user = Auth::user();
+    //     if (!$user) {
+    //         return redirect()->back()->json([
+    //             'status' => false,
+    //             'message' => 'Unauthorized',
 
-            ], 401);
-        }
-        $orders = Order::where('user_id', $user->id)->where('is_ordered', true)->with('orderItems.product')->get();
+    //         ], 401);
+    //     }
+    //     $orders = Order::where('user_id', $user->id)->where('is_ordered', true)->with('orderItems.product')->get();
 
-        return view('admin.adminOrders', compact('orders'));
-    }
+    //     return view('admin.adminOrders', compact('orders'));
+    // }
 
     public function manageClass()
     {
