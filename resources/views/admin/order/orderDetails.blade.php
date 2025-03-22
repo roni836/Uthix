@@ -549,7 +549,7 @@
                                 <tbody>
                                     @foreach ($order->orderItems as $item)
                                         <tr>
-                                            <td class="border p-2">{{ $item->product->name }}</td>
+                                            <td class="border p-2">{{ $item->product->title }}</td>
                                             <td class="border p-2">{{ $item->quantity }}</td>
                                             <td class="border p-2">₹{{ number_format($item->price, 2) }}</td>
                                             <td class="border p-2">₹{{ number_format($item->total_price, 2) }}</td>
