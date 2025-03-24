@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewMessage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\TwilioService;
@@ -129,7 +130,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'fcm_token' => 'required|string|max:255',
+            // 'fcm_token' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
             'role' => 'required|string|in:student,instructor,seller,admin',
@@ -147,11 +148,13 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $role,
-            'fcm_token' => $request->fcm_token, 
+            'fcm_token' => $request->fcm_token ?? '0123456789', 
         ]);
 
         // Generate authentication token
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        // broadcast(new NewMessage('Registration done'))->toOthers();
 
         return response()->json([
             'message' => 'User registered successfully!',
@@ -160,6 +163,7 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'role' => $role
         ], 201);
+
     }
 
     public function login(Request $request)
