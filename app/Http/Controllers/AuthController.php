@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Models\PasswordReset;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -108,7 +111,7 @@ class AuthController extends Controller
     //         'access_token' => $token,
     //         'token_type' => 'Bearer',
     //     ]);
-        
+
     // }
 
     // // Get Authenticated User
@@ -140,14 +143,14 @@ class AuthController extends Controller
         }
 
         // Set the default role to 'student' if no role is provided
-        $role = $request->role ?? 'student'; 
+        $role = $request->role ?? 'student';
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $role,
-            'fcm_token' => $request->fcm_token ?? '0123456789', 
+            'fcm_token' => $request->fcm_token ?? '0123456789',
         ]);
 
         // Generate authentication token
@@ -162,7 +165,6 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'role' => $role
         ], 201);
-
     }
 
     public function login(Request $request)
@@ -179,11 +181,11 @@ class AuthController extends Controller
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-    
+
         // Add role-based response
         $role = $user->role;
         $token = $user->createToken('auth_token')->plainTextToken;
-    
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
@@ -191,37 +193,37 @@ class AuthController extends Controller
         ]);
     }
     public function adminLogin(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'email' => 'required|string|email|max:255|exists:users,email',
-        'password' => 'required|string|min:6',
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255|exists:users,email',
+            'password' => 'required|string|min:6',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json(['error' => $validator->errors()], 422);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $credentials = $request->only('email', 'password');
+
+        // Check if the user exists
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user || $user->role !== 'admin' || !Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['error' => 'Unauthorized login attempt'], 401);
+        }
+
+        // Log in the admin and generate token
+        Auth::login($user);
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login successful',
+            'token' => $token
+        ]);
     }
 
-    $credentials = $request->only('email', 'password');
 
-    // Check if the user exists
-    $user = User::where('email', $credentials['email'])->first();
-
-    if (!$user || $user->role !== 'admin' || !Hash::check($credentials['password'], $user->password)) {
-        return response()->json(['error' => 'Unauthorized login attempt'], 401);
-    }
-
-    // Log in the admin and generate token
-    Auth::login($user);
-    $token = $user->createToken('auth_token')->plainTextToken;
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Login successful',
-        'token' => $token
-    ]);
-}
-
-    
     // Get Authenticated User
     public function profile(Request $request)
     {
@@ -233,7 +235,7 @@ class AuthController extends Controller
     //     $request->user()->tokens()->delete();
     //     return response()->json(['message' => 'User logged out successfully']);
     // }
-    
+
     public function logout(Request $request)
     {
         // Delete the token used to authenticate the request
@@ -243,4 +245,86 @@ class AuthController extends Controller
         return response()->json(['message' => 'User logged out successfully']);
     }
 
+    public function forgotPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Email does not exist'], 400);
+        }
+
+        $email = $request->email;
+        $otp = rand(100000, 999999); // Generate 6-digit OTP
+
+        // Store OTP in the database
+        PasswordReset::updateOrCreate(
+            ['email' => $email],
+            ['otp' => $otp, 'created_at' => Carbon::now()]
+        );
+
+        // Send OTP to email
+        Mail::raw("Your OTP for password reset is: $otp", function ($message) use ($email) {
+            $message->to($email)->subject('Password Reset OTP');
+        });
+
+        return response()->json(['message' => 'OTP sent to your email'], 200);
+    }
+
+    // Step 2: Verify OTP
+    public function verifyOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+            'otp' => 'required|digits:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Invalid OTP or email'], 400);
+        }
+
+        $otpData = PasswordReset::where('email', $request->email)
+            ->where('otp', $request->otp)
+            ->where('created_at', '>', Carbon::now()->subMinutes(10)) // OTP valid for 10 mins
+            ->first();
+
+        if (!$otpData) {
+            return response()->json(['message' => 'Invalid or expired OTP'], 400);
+        }
+
+        return response()->json(['message' => 'OTP verified successfully! Proceed to reset password'], 200);
+    }
+
+    // Step 3: Reset Password
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+            'otp' => 'required|digits:6',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Invalid input'], 400);
+        }
+
+        $otpData = PasswordReset::where('email', $request->email)
+            ->where('otp', $request->otp)
+            ->first();
+
+        if (!$otpData) {
+            return response()->json(['message' => 'Invalid OTP'], 400);
+        }
+
+        // Update the password
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Delete the OTP record
+        $otpData->delete();
+
+        return response()->json(['message' => 'Password reset successful!'], 200);
+    }
 }
