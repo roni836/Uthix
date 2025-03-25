@@ -178,6 +178,9 @@
                                 <a href="{{ route('manage.class') }}" class="menu-link ">
                                     <div data-i18n="Class List">Class List</div>
                                 </a>
+                                <a href="{{ route('manage.plan') }}" class="menu-link ">
+                                    <div data-i18n="Plan List">Plan List</div>
+                                </a>
                                 {{-- <ul class="menu-sub">
                                     <li class="menu-item">
                                         <a href="app-ecommerce-category-list.html" class="menu-link">

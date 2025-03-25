@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Classroom;
 use App\Models\Instructor;
 use App\Models\Order;
+use App\Models\Plan;
 use App\Models\Product;
 use App\Models\Student;
 use App\Models\User;
@@ -250,6 +251,18 @@ class AdminController extends Controller
         return view('admin.manageClass', compact('classes'));
     }
 
+    public function managePlan()
+    {
+        $data['plans'] = Plan::all();
+        return view('admin.plan.managePlan', $data);
+    }
+
+
+    public function insertPlan()
+    {
+        return view('admin.plan.insertPlan');
+    }
+
     public function toggleProductStatus($id)
 {
     $data = Product::findOrFail($id);
@@ -258,6 +271,8 @@ class AdminController extends Controller
     session()->flash('success', 'Product status updated successfully!');
 
     return back();
-}
+} 
+
+
 
 }

@@ -14,6 +14,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShipRocketController;
@@ -42,6 +43,7 @@ Route::get('/products/view/{id}', [ProductController::class, 'productView']);
 Route::get('/categories/{id}', [CategoryController::class, 'getCategoriesByParent']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/plans/student', [PlanController::class, 'showPlanForStudent']);
 
     Route::put('/update-token', [NotificationController::class, 'updateDeviceToken']);
     Route::post('/send-notification', [NotificationController::class, 'sendNotification']);
@@ -101,7 +103,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/admin-student', [StudentController::class, 'adminStore'])->name('admin.student.store');
         Route::post('/admin-instructor', [InstructorController::class, 'adminStore'])->name('admin.instructor.store');
         Route::post('/admin-vendor', [VendorController::class, 'adminStore'])->name('admin.vendor.store');
-    });
+        Route::apiResource('plans', PlanController::class);});
 
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
         Route::apiResource('student', StudentController::class);

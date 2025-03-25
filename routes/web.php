@@ -34,6 +34,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/insert-product', [AdminController::class, 'insertProduct'])->name('insert.product');
         Route::get('/manage-product', [AdminController::class, 'manageProduct'])->name('manage.product');
         Route::get('/manage-coupon', [AdminController::class, 'manageCoupon'])->name('manage.coupon');
+
+        Route::get('/manage-plan', [AdminController::class, 'managePlan'])->name('manage.plan');
+        Route::get('/insert-plan', [AdminController::class, 'insertPlan'])->name('insert.plan');
+        // Route::put('/toggle-publish/{id}', [AdminController::class, 'togglePlanStatus'])->name('toggle.publish');
+
+
         Route::get('/insert-coupon', [AdminController::class, 'insertCoupon'])->name('insert.coupon');
         Route::get('/all-orders', [AdminController::class, 'allOrders'])->name('orders.all');
         // Route::get('/admin-orders', [AdminController::class, 'adminOrders'])->name('admin.orders');
