@@ -248,46 +248,41 @@ class AuthController extends Controller
 
     public function forgotPassword(Request $request)
     {
-        try {
-            // Validate input
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email|exists:users,email',
-            ]);
+        // Validate input
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 400);
-            }
-
-            $email = $request->email;
-
-            // Check if a recent OTP exists (rate limiting - optional)
-            $existingOTP = PasswordReset::where('email', $email)
-                ->where('created_at', '>=', Carbon::now()->subMinutes(2)) // Prevent multiple requests within 2 minutes
-                ->first();
-
-            if ($existingOTP) {
-                return response()->json(['message' => 'OTP already sent. Please wait before requesting again.'], 429);
-            }
-
-            // Generate 6-digit OTP
-            $otp = rand(100000, 999999);
-
-            // Store OTP in the database
-            PasswordReset::updateOrCreate(
-                ['email' => $email],
-                ['otp' => $otp, 'created_at' => Carbon::now()]
-            );
-
-            // Send OTP to email
-            Mail::raw("Your OTP for password reset is: $otp", function ($message) use ($email) {
-                $message->to($email)->subject('Password Reset OTP');
-            });
-
-            return response()->json(['message' => 'OTP sent to your email'], 200);
-        } catch (\Exception $e) {
-            Log::error('Forgot Password Error: ' . $e->getMessage());
-            return response()->json(['message' => 'Something went wrong. Please try again later.'], 500);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
         }
+
+        $email = $request->email;
+
+        // Check if a recent OTP exists (rate limiting - optional)
+        $existingOTP = PasswordReset::where('email', $email)
+            ->where('created_at', '>=', Carbon::now()->subMinutes(2)) // Prevent multiple requests within 2 minutes
+            ->first();
+
+        if ($existingOTP) {
+            return response()->json(['message' => 'OTP already sent. Please wait before requesting again.'], 429);
+        }
+
+        // Generate 6-digit OTP
+        $otp = rand(100000, 999999);
+
+        // Store OTP in the database
+        PasswordReset::updateOrCreate(
+            ['email' => $email],
+            ['otp' => $otp, 'created_at' => Carbon::now()]
+        );
+
+        // Send OTP to email
+        Mail::raw("Your OTP for password reset is: $otp", function ($message) use ($email) {
+            $message->to($email)->subject('Password Reset OTP');
+        });
+
+        return response()->json(['message' => 'OTP sent to your email'], 200);
     }
 
     // Step 2: Verify OTP
@@ -299,7 +294,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['message' => 'Invalid OTP or email'], 400);
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
         $otpData = PasswordReset::where('email', $request->email)
@@ -324,7 +319,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['message' => 'Invalid input'], 400);
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
         $otpData = PasswordReset::where('email', $request->email)
