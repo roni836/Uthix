@@ -102,8 +102,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('subject', SubjectController::class);
         Route::post('/admin-student', [StudentController::class, 'adminStore'])->name('admin.student.store');
         Route::post('/admin-instructor', [InstructorController::class, 'adminStore'])->name('admin.instructor.store');
+        Route::put('/update-status/{id}', [AuthController::class, 'updateStatus'])->name('status.update');
         Route::post('/admin-vendor', [VendorController::class, 'adminStore'])->name('admin.vendor.store');
-        Route::apiResource('plans', PlanController::class);});
+        Route::apiResource('plans', PlanController::class);
+    });
 
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
         Route::apiResource('student', StudentController::class);
@@ -154,10 +156,8 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-
 Route::get('/categories/{id}/products', [ProductController::class, 'getproductByCategories']);
 Route::get('/products/filter', [ProductController::class, 'filterProducts']);
-
 
 // shiprocket apis not tested
 

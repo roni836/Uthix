@@ -177,10 +177,16 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
+
         $credentials = $request->only('email', 'password');
         $user = User::where('email', $credentials['email'])->first();
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        // Check if user is an instructor and if they are verified
+        if ($user->role === 'instructor' && !$user->is_verified) {
+            return response()->json(['error' => 'Your account is not verified. Please contact support.'], 403);
         }
 
         // Add role-based response
@@ -339,5 +345,26 @@ class AuthController extends Controller
         $otpData->delete();
 
         return response()->json(['message' => 'Password reset successful!'], 200);
+    }
+
+    public function updateStatus(Request $request, int $id)
+    {
+        $data = User::find($id);
+        if ($data) {
+            $status = $data->update([
+                'is_verified' => $request->status,
+            ]);
+            // dd($data);
+            if ($status) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => "Updated Successfully"
+                ], 200);
+            }
+        }
+        return response()->json([
+            'status' => 400,
+            'message' => "Error Updating Status"
+        ], 400);
     }
 }
