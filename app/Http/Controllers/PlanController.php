@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\plan;
+use App\Models\Plan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -36,7 +36,7 @@ class PlanController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-        $plan = plan::create([
+        $plan = Plan::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
