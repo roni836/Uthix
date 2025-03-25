@@ -8,6 +8,7 @@ use App\Services\TwilioService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
@@ -247,16 +248,28 @@ class AuthController extends Controller
 
     public function forgotPassword(Request $request)
     {
+        // Validate input
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['message' => 'Email does not exist'], 400);
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
         $email = $request->email;
-        $otp = rand(100000, 999999); // Generate 6-digit OTP
+
+        // Check if a recent OTP exists (rate limiting - optional)
+        $existingOTP = PasswordReset::where('email', $email)
+            ->where('created_at', '>=', Carbon::now()->subMinutes(2)) // Prevent multiple requests within 2 minutes
+            ->first();
+
+        if ($existingOTP) {
+            return response()->json(['message' => 'OTP already sent. Please wait before requesting again.'], 429);
+        }
+
+        // Generate 6-digit OTP
+        $otp = rand(100000, 999999);
 
         // Store OTP in the database
         PasswordReset::updateOrCreate(
@@ -281,7 +294,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['message' => 'Invalid OTP or email'], 400);
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
         $otpData = PasswordReset::where('email', $request->email)
@@ -306,7 +319,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['message' => 'Invalid input'], 400);
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
         $otpData = PasswordReset::where('email', $request->email)
