@@ -150,7 +150,9 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API is working!']);
 });
 
-
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 
 Route::get('/categories/{id}/products', [ProductController::class, 'getproductByCategories']);
