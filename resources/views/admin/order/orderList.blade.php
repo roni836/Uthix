@@ -29,7 +29,7 @@
                                         {{-- {{dd($orders)}} --}}
                                         @foreach($orders as $key => $order)
                                         <tr>
-                                            <td class="">{{ $key + 1  }}</td>
+                                            <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $key + 1 }}</td>  
                                             <td class="">{{ $order->order_number }}</td>
                                             <td class="">{{ $order->user->name }}</td>
                                             <td class="">₹{{ number_format($order->total_amount, 2) }}</td>
@@ -64,7 +64,19 @@
                         
                         <!--/ Hoverable Table rows -->
 
-
+                        <div class="container mt-3 mb-3"> 
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-lg-6 d-flex justify-content-lg-start justify-content-center mb-2 mb-lg-0">
+                                    {{ $orders->links() }}
+                                </div>
+                                
+                                <div class="col-lg-6 text-lg-end text-center">
+                                    Page {{ $orders->currentPage() }} of {{ $totalPages }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+
                   
 @endsection
