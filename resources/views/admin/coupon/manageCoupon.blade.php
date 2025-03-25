@@ -13,6 +13,7 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>code</th>
                                             <th>discount_type</th>
                                             <th>discount_value</th>
@@ -22,8 +23,9 @@
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
-                                        @foreach($coupons as $data)
+                                        @foreach($coupons as $key=>$data)
                                         <tr>
+                                            <td>{{ ($coupons->currentPage() - 1) * $coupons->perPage() + $key + 1 }}</td>  
                                             <td>
                                                 <span class="fw-medium">{{$data->code}}</span>
                                             </td>
@@ -52,7 +54,17 @@
                             </div>
                         </div>
                         <!--/ Hoverable Table rows -->
-
+                        <div class="container mt-3 mb-3"> 
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-lg-6 d-flex justify-content-lg-start justify-content-center mb-2 mb-lg-0">
+                                    {{ $coupons->links() }}
+                                </div>
+                                
+                                <div class="col-lg-6 text-lg-end text-center">
+                                    Page {{ $coupons->currentPage() }} of {{ $totalPages }}
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                     <!-- / Content -->

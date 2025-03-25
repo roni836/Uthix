@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Classroom;
 use App\Models\Instructor;
 use App\Models\Order;
+use App\Models\Plan;
 use App\Models\Product;
 use App\Models\Student;
 use App\Models\User;
@@ -187,8 +188,12 @@ class AdminController extends Controller
     }
     public function manageCoupon()
     {
-        $coupons = Coupon::get();
-        return view('admin.coupon.manageCoupon', compact('coupons'));
+        $perPage = 8; 
+
+        $coupons = Coupon::simplePaginate($perPage);
+        $totalPages = ceil(Product::count() / $perPage);
+
+        return view('admin.coupon.manageCoupon', compact('coupons','totalPages'));
     }
     public function insertCoupon()
     {
@@ -211,8 +216,11 @@ class AdminController extends Controller
     // }
     public function allOrders()
     {
-        $orders = Order::with('user', 'coupon', 'address')->get();
-        return view('admin.order.orderList', compact('orders'));
+        $perPage = 8; 
+        $orders = Order::with('user', 'coupon', 'address')->simplePaginate($perPage);
+        $totalPages = ceil(Product::count() / $perPage);
+
+        return view('admin.order.orderList', compact('orders','totalPages'));
     }
 
     public function orderDetails($id)
@@ -243,6 +251,18 @@ class AdminController extends Controller
         return view('admin.manageClass', compact('classes'));
     }
 
+    public function managePlan()
+    {
+        $data['plans'] = Plan::all();
+        return view('admin.plan.managePlan', $data);
+    }
+
+
+    public function insertPlan()
+    {
+        return view('admin.plan.insertPlan');
+    }
+
     public function toggleProductStatus($id)
 {
     $data = Product::findOrFail($id);
@@ -251,6 +271,8 @@ class AdminController extends Controller
     session()->flash('success', 'Product status updated successfully!');
 
     return back();
-}
+} 
+
+
 
 }
