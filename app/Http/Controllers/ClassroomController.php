@@ -66,7 +66,7 @@ class ClassroomController extends Controller
     {
         $instructorId = Instructor::where('user_id', auth()->id())->value('id');
         $validator = Validator::make($request->all(), [
-            'instructor_id' => 'required|exists:instructors,id',
+            // 'instructor_id' => 'required|exists:instructors,id',
             'class_name' => 'required|string|max:255',
             'section' => 'required|string|max:255',
             'subject_id' => 'required|exists:subjects,id',
