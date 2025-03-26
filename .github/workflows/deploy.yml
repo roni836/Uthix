@@ -13,17 +13,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup SSH Key
+      - name: Setup SSH Key (With Passphrase)
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keygen -p -P "${{ secrets.CPANEL_SSH_PASSPHRASE }}" -N "" -f ~/.ssh/id_rsa
+          ssh-keyscan -H admin.uthix.com >> ~/.ssh/known_hosts
 
-      - name: Deploy to cPanel
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+      - name: Add SSH Key to Agent
         run: |
           eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa <<< "${{ secrets.CPANEL_SSH_PASSPHRASE }}"
-          ssh -o StrictHostKeyChecking=no adminuithix@admin.uthix.com "cd public_html && git pull origin main"
+          echo "${{ secrets.CPANEL_SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
+          
+      - name: Deploy to cPanel
+        run: |
+          ssh -o StrictHostKeyChecking=no adminuithix@admin.uthix.com "
+            cd public_html/ || exit 1
+            git status
+            git pull origin main
+          "
