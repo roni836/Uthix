@@ -3,32 +3,29 @@ name: Deploy to cPanel
 on:
   push:
     branches:
-      - main  # Change this to your deployment branch
+      - main  # Change this to your production branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup SSH Key (With Passphrase)
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H admin.uthix.com >> ~/.ssh/known_hosts
-
-      - name: Add SSH Key to Agent
-        run: |
-          eval "$(ssh-agent -s)"
-          echo "${{ secrets.CPANEL_SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
-          
-      - name: Deploy to cPanel
-        run: |
-          ssh -o StrictHostKeyChecking=no adminuithix@admin.uthix.com:2083 "
-            cd public_html/ || exit 1
-            git status
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
+          password: ${{ secrets.CPANEL_PASSWORD }}
+          script: |
+            cd /home/YOUR_CPANAL_USER/public_html/YOUR_PROJECT_DIRECTORY
             git pull origin main
-          "
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan storage:link
