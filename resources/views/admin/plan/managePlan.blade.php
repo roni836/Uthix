@@ -2,90 +2,83 @@
 @section('title', 'Manage Plan')
 @section('content')
 
-    
 
-                    <div class="container-xxl flex-grow-1 container-p-y">
 
-                        <!-- Hoverable Table rows -->
-                        <div class="card">
-                            <h5 class="card-header">Manage Classes</h5>
-                            <div class="table-responsive text-nowrap">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Description</th>
-                                            <th>Price</th>
-                                            <th>Duration</th>
-                                            <th>Features</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="table-border-bottom-0">
-                                        @foreach($plans as $plan)
-                                        <tr>
-                                            <td>
-                                                <span class="fw-medium">{{ $plan->name }}</span>
-                                            </td>
-                                            <td>
-                                                <span class="fw-medium">{{ $plan->description ?? 'N/A' }}</span>
-                                            </td>
-                                            <td>
-                                                <span class="fw-medium">₹{{ number_format($plan->price, 2) }}</span>
-                                            </td>
-                                            <td>
-                                                <span class="fw-medium">{{ ucfirst($plan->duration) }}</span> {{-- Capitalize Monthly/Yearly --}}
-                                            </td>
-                                            <td>
-                                                @php 
-                                                    $features = is_array($plan->features) ? $plan->features : json_decode($plan->features, true);
-                                                @endphp
-                                                
-                                                @if(!empty($features) && is_array($features))
-                                                    <ul>
-                                                        @foreach($features as $feature)
-                                                            <li>{{ $feature }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                @else
-                                                    <span class="fw-medium text-danger">No Features</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <label class="switch">
-                                                    <input type="checkbox" class="toggle-status" data-id="{{ $plan->id }}" {{ $plan->status ? 'checked' : '' }}>
-                                                    <span class="slider"></span>
-                                                </label>
-                                            </td>
-                                            
-                                            <script>
-                                                $(document).on('change', '.toggle-status', function () {
-                                                    let planId = $(this).data('id');
-                                                    let status = $(this).prop('checked') ? 1 : 0;
-                                                    let token = "{{ csrf_token() }}";
-                                            
-                                                    $.ajax({
-                                                        type: "PUT",
-                                                        url: "/toggle-publish/" + planId,
-                                                        data: { _token: token, status: status },
-                                                        success: function (response) {
-                                                            swal("Success", "Plan status updated!", "success");
-                                                        },
-                                                        error: function () {
-                                                            swal("Error", "Something went wrong!", "error");
-                                                        }
-                                                    });
-                                                });
-                                            </script>
-                                            
-                                            
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                                        <i class="ti ti-dots-vertical"></i>
-                                                    </button>
-                                                    {{-- <div class="dropdown-menu">
+    <div class="container-xxl flex-grow-1 container-p-y">
+
+        <!-- Hoverable Table rows -->
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">Manage Plans</h5>
+                <a href="{{route('insert.plan')}}" class="text-white"><button type="submit" class="btn btn-primary hover" data-bs-toggle="modal"
+                    data-bs-target="#default-modal">Add New Plan</button></a>
+            </div>
+            {{-- <h5 class="card-header">Manage Classes</h5> --}}
+            <div class="table-responsive text-nowrap">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Duration</th>
+                            <th>Features</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        @foreach ($plans as $plan)
+                            <tr>
+                                <td>
+                                    <span class="fw-medium">{{ $plan->name }}</span>
+                                </td>
+                                <td>
+                                    <span class="fw-medium">{{ $plan->description ?? 'N/A' }}</span>
+                                </td>
+                                <td>
+                                    <span class="fw-medium">₹{{ number_format($plan->price, 2) }}</span>
+                                </td>
+                                <td>
+                                    <span class="fw-medium">{{ ucfirst($plan->duration) }}</span> {{-- Capitalize Monthly/Yearly --}}
+                                </td>
+                                <td>
+                                    @php
+                                        $features = is_array($plan->features)
+                                            ? $plan->features
+                                            : json_decode($plan->features, true);
+                                    @endphp
+
+                                    @if (!empty($features) && is_array($features))
+                                        <ul>
+                                            @foreach ($features as $feature)
+                                                <li>{{ $feature }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <span class="fw-medium text-danger">No Features</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <form action="{{ route('toggle.plan.status', $plan->id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <label class="switch">
+                                            <input type="checkbox" name="status" onchange="this.form.submit()" {{ $plan->status ? 'checked' : '' }}>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </form>
+                                </td>
+                                
+                               
+
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                            data-bs-toggle="dropdown">
+                                            <i class="ti ti-dots-vertical"></i>
+                                        </button>
+                                        {{-- <div class="dropdown-menu">
                                                         <a class="dropdown-item" href="{{ route('plans.show', $plan->id) }}">
                                                             <i class="ti ti-eye me-1"></i> View Details
                                                         </a>
@@ -100,21 +93,21 @@
                                                             </button>
                                                         </form>
                                                     </div> --}}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                
-                            </div>
-                        </div>
-                        <!--/ Hoverable Table rows -->
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <!--/ Hoverable Table rows -->
 
 
-                    </div>
-                    <!-- / Content -->
-                  
+    </div>
+    <!-- / Content -->
+
 @endsection
 <style>
     .switch {
