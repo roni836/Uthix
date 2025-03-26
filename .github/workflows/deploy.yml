@@ -18,12 +18,9 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keygen -p -P "${{ secrets.CPANEL_SSH_PASSPHRASE }}" -N "" -f ~/.ssh/id_rsa
-
-      - name: Deploy to cPanel
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        run: |
           eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa <<< "${{ secrets.CPANEL_SSH_PASSPHRASE }}"
+          echo "${{ secrets.CPANEL_SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
+
+      - name: Deploy to cPanel via SSH
+        run: |
           ssh -o StrictHostKeyChecking=no adminuithix@admin.uthix.com "cd public_html && git pull origin main"
