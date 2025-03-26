@@ -35,6 +35,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.CPANEL_SSH_KEY }}
           ssh-passphrase: ${{ secrets.CPANEL_PASSPHRASE }}
+    
+      - name: Debug SSH Key
+        run: |
+          echo "${{ secrets.CPANEL_SSH_KEY }}" > debug_key
+          file debug_key
 
       - name: Deploy to cPanel Server
         run: |
