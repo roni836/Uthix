@@ -2,7 +2,7 @@ name: Laravel CI/CD Pipeline
 
 on:
   push:
-    branches: [main]   # Adjust branch as needed
+    branches: [main]
 
 jobs:
   build-test-deploy:
@@ -12,30 +12,40 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # - name: Set up PHP
+      #   uses: shivammathur/setup-php@v2
+      #   with:
+      #     php-version: '8.1'
+      #     extensions: mbstring, intl, bcmath
+      #     ini-values: post_max_size=256M, upload_max_filesize=256M
+
       # - name: Install Composer Dependencies
       #   run: composer install --prefer-dist --no-interaction --optimize-autoloader
 
-      # - name: Package Application (optional)
+      # - name: Run Tests
+      #   run: vendor/bin/phpunit
+
+      # - name: Build Frontend Assets
       #   run: |
-      #     # For example, you can create a zip of the built application
-      #     zip -r deploy-package.zip . -x "*.git*"
+      #     npm install
+      #     npm run prod
+
+      - name: Start SSH Agent and Add Key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.CPANEL_SSH_KEY }}
+          ssh-passphrase: ${{ secrets.CPANEL_PASSPHRASE }}
 
       - name: Deploy to cPanel Server
-        # We use an SSH action to remotely run commands on your cPanel server.
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.CPANEL_HOST }}
-          username: ${{ secrets.CPANEL_USER }}
-          key: ${{ secrets.CPANEL_SSH_KEY }}
-          passphrase: ${{ secrets.CPANEL_PASSPHRASE }}
-          port: 22
-          script: |
-            cd /home/adminuithix/public_html
-            # Pull the latest code (if you’re using Git on the server)
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.CPANEL_USER }}@${{ secrets.CPANEL_HOST }} << 'EOF'
+            cd /home/yourcpaneluser/public_html/yourproject
+            # If using Git on the server:
             git pull origin main
-            # Alternatively, if you’re copying files, adjust accordingly:
+            # Alternatively, if deploying a package, unzip and update files:
             # unzip deploy-package.zip -d /home/yourcpaneluser/public_html/yourproject
             composer install --prefer-dist --no-interaction --optimize-autoloader
             php artisan migrate --force
             php artisan cache:clear
             php artisan config:cache
+          EOF
