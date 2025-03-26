@@ -12,8 +12,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Composer Dependencies
-        run: composer install --prefer-dist --no-interaction --optimize-autoloader
+      # - name: Install Composer Dependencies
+      #   run: composer install --prefer-dist --no-interaction --optimize-autoloader
 
       # - name: Package Application (optional)
       #   run: |
