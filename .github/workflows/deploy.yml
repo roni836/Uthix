@@ -1,56 +1,29 @@
-name: Laravel CI/CD Pipeline
+name: Deploy to cPanel
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main  # Change this to your deployment branch
 
 jobs:
-  build-test-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # - name: Set up PHP
-      #   uses: shivammathur/setup-php@v2
-      #   with:
-      #     php-version: '8.1'
-      #     extensions: mbstring, intl, bcmath
-      #     ini-values: post_max_size=256M, upload_max_filesize=256M
-
-      # - name: Install Composer Dependencies
-      #   run: composer install --prefer-dist --no-interaction --optimize-autoloader
-
-      # - name: Run Tests
-      #   run: vendor/bin/phpunit
-
-      # - name: Build Frontend Assets
-      #   run: |
-      #     npm install
-      #     npm run prod
-
-      - name: Start SSH Agent and Add Key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.CPANEL_SSH_KEY }}
-          ssh-passphrase: ${{ secrets.CPANEL_PASSPHRASE }}
-    
-      - name: Debug SSH Key
+      - name: Setup SSH Key
         run: |
-          echo "${{ secrets.CPANEL_SSH_KEY }}" > debug_key
-          file debug_key
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keygen -p -P "${{ secrets.CPANEL_SSH_PASSPHRASE }}" -N "" -f ~/.ssh/id_rsa
 
-      - name: Deploy to cPanel Server
+      - name: Deploy to cPanel
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.CPANEL_USER }}@${{ secrets.CPANEL_HOST }} << 'EOF'
-            cd /home/yourcpaneluser/public_html/yourproject
-            # If using Git on the server:
-            git pull origin main
-            # Alternatively, if deploying a package, unzip and update files:
-            # unzip deploy-package.zip -d /home/yourcpaneluser/public_html/yourproject
-            composer install --prefer-dist --no-interaction --optimize-autoloader
-            php artisan migrate --force
-            php artisan cache:clear
-            php artisan config:cache
-          EOF
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa <<< "${{ secrets.CPANEL_SSH_PASSPHRASE }}"
+          ssh -o StrictHostKeyChecking=no adminuithix@server.zcs.hzn.mybluehostin.me "cd public_html && git pull origin main"
