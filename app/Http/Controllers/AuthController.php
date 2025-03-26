@@ -197,7 +197,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'pending',
                 // 'message' => 'Your account is not verified. Please contact support.'
-            ], 200);
+            ], 403);
         }
         
 
