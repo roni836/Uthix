@@ -21,7 +21,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'role',
         'password',
+        'fcm_token',
+        'is_verified',
     ];
 
     /**
@@ -46,4 +50,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function vendor()
+    {
+        return $this->hasOne(Vendor::class);
+    }
+
+    public function instructor()
+{
+    return $this->hasOne(Instructor::class, 'user_id');
+}
+public function student()
+{
+    return $this->hasOne(Student::class);
+}
+
 }
