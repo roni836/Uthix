@@ -194,14 +194,19 @@ class AuthController extends Controller
 
         // Check if user is an instructor and if they are verified
         if ($user->role === 'instructor' && !$user->is_verified) {
-            return response()->json(['error' => 'Your account is not verified. Please contact support.'], 403);
+            return response()->json([
+                'status' => 'pending',
+                'message' => 'Your account is not verified. Please contact support.'
+            ], 403);
         }
+        
 
         // Add role-based response
         $role = $user->role;
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
+            'status' => 'approved',
             'access_token' => $token,
             'token_type' => 'Bearer',
             'role' => $role
