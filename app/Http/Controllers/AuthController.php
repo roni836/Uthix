@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Instructor;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\TwilioService;
@@ -158,6 +159,13 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         // broadcast(new NewMessage('Registration done'))->toOthers();
+
+        if($request->role == 'instructor' ){
+            Instructor::create([
+                'user_id' => $user->id,
+                'qualification'=> 'N/a'
+            ]);
+        }
 
         return response()->json([
             'message' => 'User registered successfully!',
