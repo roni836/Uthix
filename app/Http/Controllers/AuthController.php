@@ -196,8 +196,8 @@ class AuthController extends Controller
         if ($user->role === 'instructor' && !$user->is_verified) {
             return response()->json([
                 'status' => 'pending',
-                'message' => 'Your account is not verified. Please contact support.'
-            ], 403);
+                // 'message' => 'Your account is not verified. Please contact support.'
+            ], 200);
         }
         
 
