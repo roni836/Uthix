@@ -1,32 +1,29 @@
-name: Deploy to cPanel via SSH
+name: Deploy to cPanel
 
 on:
   push:
     branches:
-      - main  # Change to your branch
+      - main  # Change this to your deployment branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: admin.uthix.com
-          username: adminuithix
-          key: ${{ secrets.CPANEL_SSH_KEY }}
-          port: 22
-          script: |
-            cd /home/adminuithix/public_html/
-            git pull origin main
-            composer install --no-dev --optimize-autoloader
-            php artisan migrate --force
-            php artisan config:clear
-            php artisan cache:clear
-            php artisan route:clear
-            php artisan view:clear
-            php artisan storage:link
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keygen -p -P "${{ secrets.CPANEL_SSH_PASSPHRASE }}" -N "" -f ~/.ssh/id_rsa
+
+      - name: Deploy to cPanel
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa <<< "${{ secrets.CPANEL_SSH_PASSPHRASE }}"
+          ssh -o StrictHostKeyChecking=no adminuithix@admin.uthix.com "cd public_html && git pull origin main"
