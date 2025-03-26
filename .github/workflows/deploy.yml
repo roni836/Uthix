@@ -27,7 +27,7 @@ jobs:
           
       - name: Deploy to cPanel
         run: |
-          ssh -o StrictHostKeyChecking=no admin.uthix.com:2083/ "
+          ssh -o StrictHostKeyChecking=no adminuithix "
             cd public_html/ || exit 1
             git status
             git pull origin main
