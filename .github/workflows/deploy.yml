@@ -13,13 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup SSH Key
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+      
+      - name: Setup SSH Key with Passphrase
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa
+            mkdir -p ~/.ssh
+            echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            eval "$(ssh-agent -s)"
+            sshpass -p "${{ secrets.CPANEL_SSH_PASSPHRASE }}" ssh-add ~/.ssh/id_rsa
 
       - name: Debug SSH Connection
         run: ssh -v -o StrictHostKeyChecking=no adminuithix@admin.uthix.com "echo Connected Successfully"
