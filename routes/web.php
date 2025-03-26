@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PlanController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
@@ -38,6 +39,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/manage-plan', [AdminController::class, 'managePlan'])->name('manage.plan');
         Route::get('/insert-plan', [AdminController::class, 'insertPlan'])->name('insert.plan');
         // Route::put('/toggle-publish/{id}', [AdminController::class, 'togglePlanStatus'])->name('toggle.publish');
+        Route::put('/plan/toggle-status/{id}', [PlanController::class, 'toggleStatus'])->name('toggle.plan.status');
 
 
         Route::get('/insert-coupon', [AdminController::class, 'insertCoupon'])->name('insert.coupon');

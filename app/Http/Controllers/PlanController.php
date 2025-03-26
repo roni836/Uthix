@@ -58,6 +58,14 @@ class PlanController extends Controller
 
         ]);
     }
+    public function toggleStatus($id)
+{
+    $plan = Plan::findOrFail($id);
+    $plan->status = !$plan->status; 
+    $plan->save();
+
+    return back()->with('success', 'Plan status updated successfully!');
+}
 
   
 }
