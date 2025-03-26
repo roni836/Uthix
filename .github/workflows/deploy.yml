@@ -1,38 +1,41 @@
-name: Deploy to cPanel
+name: Laravel CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main  # Change if needed
+    branches: [main]   # Adjust branch as needed
 
 jobs:
-  deploy:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup SSH Key with Passphrase
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          eval $(ssh-agent -s)
-          echo "${{ secrets.CPANEL_SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.CPANEL_HOST }} >> ~/.ssh/known_hosts
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-interaction --optimize-autoloader
 
-      - name: Deploy via SSH
-        run: |
-          ssh ${{ secrets.CPANEL_USER }}@${{ secrets.CPANEL_HOST }} << 'EOF'
-          cd public_html/  # Change this
-          git pull origin main  # Pull latest changes
-          composer install --no-dev --optimize-autoloader
-          php artisan migrate --force
-          php artisan cache:clear
-          php artisan config:clear
-          php artisan route:clear
-          php artisan view:clear
-          php artisan storage:link
-          exit
-          EOF
+      # - name: Package Application (optional)
+      #   run: |
+      #     # For example, you can create a zip of the built application
+      #     zip -r deploy-package.zip . -x "*.git*"
+
+      - name: Deploy to cPanel Server
+        # We use an SSH action to remotely run commands on your cPanel server.
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
+          key: ${{ secrets.CPANEL_SSH_KEY }}
+          passphrase: ${{ secrets.CPANEL_PASSPHRASE }}
+          port: 22
+          script: |
+            cd /home/adminuithix/public_html
+            # Pull the latest code (if you’re using Git on the server)
+            git pull origin main
+            # Alternatively, if you’re copying files, adjust accordingly:
+            # unzip deploy-package.zip -d /home/yourcpaneluser/public_html/yourproject
+            composer install --prefer-dist --no-interaction --optimize-autoloader
+            php artisan migrate --force
+            php artisan cache:clear
+            php artisan config:cache
