@@ -43,6 +43,7 @@ class InstructorController extends Controller
                 'error' => $validator->errors()
             ], 401);
         }
+        
         $existingInstructor = Instructor::where('user_id', $user->id)->first();
         if ($existingInstructor) {
             return response()->json([
