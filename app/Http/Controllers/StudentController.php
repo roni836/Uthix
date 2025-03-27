@@ -29,32 +29,74 @@ class StudentController extends Controller
         ], 200);
     }
 
+    // public function store(Request $request)
+    // {
+    //     $user = Auth::user();
+
+    //     $validator = Validator::make($request->all(), [
+    //         'status' => 'nullable|boolean'
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->withErrors($validator)->withInput();
+    //     }
+
+    //     $student = Student::create([
+    //         'user_id' => $user->id,
+    //         'class' => $request->class,
+    //     ]);
+    //     if (!$student) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Data not found'
+    //         ], 404);
+    //     }
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'Student created successfully',
+    //         'data' => $student
+    //     ], 201);
+    // }
+
+
     public function store(Request $request)
     {
         $user = Auth::user();
-
+    
+        // Validation
         $validator = Validator::make($request->all(), [
             'status' => 'nullable|boolean'
         ]);
-
+    
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
+    
+        $existingStudent = Student::where('user_id', $user->id)->first();
+    
+        if ($existingStudent) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Student profile already exists. You can only edit or delete it.'
+            ], 400); 
+        }
+    
         $student = Student::create([
             'user_id' => $user->id,
             'class' => $request->class,
         ]);
+    
         if (!$student) {
             return response()->json([
                 'status' => false,
-                'message' => 'Data not found'
-            ], 404);
+                'message' => 'Failed to create student profile'
+            ], 500);
         }
-
+    
         return response()->json([
             'status' => true,
-            'message' => 'Student created successfully',
+            'message' => 'Student profile created successfully',
             'data' => $student
         ], 201);
     }
