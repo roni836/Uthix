@@ -11,10 +11,7 @@ class FaqController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return response()->json(Faq::where('status', 1)->get());
-    }
+    
 
     public function store(Request $request)
     {
@@ -80,6 +77,14 @@ class FaqController extends Controller
         }
     
         return response()->json($faqs);
+    }
+    public function toggleStatus($id)
+    {
+        $faq = Faq::findOrFail($id);
+        $faq->status = !$faq->status; 
+        $faq->save();
+    
+        return back()->with('success', 'faq status updated successfully!');
     }
     
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Artisan;
 
@@ -41,6 +42,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Route::put('/toggle-publish/{id}', [AdminController::class, 'togglePlanStatus'])->name('toggle.publish');
         Route::put('/plan/toggle-status/{id}', [PlanController::class, 'toggleStatus'])->name('toggle.plan.status');
 
+
+        Route::put('/faq/toggle-status/{id}', [FaqController::class, 'toggleStatus'])->name('toggle.faq.status');
+
+        Route::get('/manage-faq', [AdminController::class, 'manageFaq'])->name('manage.faq');
+        Route::get('/insert-faq', [AdminController::class, 'insertFaq'])->name('insert.faq');
 
         Route::get('/insert-coupon', [AdminController::class, 'insertCoupon'])->name('insert.coupon');
         Route::get('/all-orders', [AdminController::class, 'allOrders'])->name('orders.all');
