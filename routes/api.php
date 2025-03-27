@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\MessageController;
@@ -63,6 +64,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('view-cart', [OrderController::class,'viewCart']);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']);
 
+    Route::get('/faqs/active', [FaqController::class, 'onlyShowActiveFAQs']);
+
     Route::apiResource('reviews', ReviewController::class);
     Route::post('/create-payment', [PaymentController::class, 'createPayment']);
     Route::post('/verify-payment', [PaymentController::class, 'callback']);
@@ -105,6 +108,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/update-status/{id}', [AuthController::class, 'updateStatus'])->name('status.update');
         Route::post('/admin-vendor', [VendorController::class, 'adminStore'])->name('admin.vendor.store');
         Route::apiResource('plans', PlanController::class);
+        Route::apiResource('faqs', FaqController::class);
     });
 
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
