@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coupon;
+use App\Models\Faq;
 use App\Models\OrderItem;
 use App\Models\Vendor;
 use App\Models\Category;
@@ -275,4 +276,14 @@ class AdminController extends Controller
 
 
 
+public function manageFaq()
+    {
+        $data['faqs'] = Faq::all();
+        return view('admin.faq.manageFaq', $data);
+    }
+
+    public function insertFaq()
+    {
+        return view('admin.faq.insertFaq');
+    }
 }
