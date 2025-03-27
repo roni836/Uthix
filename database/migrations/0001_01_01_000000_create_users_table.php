@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('dob')->nullable();
+            $table->string('gender')->nullable();
             $table->string('role')->default('student');
             $table->bigInteger('phone')->unique()->nullable();
             $table->string('fcm_token')->nullable();
