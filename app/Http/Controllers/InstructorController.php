@@ -43,15 +43,6 @@ class InstructorController extends Controller
                 'error' => $validator->errors()
             ], 401);
         }
-        
-        $existingInstructor = Instructor::where('user_id', $user->id)->first();
-        if ($existingInstructor) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Instructor already exists',
-            ], 400);
-        }
-
 
         // Handling Profile Image Upload
         $profileImage = null;
