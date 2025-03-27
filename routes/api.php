@@ -8,7 +8,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\HelpDeskController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
@@ -54,6 +56,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //  (accessible to all authenticated users)
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::apiResource('help-desks', HelpDeskController::class);
 
     Route::apiResource('wishlist', WishlistController::class);
     Route::apiResource('address', AddressController::class);
@@ -62,6 +65,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('remove-from-cart/{id}', [OrderController::class,'removeFromCart']);
     Route::get('view-cart', [OrderController::class,'viewCart']);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']);
+
+    Route::get('/faqs/active', [FaqController::class, 'onlyShowActiveFAQs']);
 
     Route::apiResource('reviews', ReviewController::class);
     Route::post('/create-payment', [PaymentController::class, 'createPayment']);
@@ -105,6 +110,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/update-status/{id}', [AuthController::class, 'updateStatus'])->name('status.update');
         Route::post('/admin-vendor', [VendorController::class, 'adminStore'])->name('admin.vendor.store');
         Route::apiResource('plans', PlanController::class);
+        Route::apiResource('faqs', FaqController::class);
     });
 
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {

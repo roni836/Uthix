@@ -227,6 +227,14 @@
                                 </a>
                                 <a href="{{ route('manage.plan') }}" class="menu-link ">
                                     <div data-i18n="Plan List">Plan List</div>
+                                </a> 
+                                <a href="{{ route('manage.faq') }}" class="menu-link ">
+                                    <div data-i18n="Faq List">Faq List</div>
+                                </a>
+                                <a href="
+                                {{-- {{ route('manage.helpDesk') }} --}}
+                                 " class="menu-link ">
+                                    <div data-i18n="Faq List">Help Desk List</div>
                                 </a>
                                 {{-- <ul class="menu-sub">
                                     <li class="menu-item">
