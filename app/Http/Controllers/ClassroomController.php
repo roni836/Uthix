@@ -268,4 +268,30 @@ class ClassroomController extends Controller
         ]);
     }
 
+
+    //CLASSROOM WISE CHAPTER CALLING
+    public function getClassChapters($classroom_id)
+{
+    // Check if classroom exists
+    $classroom = Classroom::with(['chapters'])->find($classroom_id);
+
+    if (!$classroom) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Classroom not found'
+        ], 404);
+    }
+
+    return response()->json([
+        'status' => true,
+        'class' => $classroom->name,
+        'subject' => $classroom->subject->name ?? 'N/A',
+        'chapters' => $classroom->chapters
+    ], 200);
+
+}
+
+
+
+
 }
