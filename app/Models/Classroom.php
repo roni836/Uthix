@@ -35,4 +35,5 @@ class Classroom extends Model
     {
         return $this->hasMany(Chapter::class, 'classroom_id');
     }
+    
 }

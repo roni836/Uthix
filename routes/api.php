@@ -153,6 +153,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/instructor/grade/{uploadId}', [GradeController::class, 'storeGrades']);
         Route::post('/instructor-profile', [InstructorController::class, 'updateProfile']);
         Route::get('/instructor-profile', [InstructorController::class, 'showProfile']);
+        Route::get('/classroom/{id}/chapters', [ClassroomController::class, 'getClassChapters']);
 
     });
 });
