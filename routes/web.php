@@ -68,3 +68,9 @@ Route::get('/clear-cache', function () {
 
     return "All Caches are cleared by @Roni";
 });
+
+
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage link has been created!';
+});
