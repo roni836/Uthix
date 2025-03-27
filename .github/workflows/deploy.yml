@@ -15,14 +15,15 @@ jobs:
 
       - name: Setup SSH Key
         run: |
-            mkdir -p ~/.ssh
-            echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan -H admin.uthix.com >> ~/.ssh/known_hosts
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CPANEL_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
 
       - name: Debug SSH Connection
-        run: ssh -v adminuithix@admin.uthix.com "echo Connected Successfully"
+        run: ssh -v -o StrictHostKeyChecking=no adminuithix@admin.uthix.com "echo Connected Successfully"
 
-      - name: Deploy via SCP (Recommended)
+      - name: Deploy to cPanel
         run: |
-          scp -r ./* adminuithix@admin.uthix.com:/home/adminuithix/public_html/
+          ssh -o StrictHostKeyChecking=no adminuithix@admin.uthix.com "cd public_html && git pull origin main"
