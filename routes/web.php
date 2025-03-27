@@ -48,6 +48,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/manage-faq', [AdminController::class, 'manageFaq'])->name('manage.faq');
         Route::get('/insert-faq', [AdminController::class, 'insertFaq'])->name('insert.faq');
 
+        Route::get('/help-desk', [AdminController::class, 'manageHelpDesk'])->name('manage.help-desk');
+        Route::put('/query/update-status/{id}', [AdminController::class, 'updateStatusQuery'])->name('update.query.status');
+
         Route::get('/insert-coupon', [AdminController::class, 'insertCoupon'])->name('insert.coupon');
         Route::get('/all-orders', [AdminController::class, 'allOrders'])->name('orders.all');
         // Route::get('/admin-orders', [AdminController::class, 'adminOrders'])->name('admin.orders');

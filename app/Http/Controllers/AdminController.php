@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Coupon;
 use App\Models\Faq;
+use App\Models\HelpDesk;
 use App\Models\OrderItem;
 use App\Models\Vendor;
 use App\Models\Category;
@@ -286,4 +287,30 @@ public function manageFaq()
     {
         return view('admin.faq.insertFaq');
     }
+    public function manageHelpDesk()
+    {
+        $data['queries'] = HelpDesk::all();
+        return view('admin.manageHelpDesk', $data);
+    }
+
+    public function updateStatusQuery(Request $request, $id)
+    {
+        $query = HelpDesk::find($id);
+    
+        if (!$query) {
+            return redirect()->back()->with('error', 'Query not found');
+        }
+    
+        $request->validate([
+            'status' => 'required|in:pending,resolved,closed',
+        ]);
+    
+        $query->status = $request->status;
+        $query->save();
+    
+        return redirect()->back()->with('success', 'Query status updated successfully');
+    }
+    
+
+
 }

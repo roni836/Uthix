@@ -118,7 +118,6 @@
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
 
-            @include('admin.includes.navbar')
             <!-- Menu -->
 
 
@@ -154,6 +153,14 @@
                 <div class="menu-inner-shadow"></div>
 
                 <ul class="menu-inner py-1">
+
+                    <li class="menu-item">
+                        <a href="{{route('admin.dashboard')}}" class="menu-link ">
+                            <i class="menu-icon tf-icons ti ti-users"></i>
+                            <div data-i18n="Dashboard">Dashboard</div>
+                        </a>
+                        
+                    </li>
 
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -228,14 +235,7 @@
                                 <a href="{{ route('manage.plan') }}" class="menu-link ">
                                     <div data-i18n="Plan List">Plan List</div>
                                 </a> 
-                                <a href="{{ route('manage.faq') }}" class="menu-link ">
-                                    <div data-i18n="Faq List">Faq List</div>
-                                </a>
-                                <a href="
-                                {{-- {{ route('manage.helpDesk') }} --}}
-                                 " class="menu-link ">
-                                    <div data-i18n="Faq List">Help Desk List</div>
-                                </a>
+                               
                                 {{-- <ul class="menu-sub">
                                     <li class="menu-item">
                                         <a href="app-ecommerce-category-list.html" class="menu-link">
@@ -508,11 +508,12 @@
                             <div data-i18n="System Settings">System Settings</div>
                         </a>
                         <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="javascript:void(0);" class="menu-link">
-                                    <div data-i18n="Under working">Under Working</div>
-                                </a>
-                            </li>
+                            <a href="{{ route('manage.faq') }}" class="menu-link ">
+                                <div data-i18n="Faq List">Faq List</div>
+                            </a>
+                            <a href="{{ route('manage.help-desk') }}" class="menu-link ">
+                                <div data-i18n="Help Desk">Help Desk List</div>
+                            </a>
                             {{-- <li class="menu-item">
                                 <a href="app-logistics-dashboard.html" class="menu-link">
                                     <div data-i18n="General Settings">General Settings</div>
