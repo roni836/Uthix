@@ -273,8 +273,12 @@ class ClassroomController extends Controller
     public function getClassChapters($classroom_id)
 {
     // Check if classroom exists
-    $classroom = Classroom::with(['chapters'])->find($classroom_id);
+    $instructor = auth()->user();
 
+    // Fetch the classroom only if it belongs to the instructor
+    $classroom = Classroom::with(['subject', 'chapters'])
+        ->where('instructor_id', $instructor->id)
+        ->find($classroom_id);
     if (!$classroom) {
         return response()->json([
             'status' => false,
