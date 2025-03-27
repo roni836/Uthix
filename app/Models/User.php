@@ -23,6 +23,8 @@ class User extends Authenticatable
         'email',
         'phone',
         'role',
+        'dob',
+        'gender',
         'password',
         'fcm_token',
         'is_verified',
