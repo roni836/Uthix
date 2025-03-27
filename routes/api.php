@@ -10,6 +10,7 @@ use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GradeController;
+use App\Http\Controllers\HelpDeskController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
@@ -55,6 +56,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //  (accessible to all authenticated users)
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::apiResource('help-desks', HelpDeskController::class);
 
     Route::apiResource('wishlist', WishlistController::class);
     Route::apiResource('address', AddressController::class);
