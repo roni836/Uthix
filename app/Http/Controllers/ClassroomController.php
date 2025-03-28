@@ -272,15 +272,19 @@ class ClassroomController extends Controller
     //CLASSROOM WISE CHAPTER CALLING
     public function getClassChapters($classroom_id)
     {
-        // Get authenticated instructor
-        $instructor = auth()->user();
-        // dd($instructor);
+        $instructorId = Instructor::where('user_id', auth()->id())->value('id');
+        if (!$instructorId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Instructor not found.',
+            ], 404);
+        }
     
     
-        // Step 1: Fetch the classroom by ID (Only if it belongs to the logged-in instructor)
-       $classroom = Classroom::with(['subject', 'chapters'])
-        ->where('id', $classroom_id)
-        ->first();
+        $classroom = Classroom::where('id', $classroom_id)
+    ->where('instructor_id', $instructorId) // ✅ Directly use $instructorId
+    ->with('chapters')
+    ->first();
     
     // dd($classroom);
     
