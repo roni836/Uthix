@@ -56,6 +56,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Route::get('/admin-orders', [AdminController::class, 'adminOrders'])->name('admin.orders');
         Route::get('/admin/orders/{id}', [AdminController::class, 'orderDetails'])->name('orders.order-Details');
         Route::put('/toggle-publish/{id}', [AdminController::class, 'toggleProductStatus'])->name('toggle.publish');
+        Route::get('/classroom/{id}/chapters', [AdminController::class, 'showChapters'])->name('classroom.chapters');
 
     });
 });
