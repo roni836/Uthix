@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,22 @@ class StudentController extends Controller
         return response()->json([
             'status' => true,
             'students' => $students, // Corrected key name
+        ], 200);
+    }
+    public function getAllSubject()
+    {
+        $subject = Subject::all();
+
+        if (!$subject) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No Data found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'subject' => $subject, // Corrected key name
         ], 200);
     }
 
