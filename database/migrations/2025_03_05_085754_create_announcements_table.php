@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('announcements', function (Blueprint $table) {
         $table->id();
         $table->foreignId('instructor_id')->constrained()->onDelete('cascade');
-        $table->foreignId('classroom_id')->constrained()->onDelete('cascade');
+        $table->foreignId('chapter_id')->constrained()->onDelete('cascade');
         $table->string('title')->nullable();
         $table->date('due_date')->nullable(); 
         $table->unsignedInteger('comments_count')->default(0);

@@ -60,11 +60,11 @@ class AnnouncementController extends Controller
     }
     
    
-    public function getAnnouncementsByClass($classroom_id)
+    public function getAnnouncementsByClass($chapter_id)
     {
-        $announcements = Announcement::where('classroom_id', $classroom_id)
+        $announcements = Announcement::where('chapter_id', $chapter_id)
             ->orderBy('created_at', 'desc')
-            ->with(['attachments', 'classroom', 'instructor']) 
+            ->with(['attachments', 'chapter', 'instructor']) 
             ->get();
     
         return response()->json([
