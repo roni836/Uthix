@@ -79,7 +79,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/mark-as-read/{messageId}', [MessageController::class, 'markAsRead']);
     Route::delete('/delete-message/{messageId}', [MessageController::class, 'deleteMessage']);
     Route::get('/subject-classes/{id}', [ClassroomController::class, 'subjectClasses'])->name('subject.classes');
-    Route::get('/classroom/{classroom_id}/announcements', [AnnouncementController::class, 'getAnnouncementsByClass'])->name('announcement.manage');
+    Route::get('/chapter/{chapter_id}/announcements', [AnnouncementController::class, 'getAnnouncementsByClass'])->name('announcement.manage');
 
     // Admin routes
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard', function () {
@@ -145,7 +145,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('classroom', ClassroomController::class);
         Route::post('/class-chapter/{classroom_id}', [ClassroomController::class, 'createNewChapter'])->name('class.store');
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
-        Route::post('/announcement', [AnnouncementController::class, 'createAnnouncement'])->name('annocment.store');
+        Route::post('/chapters/{chapter_id}/announcements', [AnnouncementController::class, 'createAnnouncement']);
         // Route::post('/assignments', [AnnouncementController::class, 'store']);
         Route::get('/assignments', [AnnouncementController::class, 'getInstructorAssignments']);
         Route::get('/assignments/{assignmentId}/submissions', [AnnouncementController::class, 'getSubmissions']);
@@ -153,6 +153,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/instructor/grade/{uploadId}', [GradeController::class, 'storeGrades']);
         Route::post('/instructor-profile', [InstructorController::class, 'updateProfile']);
         Route::get('/instructor-profile', [InstructorController::class, 'showProfile']);
+        Route::get('/classroom/{id}/chapters', [ClassroomController::class, 'getClassChapters']);
         Route::get('/instructor-get-subject', [StudentController::class, 'getAllSubject']);
 
     });

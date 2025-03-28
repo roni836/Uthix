@@ -141,6 +141,8 @@ class InstructorController extends Controller
             $instructor->update([
                 'qualification' => $request->qualification,
                 'bio' => $request->bio,
+                'experience' => $request->experience,
+            'specialization' => $request->specialization,
             ]);
         }
     

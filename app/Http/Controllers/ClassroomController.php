@@ -258,7 +258,7 @@ class ClassroomController extends Controller
                 ->from('classrooms')
                 ->where('subject_id', $subject_id);
         })
-            ->with(['classroom.instructor.user'])
+            ->with(['classroom.instructor'])
             ->with(['classroom.subject'])
             ->get();
 
@@ -267,5 +267,45 @@ class ClassroomController extends Controller
             'data' => $classes
         ]);
     }
+
+
+    //CLASSROOM WISE CHAPTER CALLING
+    public function getClassChapters($classroom_id)
+    {
+        $instructorId = Instructor::where('user_id', auth()->id())->value('id');
+        if (!$instructorId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Instructor not found.',
+            ], 404);
+        }
+    
+    
+        $classroom = Classroom::where('id', $classroom_id)
+    ->where('instructor_id', $instructorId) // ✅ Directly use $instructorId
+    ->with('chapters')
+    ->first();
+    
+    // dd($classroom);
+    
+        if (!$classroom) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Classroom not found'
+            ], 404);
+        }
+    
+        // Step 2: Return classroom details with chapters
+        return response()->json([
+            'status' => true,
+            'class' => $classroom->name,
+            'subject' => $classroom->subject->name ?? 'N/A',
+            'chapters' => $classroom->chapters
+        ], 200);
+    }
+    
+
+
+
 
 }

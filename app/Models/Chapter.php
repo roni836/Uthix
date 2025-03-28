@@ -11,4 +11,5 @@ class Chapter extends Model
     {
         return $this->belongsTo(Classroom::class, 'classroom_id');
     }
+    
 }

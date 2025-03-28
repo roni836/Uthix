@@ -249,9 +249,28 @@ class AdminController extends Controller
 
     public function manageClass()
     {
-        $classes = Classroom::with('instructor', 'subject', 'chapters')->get();
-        return view('admin.manageClass', compact('classes'));
+        $perPage = 8; 
+
+        $classes = Classroom::with('instructor', 'subject')->simplePaginate($perPage);
+        $totalPages = ceil(Classroom::count() / $perPage);
+
+        return view('admin.manageClass', compact('classes','totalPages'));
     }
+
+
+    public function showChapters($id)
+    {
+        $classroom = Classroom::with('chapters')->find($id);
+    
+        if (!$classroom) {
+            return redirect()->route('admin.manageClass')->with('error', 'Classroom not found');
+        }
+    
+        return view('admin.classes.classroomChapters', compact('classroom'));
+    }
+    
+
+
 
     public function managePlan()
     {

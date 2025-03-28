@@ -20,7 +20,12 @@ class Announcement extends Model
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
+    } 
+    public function chapter()
+    {
+        return $this->belongsTo(Chapter::class);
     }
+    
     public function instructor()
     {
         return $this->belongsTo(User::class, 'instructor_id')->select('id', 'name');
