@@ -135,10 +135,7 @@ class InstructorController extends Controller
             'phone' => $request->phone,
             'gender' => $request->gender,
             'dob' => $request->dob,
-            'qualification' => $request->qualification,
-            'bio' => $request->bio,
-            'experience' => $request->experience,
-            'specialization' => $request->specialization,
+            
             'password' => $request->password ? Hash::make($request->password) : $user->password,
             'image' => $data->image ?? null, // Save new image name in database
         ]);
@@ -149,6 +146,8 @@ class InstructorController extends Controller
             $instructor->update([
                 'qualification' => $request->qualification,
                 'bio' => $request->bio,
+                'experience' => $request->experience,
+            'specialization' => $request->specialization,
             ]);
         }
     
