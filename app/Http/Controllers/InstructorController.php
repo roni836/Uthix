@@ -88,10 +88,6 @@ class InstructorController extends Controller
             'phone' => 'nullable|string|max:15',
             'gender' => 'nullable|string|in:male,female,other',
             'dob' => 'nullable|date',
-            'qualification' => 'required|string|max:255',
-            'bio' => 'required|string|max:1000',
-            'experience' => 'required|integer|min:0', // Experience in years
-            'specialization' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Image validation
         ]);
     
@@ -135,7 +131,6 @@ class InstructorController extends Controller
             'phone' => $request->phone,
             'gender' => $request->gender,
             'dob' => $request->dob,
-            
             'password' => $request->password ? Hash::make($request->password) : $user->password,
             'image' => $data->image ?? null, // Save new image name in database
         ]);
