@@ -254,7 +254,7 @@ class AdminController extends Controller
         $classes = Classroom::with('instructor', 'subject')->simplePaginate($perPage);
         $totalPages = ceil(Classroom::count() / $perPage);
 
-        return view('admin.manageClass', compact('classes','totalPages'));
+        return view('admin.classes.manageClass', compact('classes','totalPages'));
     }
 
 
