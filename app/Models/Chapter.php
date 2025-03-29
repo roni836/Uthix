@@ -11,5 +11,9 @@ class Chapter extends Model
     {
         return $this->belongsTo(Classroom::class, 'classroom_id');
     }
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class, 'chapter_id');
+    }
     
 }
