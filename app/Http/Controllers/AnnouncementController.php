@@ -123,7 +123,7 @@ class AnnouncementController extends Controller
             ->with(['announcements' => function ($query) use ($instructor) {
                 $query->where('instructor_id', $instructor->id) // Fetch only this instructor's announcements
                     ->orderBy('created_at', 'desc')
-                    ->with(['attachments']); // Include instructor and user details
+                    ->with(['attachments']); 
             }])
             ->first();
     
@@ -205,5 +205,14 @@ class AnnouncementController extends Controller
                 }),
             ],
         ], 200);
+    }
+    public function getSubmissionsofChapter($chapterId)
+    {
+        $submissions = AssignmentUpload::where('chapter_id', $chapterId)->with(['student'])->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $submissions
+        ]);
     }
 }
