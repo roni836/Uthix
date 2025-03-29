@@ -103,4 +103,5 @@ class SubjectController extends Controller
             'status' => true,
             'message' => 'Subject deleted successfully'
         ], 200);
-    }}
+    }
+}

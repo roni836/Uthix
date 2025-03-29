@@ -68,10 +68,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="insertclass" method="POST" enctype="multipart/form-data">
+                    <form id="insertClass" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" id="name" name="cat_name" class="form-control" required>
+                            <input type="text" id="name" name="class_name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Capacity</label>
+                            <input type="number" id="capacity" name="capacity" class="form-control" required>
                         </div>
                         <div class="d-flex justify-content-between">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -109,7 +113,7 @@
 
     <script>
         $(document).ready(function() {
-            $("#insertclass").submit(function(e) {
+            $("#insertClass").submit(function(e) {
                 e.preventDefault();
 
                 let formData = new FormData(this);
@@ -128,8 +132,7 @@
                     },
                     success: function(response) {
                         swal("Success", response.message, "success");
-                        $("#insertclass").trigger("reset");
-                        window.open("{{ url('/manage-class') }}", "_self");
+                        $("#insertClass").trigger("reset");
                     },
                     error: function(xhr) {
                         swal("Error", xhr.responseText, "error");

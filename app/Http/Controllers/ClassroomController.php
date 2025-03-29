@@ -54,7 +54,6 @@ class ClassroomController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'class_name' => 'required|string|max:255',
-            'section' => 'required|string|max:255',
             'link' => 'nullable|url',
             'description' => 'nullable|string',
             'capacity' => 'nullable|integer|min:1',
@@ -116,9 +115,14 @@ class ClassroomController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Classroom $classroom)
+    public function destroy(Classroom $class)
     {
-        //
+        $class->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data deleted successfully'
+        ], 200);
     }
 
 
