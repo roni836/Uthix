@@ -49,6 +49,22 @@ class SubjectController extends Controller
         ], 201);
     }
 
+    public function show($id)
+    {
+        $subject = Subject::where('id', $id)->first();
+
+        if (!$subject) {
+            return response()->json([
+                'message' => 'Data not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Data retrieved successfully',
+            'subject' => $subject
+        ], 200);
+    }
+
     public function update(Request $request, Subject $subject)
     {
         $validator = Validator::make($request->all(), [

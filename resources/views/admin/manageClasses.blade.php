@@ -25,10 +25,10 @@
                         @foreach ($classes as $i=>$data)
                             <tr>
                                 <td>
-                                    <span class="fw-medium capitalize">{{ $i + 1 }}</span>
+                                    <span class="fw-medium">{{ $i + 1 }}</span>
                                 </td>
                                 <td>
-                                    <span class="fw-medium">{{ $data->class_name }}</span>
+                                    <span class="fw-medium capitalize">{{ $data->class_name }}</span>
                                 </td>
                                 <td><span class="badge bg-label-primary me-1">{{ $data->capacity }}</span></td>
                                 <td>

@@ -89,9 +89,20 @@ class ClassroomController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Classroom $classroom)
+    public function show($id)
     {
-        //
+        $classroom = Classroom::where('id', $id)->first();
+
+        if (!$classroom) {
+            return response()->json([
+                'message' => 'Data not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Data retrieved successfully',
+            'classroom' => $classroom
+        ], 200);
     }
 
     /**
