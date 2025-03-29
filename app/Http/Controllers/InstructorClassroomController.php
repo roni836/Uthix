@@ -41,10 +41,19 @@ class InstructorClassroomController extends Controller
 
     public function store(Request $request)
     {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        $instructor = Instructor::where('user_id', $user->id)->first();
+
         $validator = Validator::make($request->all(), [
             'classroom_id' => 'required|exists:classrooms,id',
             'subject_id' => 'required|exists:subjects,id',
-            'instructor_id' => 'required|exists:instructors,id',
         ]);
 
         if ($validator->fails()) {
@@ -54,7 +63,7 @@ class InstructorClassroomController extends Controller
         $classroom = InstructorClassroom::create([
             'classroom_id' => $request->classroom_id,
             'subject_id' => $request->subject_id,
-            'instructor_id' => $request->instructor_id,
+            'instructor_id' => $instructor->id,
         ]);
 
         return response()->json([

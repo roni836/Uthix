@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
             $table->string('class_name'); 
-            $table->string('section');
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->string('link')->nullable(); 
             $table->text('description')->nullable(); 
