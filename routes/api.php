@@ -46,12 +46,12 @@ Route::get('/products/view/{id}', [ProductController::class, 'productView']);
 Route::get('/categories/{id}', [CategoryController::class, 'getCategoriesByParent']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-        Route::get('/plans/student', [PlanController::class, 'showPlanForStudent']);
+    Route::get('/plans/student', [PlanController::class, 'showPlanForStudent']);
 
     Route::put('/update-token', [NotificationController::class, 'updateDeviceToken']);
     Route::post('/send-notification', [NotificationController::class, 'sendNotification']);
 
-    Route::get('/manage-coupon', [CouponController::class,'manageCoupon']);
+    Route::get('/manage-coupon', [CouponController::class, 'manageCoupon']);
     Route::get('/parent-categories', [CategoryController::class, 'getParentCategories']);
 
     //  (accessible to all authenticated users)
@@ -62,9 +62,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('wishlist', WishlistController::class);
     Route::apiResource('address', AddressController::class);
     Route::apiResource('orders', OrderController::class);
-    Route::post('add-to-cart', [OrderController::class,'addToCart']);
-    Route::delete('remove-from-cart/{id}', [OrderController::class,'removeFromCart']);
-    Route::get('view-cart', [OrderController::class,'viewCart']);
+    Route::post('add-to-cart', [OrderController::class, 'addToCart']);
+    Route::delete('remove-from-cart/{id}', [OrderController::class, 'removeFromCart']);
+    Route::get('view-cart', [OrderController::class, 'viewCart']);
     Route::delete('/orders/{id}/cancel', [OrderController::class, 'cancelOrder']);
 
     Route::get('/faqs/active', [FaqController::class, 'onlyShowActiveFAQs']);
@@ -82,7 +82,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/subject-classes/{id}', [ClassroomController::class, 'subjectClasses'])->name('subject.classes');
     Route::get('/chapter/{chapter_id}/announcements', [AnnouncementController::class, 'getAnnouncementsByClass'])->name('announcement.manage');
 
-    Route::get('all-classroom', [ClassroomController::class,'allClassroom']);
+    Route::get('all-classroom', [ClassroomController::class, 'allClassroom']);
 
     // Admin routes
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard', function () {
@@ -120,7 +120,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
         Route::apiResource('student', StudentController::class);
         Route::apiResource('student-classroom', StudentClassroomController::class);
-        Route::get('grade/{uploadId}', [GradeController::class,'getGrades']);
+        Route::get('grade/{uploadId}', [GradeController::class, 'getGrades']);
         Route::post('/student/assignments/upload', [AssignmentUploadController::class, 'store']);
         Route::post('/student-profile', [StudentController::class, 'updateProfile']);
         Route::get('/student-profile', [StudentController::class, 'showProfile']);
@@ -142,7 +142,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/profile', [VendorController::class, 'editSeller']);
         Route::post('/vendor/profile', [VendorController::class, 'updateSeller']);
     });
-     Route::middleware([RoleMiddleware::class . ':instructor'])->group(function () {
+    
+    Route::middleware([RoleMiddleware::class . ':instructor'])->group(function () {
         // Route::apiResource('/instructor', [InstructorController::class]);
         Route::apiResource('instructor', InstructorController::class);
         Route::apiResource('instructor-classroom', InstructorClassroomController::class);
@@ -155,14 +156,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         //submission page
         Route::get('/assignments/{assignmentId}/submission', [AssignmentUploadController::class, 'viewSubmissions']);
-        
+
         Route::post('/instructor/grade/{uploadId}', [GradeController::class, 'storeGrades']);
         Route::post('/instructor-profile', [InstructorController::class, 'updateProfile']);
         Route::get('/instructor-profile', [InstructorController::class, 'showProfile']);
         Route::get('/classroom/{id}/chapters', [ClassroomController::class, 'getClassChapters']);
         Route::get('/instructor-get-subject', [StudentController::class, 'getAllSubject']);
         Route::get('/submissions/{chapterId}', [AnnouncementController::class, 'getSubmissions']);
-
     });
 });
 
@@ -200,6 +200,3 @@ Route::get('/zoom/callback', [ZoomController::class, 'handleZoomCallback']);
 // Route::get('/zoom/meetings/{meetingId}', [ZoomController::class, 'shareMeeting']);
 
 Route::get('/zoom/create-meeting', [ZoomController::class, 'createMeeting']);
-
-
-

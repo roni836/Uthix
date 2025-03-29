@@ -16,18 +16,18 @@ class ClassroomController extends Controller
     /**
      * Display a listing of the resource.
      */
-   
-        public function index()
-        {
-        
-            $classrooms = Classroom::all();
-        
-            return response()->json([
-                'status' => true,
-                'message' => 'Classrooms fetched successfully',
-                'data' => $classrooms
-            ], 200);
-        }
+
+    public function index()
+    {
+
+        $classrooms = Classroom::all();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Classrooms fetched successfully',
+            'data' => $classrooms
+        ], 200);
+    }
 
     public function allClassroom()
     {
@@ -269,40 +269,21 @@ class ClassroomController extends Controller
     //CLASSROOM WISE CHAPTER CALLING
     public function getClassChapters($classroom_id)
     {
-        $instructorId = Instructor::where('user_id', auth()->id())->value('id');
-        if (!$instructorId) {
+        $chapters = Chapter::where('classroom_id', $classroom_id)->with('classroom')->get();
+
+        // dd($classroom);
+
+        if (!$chapters) {
             return response()->json([
                 'status' => false,
-                'message' => 'Instructor not found.',
+                'message' => 'Chapter not found'
             ], 404);
         }
-    
-    
-        $classroom = Classroom::where('id', $classroom_id)
-    ->where('instructor_id', $instructorId) // ✅ Directly use $instructorId
-    ->with('chapters')
-    ->first();
-    
-    // dd($classroom);
-    
-        if (!$classroom) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Classroom not found'
-            ], 404);
-        }
-    
+
         // Step 2: Return classroom details with chapters
         return response()->json([
             'status' => true,
-            'class' => $classroom->name,
-            'subject' => $classroom->subject->name ?? 'N/A',
-            'chapters' => $classroom->chapters
+            'chapters' => $chapters,
         ], 200);
     }
-    
-
-
-
-
 }
