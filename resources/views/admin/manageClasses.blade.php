@@ -133,6 +133,7 @@
                     success: function(response) {
                         swal("Success", response.message, "success");
                         $("#insertClass").trigger("reset");
+                        location.reload();
                     },
                     error: function(xhr) {
                         swal("Error", xhr.responseText, "error");
@@ -147,7 +148,7 @@
                 if (confirm("Are you sure you want to delete this data?")) {
                     $.ajax({
                         type: 'DELETE',
-                        url: `{{ url('/api/class/') }}/${id}`,
+                        url: `{{ url('/api/classroom/') }}/${id}`,
                         headers: {
                             "Authorization": "Bearer " + token
                         },
