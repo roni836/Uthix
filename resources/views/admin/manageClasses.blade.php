@@ -15,14 +15,18 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th>S.no</th>
                             <th>Name</th>
                             <th>Capacity</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
-                        @foreach ($classes as $data)
+                        @foreach ($classes as $i=>$data)
                             <tr>
+                                <td>
+                                    <span class="fw-medium capitalize">{{ $i + 1 }}</span>
+                                </td>
                                 <td>
                                     <span class="fw-medium">{{ $data->class_name }}</span>
                                 </td>

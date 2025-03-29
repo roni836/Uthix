@@ -8,8 +8,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>@yield('title') ? @yield('title') . ' - ' . config('app.name', 'Uthix') : config('app.name', 'Uthix')
-    </title>
+        <title>@yield('title') ? @yield('title') . ' - ' . (env('APP_NAME', 'Uthix')) : env('APP_NAME', 'Uthix')</title>
 
     <meta name="description" content="" />
 

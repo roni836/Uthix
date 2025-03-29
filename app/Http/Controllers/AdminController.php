@@ -322,7 +322,7 @@ class AdminController extends Controller
     public function manageClasses()
     {
         $data['classes'] = Classroom::all();
-        return view('admin.manageClassrooms', $data);
+        return view('admin.manageClasses', $data);
     }
 
     public function manageFaq()

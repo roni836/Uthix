@@ -15,16 +15,20 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th>S.no</th>
                             <th>Name</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
-                        @foreach ($subjects as $data)
+                        @foreach ($subjects as $i=>$data)
                             <tr>
                                 <td>
-                                    <span class="fw-medium">{{ $data->name }}</span>
+                                    <span class="fw-medium capitalize">{{ $i + 1 }}</span>
+                                </td>
+                                <td>
+                                    <span class="fw-medium capitalize">{{ $data->name }}</span>
                                 </td>
                                 <td><span class="badge bg-label-primary me-1">{{ $data->status }}</span></td>
                                 <td>
@@ -70,7 +74,7 @@
                     <form id="insertSubject" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" id="name" name="cat_title" class="form-control" required>
+                            <input type="text" id="name" name="name" class="form-control" required>
                         </div>
                         <div class="d-flex justify-content-between">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -94,7 +98,7 @@
                         <div class="mb-3">
                             <label for="name" class="form-label">Title</label>
                             <input type="hidden" id="edit_id" name="id" class="form-control" required>
-                            <input type="text" id="edit_cat_title" name="cat_title" class="form-control" required>
+                            <input type="text" id="edit_name" name="name" class="form-control" required>
                         </div>
                         <div class="d-flex justify-content-between">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
