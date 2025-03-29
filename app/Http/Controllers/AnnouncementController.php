@@ -80,21 +80,28 @@ class AnnouncementController extends Controller
 
     public function getAnnouncementsByClass($chapter_id)
     {
-        $instructorId = Instructor::where('user_id', auth()->id())->value('id');
-        if (!$instructorId) {
+        // Get the instructor along with the user details
+        $instructor = Instructor::where('user_id', auth()->id())->with('user')->first();
+    
+        if (!$instructor) {
             return response()->json([
                 'status' => false,
                 'message' => 'Instructor not found.',
             ], 404);
         }
+    
+        // Fetch announcements for the instructor
         $announcements = Announcement::where('chapter_id', $chapter_id)
-            ->where('instructor_id', $instructorId) // Filter by instructor
+            ->where('instructor_id', $instructor->id) // Filter by instructor ID
             ->orderBy('created_at', 'desc')
-            ->with(['attachments', 'chapter', 'instructor'])
+            ->with(['attachments', 'chapter']) // Include user details
             ->get();
-
+                // dd($instructor);
+    
+    
         return response()->json([
             'status' => true,
+            'instructor_name' => $instructor->user->name, // Fetching instructor's name
             'data' => $announcements
         ], 200);
     }
