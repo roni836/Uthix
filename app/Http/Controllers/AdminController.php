@@ -61,9 +61,9 @@ class AdminController extends Controller
         //     ->get();
 
         $dailyOrders = DB::table(DB::raw("(SELECT DAYNAME(created_at) as day, COUNT(*) as count, MIN(created_at) as min_created_at FROM orders GROUP BY DAYNAME(created_at)) as subquery"))
-        ->orderByRaw("FIELD(DAYNAME(min_created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
-        ->get();
-    
+            ->orderByRaw("FIELD(DAYNAME(min_created_at), 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')")
+            ->get();
+
         $totalSales = OrderItem::sum('total_price') / 1000;
 
         $totalOrders = Order::count();
@@ -183,20 +183,20 @@ class AdminController extends Controller
 
     public function manageProduct()
     {
-        $perPage = 8; 
-        $products = Product::simplePaginate($perPage); 
+        $perPage = 8;
+        $products = Product::simplePaginate($perPage);
         $totalPages = ceil(Product::count() / $perPage);
 
-        return view('admin.products.manageProduct', compact('products','totalPages'));
+        return view('admin.products.manageProduct', compact('products', 'totalPages'));
     }
     public function manageCoupon()
     {
-        $perPage = 8; 
+        $perPage = 8;
 
         $coupons = Coupon::simplePaginate($perPage);
         $totalPages = ceil(Product::count() / $perPage);
 
-        return view('admin.coupon.manageCoupon', compact('coupons','totalPages'));
+        return view('admin.coupon.manageCoupon', compact('coupons', 'totalPages'));
     }
     public function insertCoupon()
     {
@@ -219,11 +219,11 @@ class AdminController extends Controller
     // }
     public function allOrders()
     {
-        $perPage = 8; 
+        $perPage = 8;
         $orders = Order::with('user', 'coupon', 'address')->simplePaginate($perPage);
         $totalPages = ceil(Product::count() / $perPage);
 
-        return view('admin.order.orderList', compact('orders','totalPages'));
+        return view('admin.order.orderList', compact('orders', 'totalPages'));
     }
 
     public function orderDetails($id)
@@ -249,45 +249,45 @@ class AdminController extends Controller
     // }
 
     public function manageClass(Request $request)
-{
-    $perPage = 8; 
+    {
+        $perPage = 8;
 
-    $subjects = Subject::where('is_active', true)->get();
+        $subjects = Subject::where('is_active', true)->get();
 
-    $query = Classroom::with('instructor', 'subject');
+        $query = Classroom::with('instructor', 'subject');
 
-    if ($request->has('subject') && !empty($request->subject)) {
-        $query->where('subject_id', $request->subject);
+        if ($request->has('subject') && !empty($request->subject)) {
+            $query->where('subject_id', $request->subject);
+        }
+
+        if ($request->has('status') && !empty($request->status)) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('class_name', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // Paginate results
+        $classes = $query->simplePaginate($perPage);
+        $totalPages = ceil($query->count() / $perPage);
+
+        return view('admin.classes.manageClass', compact('classes', 'totalPages', 'subjects'));
     }
-
-    if ($request->has('status') && !empty($request->status)) {
-        $query->where('status', $request->status);
-    }
-
-    if ($request->has('search') && !empty($request->search)) {
-        $query->where('class_name', 'LIKE', '%' . $request->search . '%');
-    }
-
-    // Paginate results
-    $classes = $query->simplePaginate($perPage);
-    $totalPages = ceil($query->count() / $perPage);
-
-    return view('admin.classes.manageClass', compact('classes', 'totalPages', 'subjects'));
-}
 
 
 
     public function showChapters($id)
     {
         $classroom = Classroom::with('chapters')->find($id);
-    
+
         if (!$classroom) {
             return redirect()->route('admin.manageClass')->with('error', 'Classroom not found');
         }
-    
+
         return view('admin.classes.classroomChapters', compact('classroom'));
     }
-    
+
 
 
 
@@ -304,18 +304,28 @@ class AdminController extends Controller
     }
 
     public function toggleProductStatus($id)
-{
-    $data = Product::findOrFail($id);
-    $data->is_published = !$data->is_published;
-    $data->save();
-    session()->flash('success', 'Product status updated successfully!');
+    {
+        $data = Product::findOrFail($id);
+        $data->is_published = !$data->is_published;
+        $data->save();
+        session()->flash('success', 'Product status updated successfully!');
 
-    return back();
-} 
+        return back();
+    }
 
+    public function manageSubject()
+    {
+        $data['subjects'] = Subject::all();
+        return view('admin.manageSubjects', $data);
+    }
 
+    public function manageClasses()
+    {
+        $data['classes'] = Classroom::all();
+        return view('admin.manageClassrooms', $data);
+    }
 
-public function manageFaq()
+    public function manageFaq()
     {
         $data['faqs'] = Faq::all();
         return view('admin.faq.manageFaq', $data);
@@ -334,21 +344,18 @@ public function manageFaq()
     public function updateStatusQuery(Request $request, $id)
     {
         $query = HelpDesk::find($id);
-    
+
         if (!$query) {
             return redirect()->back()->with('error', 'Query not found');
         }
-    
+
         $request->validate([
             'status' => 'required|in:pending,resolved,closed',
         ]);
-    
+
         $query->status = $request->status;
         $query->save();
-    
+
         return redirect()->back()->with('success', 'Query status updated successfully');
     }
-    
-
-
 }

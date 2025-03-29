@@ -8,7 +8,8 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>@yield('title') - {{ env('APP_NAME') }}</title>
+    <title>@yield('title') ? @yield('title') . ' - ' . config('app.name', 'Uthix') : config('app.name', 'Uthix')
+    </title>
 
     <meta name="description" content="" />
 
@@ -70,13 +71,13 @@
             width: 40px;
             height: 20px;
         }
-    
+
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
-    
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -88,7 +89,7 @@
             transition: .4s;
             border-radius: 20px;
         }
-    
+
         .slider:before {
             position: absolute;
             content: "";
@@ -100,16 +101,16 @@
             transition: .4s;
             border-radius: 50%;
         }
-    
+
         input:checked+.slider {
             background-color: #4caf50;
         }
-    
+
         input:checked+.slider:before {
             transform: translateX(20px);
         }
     </style>
-    
+
 </head>
 
 <body>
@@ -155,11 +156,11 @@
                 <ul class="menu-inner py-1">
 
                     <li class="menu-item">
-                        <a href="{{route('admin.dashboard')}}" class="menu-link ">
+                        <a href="{{ route('admin.dashboard') }}" class="menu-link ">
                             <i class="menu-icon tf-icons ti ti-users"></i>
                             <div data-i18n="Dashboard">Dashboard</div>
                         </a>
-                        
+
                     </li>
 
                     <li class="menu-item">
@@ -234,8 +235,16 @@
                                 </a>
                                 <a href="{{ route('manage.plan') }}" class="menu-link ">
                                     <div data-i18n="Plan List">Plan List</div>
-                                </a> 
-                               
+                                </a>
+
+                                <a href="{{ route('manage.classes') }}" class="menu-link ">
+                                    <div data-i18n="Manage all Classes">Manage all Classes</div>
+                                </a>
+
+                                <a href="{{ route('manage.subject') }}" class="menu-link ">
+                                    <div data-i18n="Manage Subjects">Manage Subjects</div>
+                                </a>
+
                                 {{-- <ul class="menu-sub">
                                     <li class="menu-item">
                                         <a href="app-ecommerce-category-list.html" class="menu-link">

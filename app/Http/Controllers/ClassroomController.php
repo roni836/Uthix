@@ -19,16 +19,8 @@ class ClassroomController extends Controller
    
         public function index()
         {
-            $instructorId = Instructor::where('user_id', auth()->id())->value('id');
         
-            if (!$instructorId) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Instructor not found'
-                ], 404);
-            }
-        
-            $classrooms = Classroom::where('instructor_id', $instructorId)->get();
+            $classrooms = Classroom::all();
         
             return response()->json([
                 'status' => true,
@@ -60,12 +52,9 @@ class ClassroomController extends Controller
      */
     public function store(Request $request)
     {
-        $instructorId = Instructor::where('user_id', auth()->id())->value('id');
         $validator = Validator::make($request->all(), [
-            // 'instructor_id' => 'required|exists:instructors,id',
             'class_name' => 'required|string|max:255',
             'section' => 'required|string|max:255',
-            'subject_id' => 'required|exists:subjects,id',
             'link' => 'nullable|url',
             'description' => 'nullable|string',
             'capacity' => 'nullable|integer|min:1',
@@ -81,10 +70,7 @@ class ClassroomController extends Controller
         }
 
         $classroom = Classroom::create([
-            'instructor_id' => $instructorId,
             'class_name' => $request->class_name,
-            'section' => $request->section,
-            'subject_id' => $request->subject_id,
             'link' => $request->link,
             'description' => $request->description,
             'capacity' => $request->capacity ?? 30,

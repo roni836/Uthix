@@ -33,6 +33,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/insert-instructor', [AdminController::class, 'insertInstructor'])->name('insert.instructor');
         Route::get('/manage-instructor', [AdminController::class, 'manageInstructor'])->name('manage.instructor');
         Route::get('/manage-category', [AdminController::class, 'manageCategory'])->name('manage.category');
+        Route::get('/manage-subject', [AdminController::class, 'manageSubject'])->name('manage.subject');
+        Route::get('/manage-classes', [AdminController::class, 'manageClasses'])->name('manage.classes');
         Route::get('/insert-product', [AdminController::class, 'insertProduct'])->name('insert.product');
         Route::get('/manage-product', [AdminController::class, 'manageProduct'])->name('manage.product');
         Route::get('/manage-coupon', [AdminController::class, 'manageCoupon'])->name('manage.coupon');
