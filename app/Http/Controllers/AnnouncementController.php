@@ -78,28 +78,69 @@ class AnnouncementController extends Controller
 
 
 
+    // public function getAnnouncementsByClass($chapter_id)
+    // {
+    //     // Get the instructor along with the user details
+    //     $instructor = Instructor::where('user_id', auth()->id())->with('user')->first();
+    
+    //     if (!$instructor) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Instructor not found.',
+    //         ], 404);
+    //     }
+    
+    //     // Fetch announcements for the instructor
+    //     $announcements = Announcement::where('chapter_id', $chapter_id)
+    //         ->where('instructor_id', $instructor->id) // Filter by instructor ID
+    //         ->orderBy('created_at', 'desc')
+    //         ->with(['attachments', 'chapter']) // Include user details
+    //         ->get();
+    //             // dd($instructor);
+    
+    
+    //     return response()->json([
+    //         'status' => true,
+    //         'instructor_name' => $instructor->user->name, // Fetching instructor's name
+    //         'data' => $announcements
+    //     ], 200);
+    // }
+
     public function getAnnouncementsByClass($chapter_id)
     {
-        $instructorId = Instructor::where('user_id', auth()->id())->value('id');
-        if (!$instructorId) {
+        // Get the instructor along with the user details
+        $instructor = Instructor::where('user_id', auth()->id())->with('user')->first();
+    
+        if (!$instructor) {
             return response()->json([
                 'status' => false,
                 'message' => 'Instructor not found.',
             ], 404);
         }
-        $announcements = Announcement::where('chapter_id', $chapter_id)
-            ->where('instructor_id', $instructorId) // Filter by instructor
-            ->orderBy('created_at', 'desc')
-            ->with(['attachments', 'chapter', 'instructor'])
-            ->get();
-
+    
+        // Fetch the chapter with all announcements
+        $chapter = Chapter::where('id', $chapter_id)
+            ->with(['announcements' => function ($query) use ($instructor) {
+                $query->where('instructor_id', $instructor->id) // Fetch only this instructor's announcements
+                    ->orderBy('created_at', 'desc')
+                    ->with(['attachments']); 
+            }])
+            ->first();
+    
+        if (!$chapter) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Chapter not found.',
+            ], 404);
+        }
+    
         return response()->json([
             'status' => true,
-            'data' => $announcements
+            'chapter_title' => $chapter, // Chapter name
+            'instructor_name' => $instructor->user->name, // Instructor's name
+            // 'data' => $chapter->announcements // Announcements under the chapter
         ], 200);
     }
-
-
 
     public function getInstructorAssignments()
     {
@@ -164,5 +205,14 @@ class AnnouncementController extends Controller
                 }),
             ],
         ], 200);
+    }
+    public function getSubmissionsofChapter($chapterId)
+    {
+        $submissions = AssignmentUpload::where('chapter_id', $chapterId)->with(['student'])->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $submissions
+        ]);
     }
 }
