@@ -20,6 +20,10 @@ class AssignmentUpload extends Model
     public function classroom()
     {
         return $this->belongsTo(Classroom::class, 'classroom_id');
+    } 
+    public function chapter()
+    {
+        return $this->belongsTo(Chapter::class, 'chapter_id');
     }
 
     public function attachments()

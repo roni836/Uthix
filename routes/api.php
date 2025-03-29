@@ -149,12 +149,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Route::post('/assignments', [AnnouncementController::class, 'store']);
         Route::get('/assignments', [AnnouncementController::class, 'getInstructorAssignments']);
         Route::get('/assignments/{assignmentId}/submissions', [AnnouncementController::class, 'getSubmissions']);
+
+        //submission page
         Route::get('/assignments/{assignmentId}/submission', [AssignmentUploadController::class, 'viewSubmissions']);
+        
         Route::post('/instructor/grade/{uploadId}', [GradeController::class, 'storeGrades']);
         Route::post('/instructor-profile', [InstructorController::class, 'updateProfile']);
         Route::get('/instructor-profile', [InstructorController::class, 'showProfile']);
         Route::get('/classroom/{id}/chapters', [ClassroomController::class, 'getClassChapters']);
         Route::get('/instructor-get-subject', [StudentController::class, 'getAllSubject']);
+        Route::get('/submissions/{chapterId}', [AnnouncementController::class, 'getSubmissions']);
 
     });
 });
