@@ -28,7 +28,7 @@ class Announcement extends Model
     
     public function instructor()
     {
-        return $this->belongsTo(User::class, 'instructor_id')->select('id', 'name');
+        return $this->belongsTo(Instructor::class, 'instructor_id');
     }
    
     
