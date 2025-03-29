@@ -25,34 +25,45 @@
         <div class="col-12">
             <div class="card shadow-sm border-0">
                 <div class="card-body py-3">
-                    <form class="row g-3">
+                    <form method="GET" class="row g-3">
+                        <!-- Filter by Subject -->
                         <div class="col-md-3">
-                            <select class="form-select" id="filterSubject">
-                                <option selected>Filter by Subject</option>
-                                <option>Mathematics</option>
-                                <option>Science</option>
-                                <option>English</option>
+                            <select class="form-select" name="subject" onchange="this.form.submit()">
+                                <option value="">Filter by Subject</option>
+                                @foreach($subjects as $subject)
+                                    <option value="{{ $subject->id }}" {{ request('subject') == $subject->id ? 'selected' : '' }}>
+                                        {{ $subject->name }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
+                    
+                        <!-- Filter by Status -->
                         <div class="col-md-3">
-                            <select class="form-select" id="filterStatus">
-                                <option selected>Filter by Status</option>
-                                <option>Active</option>
-                                <option>Inactive</option>
+                            <select class="form-select" name="status" onchange="this.form.submit()">
+                                <option value="">Filter by Status</option>
+                                <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                                <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
                             </select>
                         </div>
+                    
+                        <!-- Search by Class Name -->
                         <div class="col-md-4">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search classes...">
-                                <button class="btn btn-outline-primary" type="button">
+                                <input type="text" name="search" class="form-control" placeholder="Search classes..."
+                                    value="{{ request('search') }}">
+                                <button class="btn btn-outline-primary" type="submit">
                                     <i class="fas fa-search"></i>
                                 </button>
                             </div>
                         </div>
+                    
+                        <!-- Reset Button -->
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-outline-secondary w-100">Reset</button>
+                            <a href="{{ route('manage.class') }}" class="btn btn-outline-secondary w-100">Reset</a>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>

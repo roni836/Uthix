@@ -14,6 +14,7 @@ use App\Models\Order;
 use App\Models\Plan;
 use App\Models\Product;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -247,15 +248,33 @@ class AdminController extends Controller
     //     return view('admin.adminOrders', compact('orders'));
     // }
 
-    public function manageClass()
-    {
-        $perPage = 8; 
+    public function manageClass(Request $request)
+{
+    $perPage = 8; 
 
-        $classes = Classroom::with('instructor', 'subject')->simplePaginate($perPage);
-        $totalPages = ceil(Classroom::count() / $perPage);
+    $subjects = Subject::where('is_active', true)->get();
 
-        return view('admin.classes.manageClass', compact('classes','totalPages'));
+    $query = Classroom::with('instructor', 'subject');
+
+    if ($request->has('subject') && !empty($request->subject)) {
+        $query->where('subject_id', $request->subject);
     }
+
+    if ($request->has('status') && !empty($request->status)) {
+        $query->where('status', $request->status);
+    }
+
+    if ($request->has('search') && !empty($request->search)) {
+        $query->where('class_name', 'LIKE', '%' . $request->search . '%');
+    }
+
+    // Paginate results
+    $classes = $query->simplePaginate($perPage);
+    $totalPages = ceil($query->count() / $perPage);
+
+    return view('admin.classes.manageClass', compact('classes', 'totalPages', 'subjects'));
+}
+
 
 
     public function showChapters($id)
