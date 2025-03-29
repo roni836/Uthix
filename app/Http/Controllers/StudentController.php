@@ -170,7 +170,6 @@ class StudentController extends Controller
             'phone' => 'nullable|string|max:15',
             'gender' => 'nullable|string|in:male,female,other',
             'dob' => 'nullable|date',
-            'class' => 'nullable|string|max:255',
             'stream' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Image validation
         ]);
@@ -221,7 +220,7 @@ class StudentController extends Controller
         $student = Student::where('user_id', $user->id)->first();
         if ($student) {
             $student->update([
-                'class' => $request->class,
+                'classroom_id' => $request->classroom_id,
                 'stream' => $request->stream,
             ]);
         }

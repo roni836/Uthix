@@ -11,6 +11,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\HelpDeskController;
+use App\Http\Controllers\InstructorClassroomController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
@@ -81,6 +82,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/subject-classes/{id}', [ClassroomController::class, 'subjectClasses'])->name('subject.classes');
     Route::get('/chapter/{chapter_id}/announcements', [AnnouncementController::class, 'getAnnouncementsByClass'])->name('announcement.manage');
 
+    Route::get('all-classroom', [ClassroomController::class,'allClassroom']);
+
     // Admin routes
     Route::middleware([RoleMiddleware::class . ':admin'])->get('/admin-dashboard', function () {
         return response()->json(['message' => 'admin API is working!']);
@@ -111,12 +114,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/admin-vendor', [VendorController::class, 'adminStore'])->name('admin.vendor.store');
         Route::apiResource('plans', PlanController::class);
         Route::apiResource('faqs', FaqController::class);
+        Route::apiResource('classroom', ClassroomController::class);
     });
 
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
         Route::apiResource('student', StudentController::class);
         Route::apiResource('student-classroom', StudentClassroomController::class);
-        Route::get('all-classroom', [ClassroomController::class,'allClassroom']);
         Route::get('grade/{uploadId}', [GradeController::class,'getGrades']);
         Route::post('/student/assignments/upload', [AssignmentUploadController::class, 'store']);
         Route::post('/student-profile', [StudentController::class, 'updateProfile']);
@@ -142,7 +145,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
      Route::middleware([RoleMiddleware::class . ':instructor'])->group(function () {
         // Route::apiResource('/instructor', [InstructorController::class]);
         Route::apiResource('instructor', InstructorController::class);
-        Route::apiResource('classroom', ClassroomController::class);
+        Route::apiResource('instructor-classroom', InstructorClassroomController::class);
         Route::post('/class-chapter/{classroom_id}', [ClassroomController::class, 'createNewChapter'])->name('class.store');
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
         Route::post('/chapters/{chapter_id}/announcements', [AnnouncementController::class, 'createAnnouncement']);

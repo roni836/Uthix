@@ -1,29 +1,16 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Classroom extends Model
 {
     protected $guarded = [];
 
-    // public function subject()
-    // {
-    //     return $this->belongsTo(Subject::class, 'subject_id');
-    // }
-    //  public function chapters()
-    // {
-    //     return $this->belongsTo(Chapter::class, 'chapter_id');
-    // }
-
-    // public function instructor()
-    // {
-    //     return $this->belongsTo(Instructor::class);
-    // }
-    public function instructor()
+    public function instructors()
     {
-        return $this->belongsTo(User::class, 'instructor_id')->select('id', 'name');;
+        return $this->hasMany(InstructorClassroom::class);
     }
 
     public function subject()

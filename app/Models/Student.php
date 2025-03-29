@@ -12,4 +12,14 @@ class Student extends Model
     {
         return $this->belongsTo(User::class,'user_id');
     }
+
+    public function instructors()
+    {
+        return $this->hasMany(InstructorClassroom::class);
+    }
+
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class);
+    }
 }

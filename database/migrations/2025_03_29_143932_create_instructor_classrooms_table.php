@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('classrooms', function (Blueprint $table) {
+        Schema::create('instructor_classrooms', function (Blueprint $table) {
             $table->id();
-            $table->string('class_name'); 
-            $table->string('section');
+            $table->foreignId('classroom_id')->constrained()->onDelete('cascade');
+            $table->foreignId('instructor_id')->constrained()->onDelete('cascade');
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
-            $table->string('link')->nullable(); 
-            $table->text('description')->nullable(); 
-            $table->integer('capacity')->default(30); 
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->dateTime('schedule')->nullable(); 
             $table->timestamps();
         });
     }
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('classrooms');
+        Schema::dropIfExists('instructor_classrooms');
     }
 };

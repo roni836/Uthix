@@ -16,7 +16,6 @@ class ClassroomController extends Controller
     /**
      * Display a listing of the resource.
      */
-
    
         public function index()
         {
@@ -37,14 +36,11 @@ class ClassroomController extends Controller
                 'data' => $classrooms
             ], 200);
         }
-                
-    
-
 
     public function allClassroom()
     {
-        $user = Auth::user();
-        $classrooms = Classroom::with('instructor')->get();
+        // $user = Auth::user();
+        $classrooms = Classroom::all();
 
         if (!$classrooms) {
             return response()->json([

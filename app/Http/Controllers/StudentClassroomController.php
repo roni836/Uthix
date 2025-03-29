@@ -16,7 +16,7 @@ class StudentClassroomController extends Controller
         $student = Student::where('user_id', $user->id)->first();
 
         $students = StudentClassroom::where('student_id', $student->id)
-            ->with('classroom.instructor.student') 
+            ->with('classroom.instructor.student')
             ->get();
 
         if (!$students) {
