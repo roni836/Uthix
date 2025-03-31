@@ -235,7 +235,7 @@ class StudentController extends Controller
     {
         $user = Auth::user();
 
-        $data = Student::with('user')->where('user_id', $user->id)->get();
+        $data = Student::with(['user', 'classroom'])->where('user_id', $user->id)->firstOrFail();
         return response()->json([
             'status' => true,
             'message' => 'Profile fetched successfully',
