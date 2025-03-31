@@ -74,6 +74,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/verify-payment', [PaymentController::class, 'callback']);
     // Route::apiResource('products', ProductController::class);
 
+    Route::get('/get-all-user', [MessageController::class, 'getAllUser']);
     Route::post('/send-message', [MessageController::class, 'sendMessage']);
     Route::get('/get-messages', [MessageController::class, 'getMessages']);
     Route::get('/get-conversation/{receiverId}', [MessageController::class, 'getConversation']);

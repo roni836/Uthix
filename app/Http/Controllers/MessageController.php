@@ -4,12 +4,29 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class MessageController extends Controller
 {
+    public function getAllUser(Request $request)
+    {
+        $query = User::query();
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $users = $query->get();
+
+        return response()->json([
+            'message' => 'Users fetched successfully',
+            'users' => $users
+        ]);
+    }
+
     public function sendMessage(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -55,11 +72,11 @@ class MessageController extends Controller
     // public function getMessages(Request $request)
     // {
     //     $userId = Auth::id();
-    
+
     //     $query = Message::where(function ($q) use ($userId) {
     //         $q->where('receiver_id', $userId);
     //     })->orderBy('created_at', 'desc')->with(['receiver', 'sender']);
-    
+
     //     if ($request->has('search')) {
     //         $search = $request->input('search');
     //         $query->where(function ($q) use ($search) {
@@ -67,58 +84,58 @@ class MessageController extends Controller
     //               ->orWhereHas('receiver', function ($q) use ($search) { 
     //                   $q->where('name', 'like', '%' . $search . '%');  
     //               });
-                
+
     //         });
     //     }
-    
+
     //     $messages = $query->get();
-    
+
     //     // Add file URL if exists
     //     foreach ($messages as $msg) {
     //         if ($msg->file_path) {
     //             $msg->file_url = asset('storage/' . $msg->file_path);
     //         }
     //     }
-    
+
     //     return response()->json(['messages' => $messages]);
     // }
-    
+
 
     public function getMessages(Request $request)
     {
         $userId = Auth::id();
         $search = $request->input('search'); // Get search query from request
-    
+
         $messages = Message::where(function ($query) use ($userId) {
             $query->where('receiver_id', $userId)
-                  ->orWhere('sender_id', $userId);
+                ->orWhere('sender_id', $userId);
         })->with(['receiver', 'sender']); // Include sender and receiver details
-    
+
         // Apply search filter if search query is provided
         if (!empty($search)) {
             $messages->where(function ($query) use ($search) {
                 $query->where('message', 'LIKE', "%$search%")
-                      ->orWhereHas('sender', function ($q) use ($search) {
-                          $q->where('name', 'LIKE', "%$search%");
-                      })
-                      ->orWhereHas('receiver', function ($q) use ($search) {
-                          $q->where('name', 'LIKE', "%$search%");
-                      });
+                    ->orWhereHas('sender', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('receiver', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%$search%");
+                    });
             });
         }
-    
+
         $messages = $messages->orderBy('created_at', 'desc')->get();
-    
+
         // Add file URL if a file exists
         foreach ($messages as $msg) {
             if ($msg->file_path) {
                 $msg->file_url = asset('storage/' . $msg->file_path);
             }
         }
-    
+
         return response()->json(['messages' => $messages]);
     }
-    
+
 
     /**
      * Get conversation between two users
