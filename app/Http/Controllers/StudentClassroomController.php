@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InstructorClassroom;
 use App\Models\Student;
 use App\Models\StudentClassroom;
 use Illuminate\Http\Request;
@@ -14,23 +15,24 @@ class StudentClassroomController extends Controller
     {
         $user = Auth::user();
         $student = Student::where('user_id', $user->id)->first();
-
-        $students = StudentClassroom::where('student_id', $student->id)
-            ->with('classroom.instructor.student')
-            ->get();
-
-        if (!$students) {
+    
+        if (!$student) {
             return response()->json([
                 'status' => false,
-                'message' => 'No Data found'
+                'message' => 'Student not found'
             ], 404);
         }
-
+    
+        $data = InstructorClassroom::where('classroom_id', $student->classroom_id)->get();
+    
+       
+    
         return response()->json([
             'status' => true,
-            'students' => $students,
+            'data'=> $data,
         ], 200);
     }
+    
 
     public function store(Request $request)
     {

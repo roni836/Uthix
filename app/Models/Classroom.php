@@ -8,7 +8,7 @@ class Classroom extends Model
 {
     protected $guarded = [];
 
-    public function instructors()
+    public function instructor()
     {
         return $this->hasMany(InstructorClassroom::class);
     }
