@@ -14,6 +14,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\PasswordReset;
+use App\Models\Student;
 use Carbon\Carbon;
 
 class AuthController extends Controller
@@ -164,6 +165,11 @@ class AuthController extends Controller
             Instructor::create([
                 'user_id' => $user->id,
                 'qualification'=> 'N/a'
+            ]);
+        }
+        if($request->role == 'student' ){
+            Student::create([
+                'user_id' => $user->id,
             ]);
         }
 
