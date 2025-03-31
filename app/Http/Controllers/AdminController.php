@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Coupon;
 use App\Models\Faq;
 use App\Models\HelpDesk;
+use App\Models\InstructorClassroom;
 use App\Models\OrderItem;
 use App\Models\Vendor;
 use App\Models\Category;
@@ -89,12 +90,14 @@ class AdminController extends Controller
 
 
         //upcoming classes
-        $upcomingClasses = Classroom::with(['instructor', 'subject'])
-            ->where('schedule', '>', now())
-            ->where('status', 'active')
-            ->orderBy('schedule', 'asc')
-            ->take(3)
-            ->get();
+        $upcomingClasses = InstructorClassroom::with(['classroom', 'instructor', 'subject'])
+    ->whereHas('classroom', function ($query) {
+        $query->where('schedule', '>', now())
+              ->where('status', 'active');
+    })
+    ->take(3)
+    ->get();
+
         return view('admin.index', compact(
             'orders',
             'orderStats',
@@ -251,44 +254,47 @@ class AdminController extends Controller
     public function manageClass(Request $request)
     {
         $perPage = 8;
-
+    
         $subjects = Subject::where('is_active', true)->get();
-
-        $query = Classroom::with('instructor', 'subject');
-
+    
+        $query = InstructorClassroom::with(['classroom', 'instructor', 'subject']);
+    
         if ($request->has('subject') && !empty($request->subject)) {
             $query->where('subject_id', $request->subject);
         }
-
+    
         if ($request->has('status') && !empty($request->status)) {
-            $query->where('status', $request->status);
+            $query->whereHas('classroom', function ($q) use ($request) {
+                $q->where('status', $request->status);
+            });
         }
-
+    
         if ($request->has('search') && !empty($request->search)) {
-            $query->where('class_name', 'LIKE', '%' . $request->search . '%');
+            $query->whereHas('classroom', function ($q) use ($request) {
+                $q->where('class_name', 'LIKE', '%' . $request->search . '%');
+            });
         }
-
+    
         // Paginate results
         $classes = $query->simplePaginate($perPage);
         $totalPages = ceil($query->count() / $perPage);
-
+    
         return view('admin.classes.manageClass', compact('classes', 'totalPages', 'subjects'));
     }
+    
 
 
 
     public function showChapters($id)
-    {
-        $classroom = Classroom::with('chapters')->find($id);
+{
+    $instructorClassroom = InstructorClassroom::with(['classroom.chapters', 'instructor'])->find($id);
 
-        if (!$classroom) {
-            return redirect()->route('admin.manageClass')->with('error', 'Classroom not found');
-        }
-
-        return view('admin.classes.classroomChapters', compact('classroom'));
+    if (!$instructorClassroom) {
+        return redirect()->route('admin.manageClass')->with('error', 'Classroom not found');
     }
 
-
+    return view('admin.classes.classroomChapters', compact('instructorClassroom'));
+}
 
 
     public function managePlan()

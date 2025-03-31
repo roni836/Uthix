@@ -443,31 +443,28 @@
                                 <div class="card h-100 shadow-lg">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <div>
-                                            <h5 class="mb-1">{{ $class->class_name }} - {{ $class->section }}</h5>
+                                            <h5 class="mb-1">{{ $class->classroom->class_name }} - {{ $class->classroom->section }}</h5>
                                             <p class="mb-0 text-muted">{{ $class->subject->name }}</p>
                                         </div>
-                                        @if ($class->status == 'active')
+                                        @if ($class->classroom->status == 'active')
                                             <span class="blinking-circle"></span>
                                         @endif
-
-
                                     </div>
                                     <div class="card-body">
-                                        <p class="mb-2"><strong>Instructor:</strong>
-                                            {{ $class->instructor->name }}</p>
-                                        <p class="mb-2"><strong>Capacity:</strong> {{ $class->capacity }} students</p>
+                                        <p class="mb-2"><strong>Instructor:</strong> {{ $class->instructor->name }}</p>
+                                        <p class="mb-2"><strong>Capacity:</strong> {{ $class->classroom->capacity }} students</p>
                                         <p class="mb-2"><strong>Schedule:</strong>
-                                            {{ \Carbon\Carbon::parse($class->schedule)->format('d M, Y h:i A') }}</p>
-                                        <p class="mb-3 text-muted">{{ Str::limit($class->description, 80) }}</p>
-                                        @if ($class->link)
-                                            <a href="{{ $class->link }}" target="_blank"
-                                                class="btn btn-primary w-100">Join Class</a>
+                                            {{ \Carbon\Carbon::parse($class->classroom->schedule)->format('d M, Y h:i A') }}</p>
+                                        <p class="mb-3 text-muted">{{ Str::limit($class->classroom->description, 80) }}</p>
+                                        @if ($class->classroom->link)
+                                            <a href="{{ $class->classroom->link }}" target="_blank" class="btn btn-primary w-100">Join Class</a>
                                         @endif
                                     </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
+                    
 
                     @if ($upcomingClasses->isEmpty())
                         <div class="text-center mt-4">
