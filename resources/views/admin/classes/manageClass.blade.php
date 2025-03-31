@@ -11,7 +11,10 @@
                     <i class="fas fa-chalkboard-teacher me-2"></i>Manage Classes
                 </h2>
                 <div>
-                    <a href="{{route('admin.dashboard')}}" class="btn btn-primary">
+                    {{-- <a href="{{route('admin.dashboard')}}" class="btn btn-primary">
+                        <i class="fas fa-arrow-right me-2"></i>Go back
+                    </a>  --}}
+                     <a href="{{route('admin.dashboard')}}" class="btn btn-primary">
                         <i class="fas fa-arrow-right me-2"></i>Go back
                     </a>
                 </div>
@@ -99,7 +102,7 @@
                                             <div class="class-icon me-3 bg-light rounded-circle p-2">
                                                 <i class="fas fa-book text-primary"></i>
                                             </div>
-                                            <span class="fw-bold">{{ $data->class_name }}</span>
+                                            <span class="fw-bold">{{ $data->classroom->class_name }}</span>
                                         </div>
                                     </td>
                                     <td class="py-3">
@@ -109,7 +112,7 @@
                                                     {{ substr($data->instructor->name, 0, 1) }}
                                                 </div>
                                             </div>
-                                            {{ $data->instructor->name }}
+                                            {{ $data->instructor->user->name }}
                                         </div>
                                     </td>
                                     <td class="py-3">
@@ -118,18 +121,18 @@
                                     <td class="py-3">
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-users text-muted me-2"></i>
-                                            {{ $data->capacity ?? 'N/A' }}
+                                            {{ $data->classroom->capacity ?? 'N/A' }}
                                         </div>
                                     </td>
                                     <td class="py-3">
                                         <div class="d-flex align-items-center">
                                             <i class="far fa-calendar-alt text-muted me-2"></i>
-                                            {{ $data->schedule ?? 'N/A' }}
+                                            {{ $data->classroom->schedule ?? 'N/A' }}
                                         </div>
                                     </td>
                                     <td class="py-3">
                                         <span class="badge rounded-pill px-3 py-2 {{ $data->status == 'active' ? 'bg-success' : 'bg-danger' }}">
-                                            {{ ucfirst($data->status) }}
+                                            {{ ucfirst($data->classroom->status) }}
                                         </span>
                                     </td>
                                     <td class="py-3 text-center">

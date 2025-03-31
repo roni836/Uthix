@@ -12,7 +12,10 @@ class InstructorClassroom extends Model
     {
         return $this->belongsTo(Instructor::class);
     }
-
+    public function chapters()
+    {
+        return $this->hasMany(Chapter::class, 'classroom_id');
+    }
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
