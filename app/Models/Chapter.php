@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Chapter extends Model
 {
     protected $guarded = [];
-    public function classroom()
+    public function instructorClassroom()
     {
-        return $this->belongsTo(Classroom::class, 'classroom_id');
+        return $this->belongsTo(InstructorClassroom::class, 'instructor_classroom_id');
     }
     public function announcements()
     {
         return $this->hasMany(Announcement::class, 'chapter_id');
     }
-    
 }

@@ -147,7 +147,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // Route::apiResource('/instructor', [InstructorController::class]);
         Route::apiResource('instructor', InstructorController::class);
         Route::apiResource('instructor-classroom', InstructorClassroomController::class);
-        Route::post('/class-chapter/{classroom_id}', [ClassroomController::class, 'createNewChapter'])->name('class.store');
+        Route::post('/class-chapter/{instructor_classroom_id}', [ClassroomController::class, 'createNewChapter'])->name('class.store');
         Route::get('/manage-classes', [ClassroomController::class, 'manageClasses'])->name('manage.class');
         Route::post('/chapters/{chapter_id}/announcements', [AnnouncementController::class, 'createAnnouncement']);
         // Route::post('/assignments', [AnnouncementController::class, 'store']);

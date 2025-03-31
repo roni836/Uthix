@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Chapter;
 use App\Models\ClassModel;
 use App\Models\Classroom;
+use App\Models\InstructorClassroom;
 use App\Models\Instructor;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -165,7 +166,7 @@ class ClassroomController extends Controller
     //     ], 201);
     // }
 
-    public function createNewChapter(Request $request, $classroom_id)
+    public function createNewChapter(Request $request, $instructor_classroom_id)
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
@@ -185,7 +186,7 @@ class ClassroomController extends Controller
         }
 
         // Ensure the classroom exists
-        if (!Classroom::find($classroom_id)) {
+        if (!InstructorClassroom::find($instructor_classroom_id)) {
             return response()->json([
                 'status' => false,
                 'message' => 'Classroom not found'
@@ -194,7 +195,7 @@ class ClassroomController extends Controller
 
         // Create the Chapter
         $chapter = Chapter::create([
-            'classroom_id' => $classroom_id,
+            'instructor_classroom_id' => $instructor_classroom_id,
             'title' => $request->title,
             'date' => $request->date,
             'time' => $request->time,
@@ -267,9 +268,9 @@ class ClassroomController extends Controller
 
 
     //CLASSROOM WISE CHAPTER CALLING
-    public function getClassChapters($classroom_id)
+    public function getClassChapters($instructor_classroom_id)
     {
-        $chapters = Chapter::where('classroom_id', $classroom_id)->with('classroom')->get();
+        $chapters = Chapter::where('instructor_classroom_id', $instructor_classroom_id)->with('instructorClassroom')->get();
 
         // dd($classroom);
 
