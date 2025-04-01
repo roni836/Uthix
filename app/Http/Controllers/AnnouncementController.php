@@ -235,7 +235,7 @@ class AnnouncementController extends Controller
     
         return response()->json([
             'status' => true,
-            'chapter_title' => $chapter->title, // Chapter title
+            'chapter_title' => $chapter,
             'announcements' => $chapter->announcements->map(function ($announcement) {
                 return [
                     'announcement_id' => $announcement->id,
