@@ -215,4 +215,37 @@ class AnnouncementController extends Controller
             'data' => $submissions
         ]);
     }
+
+
+    public function getChapterAnnouncements($chapter_id)
+    {
+        $chapter = Chapter::where('id', $chapter_id)
+            ->with(['announcements' => function ($query) {
+                $query->orderBy('created_at', 'desc')
+                    ->with('attachments', 'instructor.user'); 
+            }])
+            ->first();
+    
+        if (!$chapter) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Chapter not found.',
+            ], 404);
+        }
+    
+        return response()->json([
+            'status' => true,
+            'chapter_title' => $chapter->title, // Chapter title
+            'announcements' => $chapter->announcements->map(function ($announcement) {
+                return [
+                    'announcement_id' => $announcement->id,
+                    'title' => $announcement->title,
+                    'description' => $announcement->description,
+                    'created_at' => $announcement->created_at->toDateTimeString(),
+                    'instructor_name' => $announcement->instructor->user->name,
+                    'attachments' => $announcement->attachments
+                ];
+            })
+        ], 200);
+    }
 }
