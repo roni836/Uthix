@@ -23,8 +23,10 @@ class StudentClassroomController extends Controller
             ], 404);
         }
     
-        $data = InstructorClassroom::where('classroom_id', $student->classroom_id)->get();
-    
+        $data = InstructorClassroom::where('classroom_id', $student->classroom_id)
+        ->with(['instructor.user', 'subject']) 
+        ->get();
+        
        
     
         return response()->json([
