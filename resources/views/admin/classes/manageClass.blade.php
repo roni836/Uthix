@@ -8,7 +8,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h2 class="fw-bold text-primary mb-0">
-                    <i class="fas fa-chalkboard-teacher me-2"></i>Manage Classes
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Manage Instructor Classes
                 </h2>
                 <div>
                     {{-- <a href="{{route('admin.dashboard')}}" class="btn btn-primary">
@@ -109,7 +109,7 @@
                                         <div class="d-flex align-items-center">
                                             <div class="avatar me-2">
                                                 <div class="avatar-initial rounded-circle bg-primary">
-                                                    {{ substr($data->instructor->name, 0, 1) }}
+                                                    {{ substr($data->instructor->user->name, 0, 1) }}
                                                 </div>
                                             </div>
                                             {{ $data->instructor->user->name }}
