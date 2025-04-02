@@ -30,7 +30,8 @@
                                 <td>
                                     <span class="fw-medium capitalize">{{ $data->name }}</span>
                                 </td>
-                                <td><span class="badge bg-label-primary me-1">{{ $data->status }}</span></td>
+                                <td>
+                                    <span class="badge bg-label-primary me-1">{{ $data->is_active }}</span></td>
                                 <td>
                                     <div class="dropdown">
                                         <button type="button" class="btn p-0 dropdown-toggle hide-arrow"

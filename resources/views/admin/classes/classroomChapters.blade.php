@@ -50,7 +50,7 @@
                                     <div class="avatar-circle bg-primary text-white me-3">
                                         {{ substr($instructorClassroom->instructor->user->name ?? 'N/A', 0, 1) }}
                                     </div>
-                                    <span class="fs-5">{{ $instructorClassroom->instructor->name ?? 'N/A' }}</span>
+                                    <span class="fs-5">{{ $instructorClassroom->instructor->user->name ?? 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
