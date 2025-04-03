@@ -22,4 +22,5 @@ class Student extends Model
     {
         return $this->belongsTo(Classroom::class);
     }
+    
 }

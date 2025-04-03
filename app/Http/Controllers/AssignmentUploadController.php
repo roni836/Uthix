@@ -74,6 +74,8 @@ class AssignmentUploadController extends Controller
     // }
     
 
+    //for students
+
     public function uploadAssignment(Request $request, $announcementId)
     {
         $studentId = Student::where('user_id', auth()->id())->value('id');
@@ -134,6 +136,7 @@ class AssignmentUploadController extends Controller
         ], 201);
     }
 
+    //for student
   
     public function getMyAssignmentsByAnnouncement($announcementId)
     {
@@ -169,7 +172,7 @@ class AssignmentUploadController extends Controller
     
     
     
-
+//for instructors
     public function viewSubmissions($announcementId)
     {
         $announcement = Announcement::with([
@@ -192,4 +195,28 @@ class AssignmentUploadController extends Controller
     }
     
     
+    public function viewClassSubmissions()
+    {
+        // Logged-in Student Info
+        $student = auth()->user()->student;
+        if (!$student) {
+            return response()->json(['status' => false, 'message' => 'Student not found.'], 404);
+        }
+    
+        $classId = $student->classroom_id;
+    
+        $submissions = Announcement::with([
+            'uploads.students.user',
+            'uploads.attachments',
+            'chapter:id,title'
+        ])->whereHas('uploads.students', function ($query) use ($classId) {
+            $query->where('classroom_id', $classId);
+        })->get();
+    
+        return response()->json([
+            'status' => true,
+            'data' => $submissions,
+        ], 200);
+    }
+
 }
