@@ -24,7 +24,7 @@ class StudentClassroomController extends Controller
         }
     
         $data = InstructorClassroom::where('classroom_id', $student->classroom_id)
-        ->with(['instructor.user', 'subject']) 
+        ->with(['instructor.user', 'classroom:id,class_name', 'subject']) 
         ->get();
         
        

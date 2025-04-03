@@ -22,7 +22,59 @@ class AssignmentUploadController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    // public function store(Request $request)
+    // {
+    //     $studentId = Student::where('user_id', auth()->id())->value('id');
+    
+    //     if (!$studentId) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Student not found for this user!',
+    //         ], 400);
+    //     }
+    
+    //     $validator = Validator::make($request->all(), [
+    //         'announcement_id' => 'required|exists:announcements,id',
+    //         'chapter_id' => 'required|exists:chapters,id',
+    //         'attachments.*' => 'required|file|max:2048|mimes:pdf,doc,docx,png,jpg,jpeg',
+    //         'title' => 'nullable|string|max:255',
+    //         'comment' => 'nullable|string',
+    //     ]);
+    
+    //     if ($validator->fails()) {
+    //         return response()->json(['error' => $validator->errors()], 422);
+    //     }
+    
+    //     $assignmentUpload = AssignmentUpload::create([
+    //         'announcement_id' => $request->announcement_id,
+    //         'student_id' => $studentId,
+    //         'chapter_id' => $request->chapter_id,
+    //         'submitted_at' => now(),
+    //         'title' => $request->title,
+    //         'comment' => $request->comment,
+    //         'status' => 'pending',
+    //     ]);
+    
+    //     if ($request->hasFile('attachments')) {
+    //         foreach ($request->file('attachments') as $file) {
+    //             $filePath = $file->store('attachments', 'public');
+    
+    //             AssignmentAttachment::create([
+    //                 'assignment_upload_id' => $assignmentUpload->id,
+    //                 'announcement_id' => $request->announcement_id,
+    //                 'attachment_file' => $filePath,
+    //             ]);
+    //         }
+    //     }
+    
+    //     return response()->json([
+    //         'message' => 'Assignment uploaded successfully!',
+    //         'assignment_upload' => $assignmentUpload->load('attachments'),
+    //     ], 201);
+    // }
+    
+
+    public function uploadAssignment(Request $request, $announcementId)
     {
         $studentId = Student::where('user_id', auth()->id())->value('id');
     
@@ -33,9 +85,17 @@ class AssignmentUploadController extends Controller
             ], 400);
         }
     
+        // Ensure the announcement exists
+        $announcement = Announcement::find($announcementId);
+        if (!$announcement) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid announcement ID!',
+            ], 404);
+        }
+    
+        // Validate the request
         $validator = Validator::make($request->all(), [
-            'announcement_id' => 'required|exists:announcements,id',
-            'chapter_id' => 'required|exists:chapters,id',
             'attachments.*' => 'required|file|max:2048|mimes:pdf,doc,docx,png,jpg,jpeg',
             'title' => 'nullable|string|max:255',
             'comment' => 'nullable|string',
@@ -45,23 +105,24 @@ class AssignmentUploadController extends Controller
             return response()->json(['error' => $validator->errors()], 422);
         }
     
+        // Create Assignment Upload
         $assignmentUpload = AssignmentUpload::create([
-            'announcement_id' => $request->announcement_id,
+            'announcement_id' => $announcementId,
             'student_id' => $studentId,
-            'chapter_id' => $request->chapter_id,
             'submitted_at' => now(),
             'title' => $request->title,
             'comment' => $request->comment,
             'status' => 'pending',
         ]);
     
+        // Handle file attachments
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $filePath = $file->store('attachments', 'public');
     
                 AssignmentAttachment::create([
                     'assignment_upload_id' => $assignmentUpload->id,
-                    'announcement_id' => $request->announcement_id,
+                    'announcement_id' => $announcementId,
                     'attachment_file' => $filePath,
                 ]);
             }
@@ -72,7 +133,6 @@ class AssignmentUploadController extends Controller
             'assignment_upload' => $assignmentUpload->load('attachments'),
         ], 201);
     }
-    
 
     /**
      * Display the submitted assignments.
