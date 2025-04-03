@@ -124,6 +124,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('grade/{uploadId}', [GradeController::class, 'getGrades']);
         // Route::post('/student/assignments/upload', [AssignmentUploadController::class, 'store']);
         Route::post('/announcements/{announcement}/assignments', [AssignmentUploadController::class, 'uploadAssignment']);
+        Route::get('/announcements/{announcement}/my-assignments', [AssignmentUploadController::class, 'getMyAssignmentsByAnnouncement']);
+
         Route::post('/student-profile', [StudentController::class, 'updateProfile']);
         Route::get('/student-profile', [StudentController::class, 'showProfile']);
         Route::get('/student/chapters/{chapter_id}/announcements', [AnnouncementController::class, 'getChapterAnnouncements']);
