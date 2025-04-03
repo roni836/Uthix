@@ -23,6 +23,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShipRocketController;
 use App\Http\Controllers\StudentClassroomController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentPlanController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\ZoomController;
@@ -129,6 +130,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/student-profile', [StudentController::class, 'updateProfile']);
         Route::get('/student-profile', [StudentController::class, 'showProfile']);
         Route::get('/student/chapters/{chapter_id}/announcements', [AnnouncementController::class, 'getChapterAnnouncements']);
+
+        Route::apiResource(('student-plan'), StudentPlanController::class);
+        Route::get('/show-student-plan', [StudentController::class, 'showStudentPlan']);
     });
 
     //Seller

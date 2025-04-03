@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('student_plans', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->decimal('price', 8, 2);
-            $table->string('duration')->comment('monthly, yearly')->default('monthly');
-            $table->json('features')->nullable();
-            $table->boolean('status')->default(1);
-
-
+            $table->foreignId('plan_id')->constrained()->onDelete('cascade');
+            $table->foreignId('student_id')->constrained()->onDelete('cascade');
+            $table->enum('payment_status', ['paid', 'unpaid', 'refunded'])->default('unpaid');
             $table->timestamps();
         });
     }
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('student_plans');
     }
 };
