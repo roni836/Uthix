@@ -134,9 +134,42 @@ class AssignmentUploadController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the submitted assignments.
-     */
+  
+    public function getMyAssignmentsByAnnouncement($announcementId)
+    {
+        $studentId = Student::where('user_id', auth()->id())->value('id');
+    
+        if (!$studentId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Student not found for this user!',
+            ], 400);
+        }
+    
+        $announcement = Announcement::find($announcementId);
+        if (!$announcement) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid announcement ID!',
+            ], 404);
+        }
+    
+        $assignments = AssignmentUpload::where('announcement_id', $announcementId)
+            ->where('student_id', $studentId)
+            ->with('attachments')
+            ->get();
+    
+        return response()->json([
+            'status' => true,
+            'message' => 'Your assignments retrieved successfully!',
+            'assignments' => $assignments,
+        ], 200);
+    }
+    
+    
+    
+    
+
     public function viewSubmissions($announcementId)
 {
     $announcement = Announcement::with(['uploads.student', 'uploads.attachments', 'uploads.chapter'])
