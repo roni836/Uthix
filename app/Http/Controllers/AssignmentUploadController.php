@@ -74,6 +74,8 @@ class AssignmentUploadController extends Controller
     // }
     
 
+    //for students
+
     public function uploadAssignment(Request $request, $announcementId)
     {
         $studentId = Student::where('user_id', auth()->id())->value('id');
@@ -134,6 +136,7 @@ class AssignmentUploadController extends Controller
         ], 201);
     }
 
+    //for student
   
     public function getMyAssignmentsByAnnouncement($announcementId)
     {
@@ -169,49 +172,51 @@ class AssignmentUploadController extends Controller
     
     
     
-
+//for instructors
     public function viewSubmissions($announcementId)
-{
-    $announcement = Announcement::with(['uploads.student', 'uploads.attachments', 'uploads.chapter'])
-        ->where('id', $announcementId)
-        ->first();
-
-    if (!$announcement) {
+    {
+        $announcement = Announcement::with([
+            'uploads.students.user:id,name',
+            'uploads.attachments',
+            'uploads.chapter'
+        ])->where('id', $announcementId)->first();
+    
+        if (!$announcement) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Announcement not found.',
+            ], 404);
+        }
+    
         return response()->json([
-            'status' => false,
-            'message' => 'Announcement not found.',
-        ], 404);
+            'status' => true,
+            'data' => $announcement, 
+        ], 200);
+    }
+    
+    
+    public function viewClassSubmissions()
+    {
+        // Logged-in Student Info
+        $student = auth()->user()->student;
+        if (!$student) {
+            return response()->json(['status' => false, 'message' => 'Student not found.'], 404);
+        }
+    
+        $classId = $student->classroom_id;
+    
+        $submissions = Announcement::with([
+            'uploads.students.user',
+            'uploads.attachments',
+            'chapter:id,title'
+        ])->whereHas('uploads.students', function ($query) use ($classId) {
+            $query->where('classroom_id', $classId);
+        })->get();
+    
+        return response()->json([
+            'status' => true,
+            'data' => $submissions,
+        ], 200);
     }
 
-    return response()->json([
-        'status' => true,
-        'total_submissions' => $announcement->uploads->count(),
-        'uploads' => $announcement->uploads->map(function ($upload) {
-            return [
-                'id' => $upload->id,
-                'student' => $upload->student ? [
-                    'id' => $upload->student->id,
-                    'name' => $upload->student->name,
-                    'profile_image' => $upload->student->profile_image ?? null,
-                ] : null, // Handle the case where student is null
-                'class' => $upload->chapter->classroom->class_name ?? 'N/A',
-                'chapter' => $upload->chapter->title ?? 'N/A',
-                'section' => $upload->chapter->section_name ?? 'N/A',
-                'submitted_at' => $upload->submitted_at,
-                'status' => $upload->status,
-                'title' => $upload->title,
-                'comment' => $upload->comment,
-                'attachments' => $upload->attachments->map(function ($file) {
-                    return [
-                        'id' => $file->id,
-                        'file_name' => basename($file->attachment_file),
-                        'file_url' => asset('storage/' . $file->attachment_file),
-                    ];
-                }),
-            ];
-        }),
-    ], 200);
-}
-
-    
 }

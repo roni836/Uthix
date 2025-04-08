@@ -70,5 +70,8 @@ public function classrooms()
 {
     return $this->hasMany(Classroom::class, 'instructor_id');
 }
-
+public function uploads()
+    {
+        return $this->hasMany(AssignmentUpload::class, 'student_id');
+    }
 }

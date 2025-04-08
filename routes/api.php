@@ -130,6 +130,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/student-profile', [StudentController::class, 'updateProfile']);
         Route::get('/student-profile', [StudentController::class, 'showProfile']);
         Route::get('/student/chapters/{chapter_id}/announcements', [AnnouncementController::class, 'getChapterAnnouncements']);
+        Route::get('/submissions/class', [AssignmentUploadController::class, 'viewClassSubmissions']);
 
         Route::apiResource(('student-plan'), StudentPlanController::class);
         Route::get('/show-student-plan', [StudentController::class, 'showStudentPlan']);

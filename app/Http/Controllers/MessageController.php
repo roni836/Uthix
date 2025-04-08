@@ -148,7 +148,7 @@ class MessageController extends Controller
             $query->where('sender_id', $userId)->where('receiver_id', $receiverId);
         })->orWhere(function ($query) use ($userId, $receiverId) {
             $query->where('sender_id', $receiverId)->where('receiver_id', $userId);
-        })->orderBy('created_at', 'asc')->with('receiver')->get();
+        })->orderBy('created_at', 'asc')->with('receiver','sender')->get();
 
         foreach ($messages as $msg) {
             if ($msg->file_path) {
