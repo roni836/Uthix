@@ -76,8 +76,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Route::apiResource('products', ProductController::class);
 
     Route::get('/get-all-user', [MessageController::class, 'getAllUser']);
-    Route::post('/chat-messages', [MessageController::class, 'sendMessage']);
-    Route::get('/chat-messages', [MessageController::class, 'getMessages']);
+    Route::post('/send-message', [MessageController::class, 'sendMessage']);
+    Route::get('/get-messages', [MessageController::class, 'getMessages']);
     Route::get('/get-conversation/{receiverId}', [MessageController::class, 'getConversation']);
     Route::put('/mark-as-read/{messageId}', [MessageController::class, 'markAsRead']);
     Route::delete('/delete-message/{messageId}', [MessageController::class, 'deleteMessage']);
@@ -130,7 +130,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/student-profile', [StudentController::class, 'updateProfile']);
         Route::get('/student-profile', [StudentController::class, 'showProfile']);
         Route::get('/student/chapters/{chapter_id}/announcements', [AnnouncementController::class, 'getChapterAnnouncements']);
-        Route::get('/submissions/class', [AssignmentUploadController::class, 'viewClassSubmissions']);
 
         Route::apiResource(('student-plan'), StudentPlanController::class);
         Route::get('/show-student-plan', [StudentController::class, 'showStudentPlan']);
