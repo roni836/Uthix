@@ -76,8 +76,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Route::apiResource('products', ProductController::class);
 
     Route::get('/get-all-user', [MessageController::class, 'getAllUser']);
-    Route::post('/send-message', [MessageController::class, 'sendMessage']);
-    Route::get('/get-messages', [MessageController::class, 'getMessages']);
+    Route::post('/chat-messages', [MessageController::class, 'sendMessage']);
+    Route::get('/chat-messages', [MessageController::class, 'getMessages']);
     Route::get('/get-conversation/{receiverId}', [MessageController::class, 'getConversation']);
     Route::put('/mark-as-read/{messageId}', [MessageController::class, 'markAsRead']);
     Route::delete('/delete-message/{messageId}', [MessageController::class, 'deleteMessage']);
