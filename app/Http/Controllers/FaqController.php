@@ -80,15 +80,15 @@ class FaqController extends Controller
         $user = Auth::user();
 
         if ($user->role == 'instructor') {
-            $faqs = Faq::where('status', true)->where('type', 'student')->get();
+            $faqs = Faq::where('status', true)->where('type', 'instructor')->get();
         }
 
         if ($user->role == 'student') {
-            $faqs = Faq::where('status', true)->where('type', 'seller')->get();
+            $faqs = Faq::where('status', true)->where('type', 'student')->get();
         }
 
         if ($user->role == 'seller') {
-            $faqs = Faq::where('status', true)->where('type', 'instructor')->get();
+            $faqs = Faq::where('status', true)->where('type', 'seller')->get();
         }
 
 
