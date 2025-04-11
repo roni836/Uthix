@@ -67,6 +67,8 @@
             let formData = {
                 question: $("#question").val(),
                 answer: $("#answer").val(),
+                type: $("#type").val(),         
+
                 status: $("#status").val()
             };
 
