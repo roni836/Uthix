@@ -24,6 +24,17 @@
                                 <textarea name="answer" id="answer" class="form-control" placeholder="Enter Answer"></textarea>
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="type">Type</label>
+                            <div class="col-sm-10">
+                                <select name="type" id="type" class="form-control">
+                                    <option value="seller">Seller</option>
+                                    <option value="student">Student</option>
+                                    <option value="instructor">Instructor</option>
+                                </select>
+                            </div>
+                        </div>
+                        
 
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="status">Status</label>
