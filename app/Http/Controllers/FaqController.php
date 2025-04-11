@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Faq;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class FaqController extends Controller
@@ -11,7 +12,7 @@ class FaqController extends Controller
     /**
      * Display a listing of the resource.
      */
-    
+
 
     public function store(Request $request)
     {
@@ -68,23 +69,37 @@ class FaqController extends Controller
         $faq->delete();
         return response()->json(['message' => 'FAQ deleted successfully']);
     }
+
     public function onlyShowActiveFAQs()
     {
-        $faqs = Faq::where('status', true)->get();
-    
+        $user = Auth::user();
+
+        if ($user->role == 'instructor') {
+            $faqs = Faq::where('status', true)->where('type', 'student')->get();
+        }
+
+        if ($user->role == 'student') {
+            $faqs = Faq::where('status', true)->where('type', 'seller')->get();
+        }
+
+        if ($user->role == 'seller') {
+            $faqs = Faq::where('status', true)->where('type', 'instructor')->get();
+        }
+
+
         if ($faqs->isEmpty()) {
             return response()->json(['message' => 'No active FAQs found'], 404);
         }
-    
-        return response()->json($faqs);
+
+        return response()->json(['message' => 'FAQ fetch successfully', 'faqs' => $faqs], 201);
     }
+
     public function toggleStatus($id)
     {
         $faq = Faq::findOrFail($id);
-        $faq->status = !$faq->status; 
+        $faq->status = !$faq->status;
         $faq->save();
-    
+
         return back()->with('success', 'faq status updated successfully!');
     }
-    
 }
