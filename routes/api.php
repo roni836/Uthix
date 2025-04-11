@@ -150,6 +150,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/review-image/{product_id}', [ReviewController::class, 'allReviewImage']);
         Route::get('/vendor/profile', [VendorController::class, 'editSeller']);
         Route::post('/vendor/profile', [VendorController::class, 'updateSeller']);
+        Route::get('/vendor-store-status', [VendorController::class, 'vendorStoreStatus']);
     });
     
     Route::middleware([RoleMiddleware::class . ':instructor'])->group(function () {

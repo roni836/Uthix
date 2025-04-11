@@ -255,6 +255,26 @@ class VendorController extends Controller
     //     ], 200);
     // }
 
+    public function vendorStoreStatus()
+    {
+        $user = Auth::user();
+        $vendor = Vendor::where('user_id', $user->id)->first();
+
+        if (!$vendor) {
+            return response()->json(['error' => 'Vendor not found'], 404);
+        }
+
+        if ($vendor->store_name && $vendor->store_address) {
+            return response()->json([
+                'status' => true
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false
+            ], 200);
+        }
+    }
+
 
     public function updateSeller(Request $request)
     {
@@ -268,7 +288,7 @@ class VendorController extends Controller
 
         // Validation rules
         $validator = Validator::make($request->all(), [
-            'name' => 'string|max:255',
+            'name' => 'required|string|max:255',
             'phone' => 'required'
         ]);
 
