@@ -69,7 +69,7 @@ class VendorController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-    
+
         // Validation
         $validator = Validator::make($request->all(), [
             'store_name' => 'required|string|max:255',
@@ -81,28 +81,28 @@ class VendorController extends Controller
             'school' => 'nullable|string',
             'counter' => 'nullable|integer',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => 422,
                 'errors' => $validator->messages()
             ], 422);
         }
-    
+
         // Handle Logo Upload
         $logoPath = null;
         if ($request->hasFile('logo')) { // ✅ Changed 'cat_image' to 'logo'
             $image = $request->file('logo');
-    
+
             if (!$image->isValid()) {
                 return response()->json(['error' => 'Uploaded image is not valid.'], 400);
             }
-    
+
             // Generate unique filename
             $logoPath = time() . '.' . $image->extension();
             $image->storeAs('images/logos', $logoPath, 'public'); // ✅ Store in 'storage/app/public/images/logos'
         }
-    
+
         // Store Data
         $vendorStore = Vendor::create([
             'user_id' => $user->id,
@@ -117,14 +117,14 @@ class VendorController extends Controller
             'status' => 'pending',
             'isApproved' => false,
         ]);
-    
+
         return response()->json([
             'message' => 'Vendor store created successfully',
             'store' => $vendorStore
         ], 201);
     }
-    
-    
+
+
 
     //PRODUCTS 
     public function getVendorCategories(Request $request)
@@ -258,66 +258,49 @@ class VendorController extends Controller
 
     public function updateSeller(Request $request)
     {
-        $user = Auth::user();
-        $vendor = Vendor::where('user_id', $user->id)->first();
-    
+        $data = Auth::user();
+        $vendor = Vendor::where('user_id', $data->id)->first();
+        $user = User::where('id', $data->id)->first();
+
         if (!$vendor) {
             return response()->json(['error' => 'Vendor not found'], 404);
         }
-    
-        // Allowed fields for updating
-        $allowedFields = ['name', 'mobile', 'email', 'gender', 'dob', 'address', 'school', 'counter', 'password'];
-        $inputFields = array_intersect_key($request->all(), array_flip($allowedFields));
-    
-        // Ensure at least one field is provided for update
-        if (count($inputFields) === 0) {
-            return response()->json([
-                'error' => 'At least one field must be provided for update.'
-            ], 422);
-        }
-    
+
         // Validation rules
         $validator = Validator::make($request->all(), [
-            // 'name' => 'string|max:255',
-            // 'mobile' => 'digits:10',
-            'email' => 'email|unique:users,email,' . $user->id,  // Fixed: Email should be checked for the user
-            'gender' => 'in:male,female,others',
-            'dob' => 'date',
-            'address' => 'string',
-            'school' => 'string',
-            'counter' => 'integer',
-            'password' => 'nullable|string|min:6',
+            'name' => 'string|max:255',
+            'mobile' => 'required'
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => 422,
                 'errors' => $validator->messages()
             ], 422);
         }
-    
-        // Handle password separately (hash before saving)
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-    
-        // Update user fields
-        foreach ($inputFields as $key => $value) {
-            if (in_array($key, ['name', 'email', 'password', 'mobile'])) {
-                $user->$key = $value;
-            } else {
-                $vendor->$key = $value;
-            }
-        }
-    
-        $user->save();
-        $vendor->save();
-    
+
+        $user->update([
+            'name' => $request->name,
+            'mobile' => $request->mobile,
+        ]);
+
+        $vendor->update([
+            'gender' => $request->gender,
+            'dob' => $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null,
+            'address' => $request->address,
+            'store_name' => $request->store_name,
+            'store_address' => $request->store_address,
+            'school' => $request->school,
+            'counter' => $request->counter ?? 0,
+            'status' => 'pending',
+            'isApproved' => false,
+        ]);
+
+
         return response()->json([
             'message' => 'Profile updated successfully',
             'user' => $user,
             'vendor' => $vendor
         ], 200);
     }
-    
 }
