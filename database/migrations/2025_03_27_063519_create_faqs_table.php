@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('question');
             $table->text('answer')->nullable();
+            $table->enum('type', ['seller', 'student', 'instructor'])->default('student');
             $table->boolean('status')->default(1);
             $table->timestamps();
         });
