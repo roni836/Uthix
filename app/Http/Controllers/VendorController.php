@@ -74,9 +74,6 @@ class VendorController extends Controller
         $validator = Validator::make($request->all(), [
             'store_name' => 'required|string|max:255',
             'store_address' => 'required|string',
-            'gender' => 'required|in:male,female,others',
-            'dob' => 'required|date',
-            'address' => 'required|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate logo as an image
             'school' => 'nullable|string',
             'counter' => 'nullable|integer',
@@ -264,15 +261,16 @@ class VendorController extends Controller
             return response()->json(['error' => 'Vendor not found'], 404);
         }
 
-        if ($vendor->store_name && $vendor->store_address) {
+        if($vendor->store_name && $vendor->store_address) {
             return response()->json([
+                'message' => 'Vendor is approved',
                 'status' => true
             ], 200);
-        } else {
-            return response()->json([
-                'status' => false
-            ], 200);
         }
+
+        return response()->json([
+            'message' => 'Vendor status fetched successfully',
+        ], 200);
     }
 
 
