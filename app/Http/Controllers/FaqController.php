@@ -18,6 +18,9 @@ class FaqController extends Controller
         $validator = Validator::make($request->all(), [
             'question' => 'required|string|max:255',
             'answer'   => 'nullable|string',
+            'type'     => 'required|in:seller,student,instructor', 
+
+
         ]);
 
         if ($validator->fails()) {
@@ -47,6 +50,8 @@ class FaqController extends Controller
         $validator = Validator::make($request->all(), [
             'question' => 'required|string|max:255',
             'answer'   => 'nullable|string',
+            'type'     => 'in:seller,student,instructor', // added
+
             'status'   => 'boolean'
         ]);
 
