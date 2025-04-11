@@ -269,7 +269,7 @@ class VendorController extends Controller
         // Validation rules
         $validator = Validator::make($request->all(), [
             'name' => 'string|max:255',
-            'mobile' => 'required'
+            'phone' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -281,7 +281,7 @@ class VendorController extends Controller
 
         $user->update([
             'name' => $request->name,
-            'mobile' => $request->mobile,
+            'phone' => $request->phone,
         ]);
 
         $vendor->update([
