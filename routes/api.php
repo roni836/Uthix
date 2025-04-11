@@ -130,7 +130,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/student-profile', [StudentController::class, 'updateProfile']);
         Route::get('/student-profile', [StudentController::class, 'showProfile']);
         Route::get('/student/chapters/{chapter_id}/announcements', [AnnouncementController::class, 'getChapterAnnouncements']);
-        Route::get('/submissions/class', [AssignmentUploadController::class, 'viewClassSubmissions']);
 
         Route::apiResource(('student-plan'), StudentPlanController::class);
         Route::get('/show-student-plan', [StudentController::class, 'showStudentPlan']);
@@ -151,6 +150,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/review-image/{product_id}', [ReviewController::class, 'allReviewImage']);
         Route::get('/vendor/profile', [VendorController::class, 'editSeller']);
         Route::post('/vendor/profile', [VendorController::class, 'updateSeller']);
+        Route::get('/vendor-store-status', [VendorController::class, 'vendorStoreStatus']);
     });
     
     Route::middleware([RoleMiddleware::class . ':instructor'])->group(function () {

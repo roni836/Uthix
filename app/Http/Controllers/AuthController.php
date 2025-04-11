@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\PasswordReset;
 use App\Models\Student;
+use App\Models\Vendor;
 use Carbon\Carbon;
 
 class AuthController extends Controller
@@ -169,6 +170,12 @@ class AuthController extends Controller
         }
         if($request->role == 'student' ){
             Student::create([
+                'user_id' => $user->id,
+            ]);
+        }
+
+        if($request->role == 'seller' ){
+            Vendor::create([
                 'user_id' => $user->id,
             ]);
         }
