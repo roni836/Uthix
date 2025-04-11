@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-          
-            $table->enum('gender', ['male', 'female', 'others']);
-            $table->date('dob');
-            $table->text('address');
-            $table->string('store_name');
-            $table->text('store_address');
+            $table->enum('gender', ['male', 'female', 'others'])->nullable();
+            $table->date('dob')->nullable();
+            $table->text('address')->nullable();
+            $table->string('store_name')->nullable();
+            $table->text('store_address')->nullable();
             $table->string('logo')->nullable();
             $table->string('school')->nullable();
             $table->string('counter')->default(0);
