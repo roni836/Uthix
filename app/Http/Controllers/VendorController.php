@@ -261,7 +261,7 @@ class VendorController extends Controller
             return response()->json(['error' => 'Vendor not found'], 404);
         }
 
-        if ($vendor->store_name && $vendor->store_address) {
+        if ($vendor->store_name) {
             return response()->json([
                 'status' => true
             ], 200);
