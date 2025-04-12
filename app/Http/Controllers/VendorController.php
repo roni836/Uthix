@@ -148,7 +148,7 @@ class VendorController extends Controller
             $query->where('category_id', $categoryId);
         }
 
-        $products = $query->with('category')->get();
+        $products = $query->with('category','images')->get();
 
         return response()->json([
             'message' => 'Products fetched successfully',
