@@ -70,6 +70,8 @@ class VendorController extends Controller
     {
         $user = Auth::user();
 
+        $vendor = Vendor::where('user_id', $user->id)->first();
+
         // Validation
         $validator = Validator::make($request->all(), [
             'store_name' => 'required|string|max:255',
@@ -101,14 +103,10 @@ class VendorController extends Controller
         }
 
         // Store Data
-        $vendorStore = Vendor::create([
-            'user_id' => $user->id,
-            'gender' => $request->gender,
-            'dob' => $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null,
-            'address' => $request->address,
+        $vendorStore = $vendor->update([
             'store_name' => $request->store_name,
             'store_address' => $request->store_address,
-            'logo' => $logoPath, // Save file path in DB
+            'logo' => $logoPath,
             'school' => $request->school,
             'counter' => $request->counter ?? 0,
             'status' => 'pending',
