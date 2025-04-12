@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -330,6 +331,75 @@ class VendorController extends Controller
             'message' => 'Profile updated successfully',
             'user' => $user,
             'vendor' => $vendor
+        ], 200);
+    }
+
+    public function vendorOrderStatus($status)
+    {
+
+        $user = Auth::user();
+        // Ensure user is a vendor by checking if they have products
+        $productIds = Product::where('user_id', $user->id)->pluck('id');
+
+        if ($productIds->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No orders found for this vendor.',
+            ], 404);
+        }
+
+        // Fetch orders that contain the vendor's products
+        $orders = Order::where('status', $status)->whereHas('orderItems', function ($query) use ($productIds) {
+            $query->whereIn('product_id', $productIds);
+        })->with(['orderItems.product'])->get();
+
+        return response()->json([
+            'status' => true,
+            'orders' => $orders
+        ], 200);
+    }
+
+    public function vendorUpdateOrderStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|exists:products,id',
+            'status' => 'required|string', // assuming status is a string like 'delivered'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->messages()
+            ], 422);
+        }
+
+        $productId = $request->product_id;
+        $newStatus = $request->status;
+
+        // Find all orders that have this product
+        $orders = Order::whereHas('orderItems', function ($query) use ($productId) {
+            $query->where('product_id', $productId);
+        })
+            ->with(['orderItems.product'])
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No orders found for this product.',
+            ], 404);
+        }
+
+        // Update each order's status
+        foreach ($orders as $order) {
+            $order->status = $newStatus;
+            $order->save();
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Order status updated successfully.',
+            'updated_orders' => $orders
         ], 200);
     }
 }

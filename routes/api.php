@@ -151,6 +151,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor/profile', [VendorController::class, 'editSeller']);
         Route::post('/vendor/profile', [VendorController::class, 'updateSeller']);
         Route::get('/vendor-store-status', [VendorController::class, 'vendorStoreStatus']);
+        Route::get('/vendor-order-status/{status}', [VendorController::class, 'vendorOrderStatus']);
+        Route::post('/vendor-update-order-status', [VendorController::class, 'vendorUpdateOrderStatus']);
     });
     
     Route::middleware([RoleMiddleware::class . ':instructor'])->group(function () {
