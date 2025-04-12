@@ -261,16 +261,15 @@ class VendorController extends Controller
             return response()->json(['error' => 'Vendor not found'], 404);
         }
 
-        if($vendor->store_name && $vendor->store_address) {
+        if ($vendor->store_name && $vendor->store_address) {
             return response()->json([
-                'message' => 'Vendor is approved',
                 'status' => true
             ], 200);
+        } else {
+            return response()->json([
+                'status' => false
+            ], 200);
         }
-
-        return response()->json([
-            'message' => 'Vendor status fetched successfully',
-        ], 200);
     }
 
 
@@ -297,6 +296,19 @@ class VendorController extends Controller
             ], 422);
         }
 
+        $profileImage = null;
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+
+            if (!$image->isValid()) {
+                return response()->json(['error' => 'Uploaded image is not valid.'], 400);
+            }
+
+            $profileImage = time() . '.' . $image->extension();
+
+            $image->storeAs('images/instructor/profile_image', $profileImage, 'public');
+        }
+
         $user->update([
             'name' => $request->name,
             'phone' => $request->phone,
@@ -312,6 +324,7 @@ class VendorController extends Controller
             'counter' => $request->counter ?? 0,
             'status' => 'pending',
             'isApproved' => false,
+            'profile_image' => $profileImage,
         ]);
 
 

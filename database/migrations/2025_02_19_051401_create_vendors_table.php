@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('store_name')->nullable();
             $table->text('store_address')->nullable();
             $table->string('logo')->nullable();
+            $table->string('profile_image')->nullable();
             $table->string('school')->nullable();
             $table->string('counter')->default(0);
             $table->string('status')->nullable();
