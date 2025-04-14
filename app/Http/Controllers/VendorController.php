@@ -398,6 +398,7 @@ class VendorController extends Controller
                     ] : null,
                     'items' => $order->orderItems->map(function ($item) {
                         return [
+                            'id' => $item->product->id,
                             'title' => $item->product->title,
                             'description' => $item->product->description,
                             'price' => $item->product->price,
