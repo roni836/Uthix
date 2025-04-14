@@ -33,6 +33,23 @@ class OrderController extends Controller
         ], 200);
     }
 
+    public function trackingDetail($id){
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        $orders = Order::where('id',$id)->where('user_id', $user->id)->with('orderItems.product')->get();
+        
+        return response()->json([
+            'status' => true,
+            'orders' => $orders
+        ], 200);
+    }
+
 
     public function vendorOrderIndex()
     {

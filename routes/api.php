@@ -133,6 +133,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::apiResource(('student-plan'), StudentPlanController::class);
         Route::get('/show-student-plan', [StudentController::class, 'showStudentPlan']);
+        Route::get('/tracking-detail/{id}', [OrderController::class, 'trackingDetail']);
     });
 
     //Seller
