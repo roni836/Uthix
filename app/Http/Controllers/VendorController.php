@@ -329,30 +329,90 @@ class VendorController extends Controller
         ], 200);
     }
 
+    // public function vendorOrderStatus($status)
+    // {
+
+    //     $user = Auth::user();
+    //     // Ensure user is a vendor by checking if they have products
+    //     $productIds = Product::where('user_id', $user->id)->pluck('id');
+
+    //     if ($productIds->isEmpty()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'No orders found for this vendor.',
+    //         ], 404);
+    //     }
+
+    //     // Fetch orders that contain the vendor's products
+    //     $orders = Order::where('status', $status)->whereHas('orderItems', function ($query) use ($productIds) {
+    //         $query->whereIn('product_id', $productIds);
+    //     })->with(['orderItems.product'])->get();
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'orders' => $orders
+    //     ], 200);
+    // }
+
+
+
     public function vendorOrderStatus($status)
     {
-
         $user = Auth::user();
+    
         // Ensure user is a vendor by checking if they have products
         $productIds = Product::where('user_id', $user->id)->pluck('id');
-
+    
         if ($productIds->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'message' => 'No orders found for this vendor.',
             ], 404);
         }
-
-        // Fetch orders that contain the vendor's products
-        $orders = Order::where('status', $status)->whereHas('orderItems', function ($query) use ($productIds) {
-            $query->whereIn('product_id', $productIds);
-        })->with(['orderItems.product'])->get();
-
+    
+        $orders = Order::where('status', $status)
+            ->whereHas('orderItems', function ($query) use ($productIds) {
+                $query->whereIn('product_id', $productIds);
+            })
+            ->with([
+                'address', 
+                'orderItems.product' => function ($query) {
+                    $query->select('id', 'title', 'description', 'price')
+                          ->with('firstImage:id,product_id,image_path');
+                }
+            ])
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'order_id' => $order->id,
+                    'status' => $order->status,
+                    'shipping_address' => $order->address ? [
+                        'name' => $order->address->name,
+                        'phone' => $order->address->phone,
+                        'email' => $order->address->email,
+                        'state' => $order->address->state,
+                        'city' => $order->address->city,
+                        'pincode' => $order->address->pincode,
+                        'street_address' => $order->address->street_address,
+                        'landmark' => $order->address->landmark,
+                    ] : null,
+                    'items' => $order->orderItems->map(function ($item) {
+                        return [
+                            'title' => $item->product->title,
+                            'description' => $item->product->description,
+                            'price' => $item->product->price,
+                            'image' => $item->product->firstImage->image_path ?? null,
+                        ];
+                    }),
+                ];
+            });
+    
         return response()->json([
             'status' => true,
-            'orders' => $orders
-        ], 200);
+            'orders' => $orders,
+        ]);
     }
+    
 
     public function vendorUpdateOrderStatus(Request $request)
     {
