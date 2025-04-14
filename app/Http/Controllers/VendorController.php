@@ -314,13 +314,9 @@ class VendorController extends Controller
 
         $vendor->update([
             'gender' => $request->gender,
-            'dob' => $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null,
             'address' => $request->address,
-            'store_name' => $request->store_name,
-            'store_address' => $request->store_address,
             'school' => $request->school,
             'counter' => $request->counter ?? 0,
-            'status' => 'pending',
             'isApproved' => false,
             'profile_image' => $profileImage,
         ]);
