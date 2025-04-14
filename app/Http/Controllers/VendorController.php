@@ -295,7 +295,6 @@ class VendorController extends Controller
             ], 422);
         }
 
-        $profileImage = null;
         if ($request->hasFile('profile_image')) {
             $image = $request->file('profile_image');
 
