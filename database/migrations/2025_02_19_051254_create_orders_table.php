@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('address_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('order_number', 20)->unique(); // Limit length for optimization
             $table->boolean('is_ordered')->default(false);
-            $table->enum('status', ['pending', 'processing', 'completed', 'canceled'])->default('pending');
+            $table->enum('status', ['pending', 'delivered', 'rejected', 'intransit','returned'])->default('pending');
             $table->decimal('total_amount', 15, 2)->default(0.00);
             $table->decimal('shipping_charge', 15, 2)->default(0.00);
             $table->enum('payment_status', ['paid', 'unpaid', 'refunded'])->default('unpaid');

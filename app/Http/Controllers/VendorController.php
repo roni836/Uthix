@@ -314,7 +314,7 @@ class VendorController extends Controller
 
         $vendor->update([
             'gender' => $request->gender,
-            'address' => $request->address,
+            'store_address' => $request->store_address,
             'school' => $request->school,
             'counter' => $request->counter ?? 0,
             'isApproved' => false,
