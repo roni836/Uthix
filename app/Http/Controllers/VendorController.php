@@ -148,7 +148,7 @@ class VendorController extends Controller
             $query->where('category_id', $categoryId);
         }
 
-        $products = $query->with('category','images')->get();
+        $products = $query->with('category', 'images')->get();
 
         return response()->json([
             'message' => 'Products fetched successfully',
@@ -276,7 +276,7 @@ class VendorController extends Controller
     {
         $data = Auth::user();
         $vendor = Vendor::where('user_id', $data->id)->first();
-        $user = User::where('id', $data->id)->first();
+        $user = User::find($data->id);
 
         if (!$vendor) {
             return response()->json(['error' => 'Vendor not found'], 404);
@@ -285,7 +285,12 @@ class VendorController extends Controller
         // Validation rules
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'phone' => 'required'
+            'phone' => 'required|string|max:20',
+            'gender' => 'nullable|in:male,female,other',
+            'store_address' => 'nullable|string|max:500',
+            'school' => 'nullable|string|max:255',
+            'counter' => 'nullable|integer|min:0',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -295,6 +300,8 @@ class VendorController extends Controller
             ], 422);
         }
 
+        $profileImage = $vendor->profile_image; // fallback to existing image
+
         if ($request->hasFile('profile_image')) {
             $image = $request->file('profile_image');
 
@@ -303,15 +310,16 @@ class VendorController extends Controller
             }
 
             $profileImage = time() . '.' . $image->extension();
-
             $image->storeAs('images/instructor/profile_image', $profileImage, 'public');
         }
 
+        // Update user info
         $user->update([
             'name' => $request->name,
             'phone' => $request->phone,
         ]);
 
+        // Update vendor info
         $vendor->update([
             'gender' => $request->gender,
             'store_address' => $request->store_address,
@@ -320,7 +328,6 @@ class VendorController extends Controller
             'isApproved' => false,
             'profile_image' => $profileImage,
         ]);
-
 
         return response()->json([
             'message' => 'Profile updated successfully',
@@ -359,26 +366,26 @@ class VendorController extends Controller
     public function vendorOrderStatus($status)
     {
         $user = Auth::user();
-    
+
         // Ensure user is a vendor by checking if they have products
         $productIds = Product::where('user_id', $user->id)->pluck('id');
-    
+
         if ($productIds->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'message' => 'No orders found for this vendor.',
             ], 404);
         }
-    
+
         $orders = Order::where('status', $status)
             ->whereHas('orderItems', function ($query) use ($productIds) {
                 $query->whereIn('product_id', $productIds);
             })
             ->with([
-                'address', 
+                'address',
                 'orderItems.product' => function ($query) {
                     $query->select('id', 'title', 'description', 'price')
-                          ->with('firstImage:id,product_id,image_path');
+                        ->with('firstImage:id,product_id,image_path');
                 }
             ])
             ->get()
@@ -407,13 +414,13 @@ class VendorController extends Controller
                     }),
                 ];
             });
-    
+
         return response()->json([
             'status' => true,
             'orders' => $orders,
         ]);
     }
-    
+
 
     public function vendorUpdateOrderStatus(Request $request)
     {
