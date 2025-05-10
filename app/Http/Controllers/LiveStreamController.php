@@ -117,7 +117,7 @@ class LiveStreamController extends Controller
     public function startClass(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'class_id' => 'required|string'
+            'chapter_id' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -133,7 +133,7 @@ class LiveStreamController extends Controller
         return response()->json([
             'role' => 'host',
             'user_id' => $userId,
-            'class_id' => $request->class_id,
+            'chapter_id' => $request->chapter_id,
             'token' => $token,
             'app_id' => $appId,
         ]);
@@ -142,7 +142,7 @@ class LiveStreamController extends Controller
     public function joinClass(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'class_id' => 'required|string'
+            'chapter_id' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -158,7 +158,7 @@ class LiveStreamController extends Controller
         return response()->json([
             'role' => 'audience',
             'user_id' => $userId,
-            'class_id' => $request->class_id,
+            'chapter_id' => $request->chapter_id,
             'token' => $token,
             'app_id' => $appId,
         ]);
