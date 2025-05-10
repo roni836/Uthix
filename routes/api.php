@@ -13,6 +13,7 @@ use App\Http\Controllers\GradeController;
 use App\Http\Controllers\HelpDeskController;
 use App\Http\Controllers\InstructorClassroomController;
 use App\Http\Controllers\InstructorController;
+use App\Http\Controllers\LiveStreamController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
@@ -100,6 +101,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return response()->json(['message' => 'student API is working!']);
     });
 
+    Route::post('/class/start', [LiveStreamController::class, 'startClass']);   // Instructor
+    Route::post('/class/join', [LiveStreamController::class, 'joinClass']);     // Student
     //Admin
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
@@ -117,6 +120,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('plans', PlanController::class);
         Route::apiResource('faqs', FaqController::class);
         Route::apiResource('classroom', ClassroomController::class);
+
+        // live stream
+
+        Route::post('/live-stream/join', [LiveStreamController::class, 'join']);
+        Route::post('/live-stream/leave', [LiveStreamController::class, 'leave']);
+        Route::get('/live-stream/active', [LiveStreamController::class, 'active']);
     });
 
     Route::middleware([RoleMiddleware::class . ':student'])->group(function () {
@@ -155,7 +164,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/vendor-order-status/{status}', [VendorController::class, 'vendorOrderStatus']);
         Route::post('/vendor-update-order-status', [VendorController::class, 'vendorUpdateOrderStatus']);
     });
-    
+
     Route::middleware([RoleMiddleware::class . ':instructor'])->group(function () {
         // Route::apiResource('/instructor', [InstructorController::class]);
         Route::apiResource('instructor', InstructorController::class);
