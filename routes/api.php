@@ -148,7 +148,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //Seller
     Route::middleware([RoleMiddleware::class . ':seller'])->group(function () {
         Route::apiResource('vendors', VendorController::class);
-        Route::post('/vendor/products', [ProductController::class, 'store']);
+        Route::post('/vendor/products/{category_id}', [ProductController::class, 'store']);
         Route::get('/vendor/categories', [VendorController::class, 'getVendorCategories']);
         Route::get('/get/vendor/products', [VendorController::class, 'getVendorProducts']);
         Route::put('/vendor/products/{id}', [ProductController::class, 'update']); // Update product

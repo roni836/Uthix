@@ -378,6 +378,8 @@ class VendorController extends Controller
         }
 
         $orders = Order::where('status', $status)
+        ->where('is_ordered', true)
+
             ->whereHas('orderItems', function ($query) use ($productIds) {
                 $query->whereIn('product_id', $productIds);
             })
