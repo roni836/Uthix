@@ -116,24 +116,21 @@ class LiveStreamController extends Controller
 
     public function startClass(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'chapter_id' => 'required|string'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->messages(),
-            ], 422);
-        }
 
         $userId = Auth::id(); // Automatically fetch authenticated user ID
+
         [$token, $appId] = $this->generateToken($userId);
+
+        $timestamp = time();
+        $randomStr = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz1234567890'), 0, 4);
+
+        $liveId = 'live_' . $userId . '_' . $timestamp . '_' . $randomStr;
 
         return response()->json([
             'role' => 'host',
             'user_id' => $userId,
-            'chapter_id' => $request->chapter_id,
+            'live_id' => $liveId,
+            'name' => Auth::user()->name,
             'token' => $token,
             'app_id' => $appId,
         ]);
@@ -141,24 +138,20 @@ class LiveStreamController extends Controller
 
     public function joinClass(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'chapter_id' => 'required|string'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->messages(),
-            ], 422);
-        }
 
         $userId = Auth::id(); // Automatically fetch authenticated user ID
         [$token, $appId] = $this->generateToken($userId);
 
+        $timestamp = time();
+        $randomStr = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz1234567890'), 0, 4);
+
+        $liveId = 'live_' . $userId . '_' . $timestamp . '_' . $randomStr;
+
         return response()->json([
             'role' => 'audience',
             'user_id' => $userId,
-            'chapter_id' => $request->chapter_id,
+            'live_id' => $liveId,
+            'name' => Auth::user()->name,
             'token' => $token,
             'app_id' => $appId,
         ]);

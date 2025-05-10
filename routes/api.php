@@ -101,8 +101,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return response()->json(['message' => 'student API is working!']);
     });
 
-    Route::post('/class/start', [LiveStreamController::class, 'startClass']);   // Instructor
-    Route::post('/class/join', [LiveStreamController::class, 'joinClass']);     // Student
+    Route::get('/class/start', [LiveStreamController::class, 'startClass']);   // Instructor
+    Route::get('/class/join', [LiveStreamController::class, 'joinClass']);     // Student
     //Admin
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
