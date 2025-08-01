@@ -62,7 +62,7 @@
 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <meta name="google-site-verification" content="177ASV6JsvS9zVWlpmEMlGx5nvEAurlsdqk4EAeX2vY" />
+    
 
     <style>
         .switch {

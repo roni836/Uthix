@@ -62,6 +62,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <meta name="google-site-verification" content="177ASV6JsvS9zVWlpmEMlGx5nvEAurlsdqk4EAeX2vY" />
 
 </head>
 
