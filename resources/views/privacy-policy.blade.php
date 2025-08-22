@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description"
           content="{{ $company }} Privacy Policy for e-commerce and e-learning services. Learn what data we collect, why, how long we keep it, and your privacy rights. Last updated {{ $updated }}.">
-    @vite('resources/css/app.css')
+     <script src="https://cdn.tailwindcss.com"></script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
