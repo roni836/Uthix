@@ -19,6 +19,10 @@ Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
+Route::get('/privacy-policy', function () {
+    return view('privacy-policy');
+})->name('login');
+
 // Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard'); 
 
 
