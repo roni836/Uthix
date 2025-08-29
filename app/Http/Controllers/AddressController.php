@@ -55,20 +55,20 @@ class AddressController extends Controller
             ], 401);
         }
     
-        $pincode = $request->postal_code;
-        $response = Http::get("https://api.postalpincode.in/pincode/{$pincode}");
-        $data = $response->json();
+        // $pincode = $request->postal_code;
+        // $response = Http::get("https://api.postalpincode.in/pincode/{$pincode}");
+        // $data = $response->json();
     
-        if (!isset($data[0]) || !isset($data[0]['Status']) || $data[0]['Status'] !== 'Success') {
-            return response()->json([
-                'status' => false,
-                'message' => 'Invalid Pincode or API issue'
-            ], 400);
-        }
+        // if (!isset($data[0]) || !isset($data[0]['Status']) || $data[0]['Status'] !== 'Success') {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Invalid Pincode or API issue'
+        //     ], 400);
+        // }
     
-        $city = $data[0]['PostOffice'][0]['District'] ?? 'Unknown';
-        $state = $data[0]['PostOffice'][0]['State'] ?? 'Unknown';
-        $country = 'India'; // Static for this API
+        // $city = $data[0]['PostOffice'][0]['District'] ?? 'Unknown';
+        // $state = $data[0]['PostOffice'][0]['State'] ?? 'Unknown';
+        // $country = 'India'; // Static for this API
     
         // Store address in database
        $address= Address::create([
@@ -80,10 +80,10 @@ class AddressController extends Controller
             'landmark'     => $request->landmark,
             'street'       => $request->street,
             'area'         => $request->area,
-            'postal_code'  => $pincode,
-            'city'         => $city,
-            'state'        => $state,
-            'country'      => $country,
+            'postal_code'  => $request->pincode,
+            'city'         => $request->city,
+            'state'        => $request->state,
+            'country'      => $request->country,
             // 'is_default'   => $request->is_default
         ]);
     
