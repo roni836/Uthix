@@ -91,12 +91,12 @@ class AdminController extends Controller
 
         //upcoming classes
         $upcomingClasses = InstructorClassroom::with(['classroom', 'instructor', 'subject'])
-    ->whereHas('classroom', function ($query) {
-        $query->where('schedule', '>', now())
-              ->where('status', 'active');
-    })
-    ->take(3)
-    ->get();
+            ->whereHas('classroom', function ($query) {
+                $query->where('schedule', '>', now())
+                    ->where('status', 'active');
+            })
+            ->take(3)
+            ->get();
 
         return view('admin.index', compact(
             'orders',
@@ -153,6 +153,23 @@ class AdminController extends Controller
         $vendors = Vendor::with('user')->get();
         return view('admin.manageVendor', compact('vendors'));
     }
+    public function logout(Request $request)
+    {
+        if (
+            $request->user()->currentAccessToken() &&
+            ! $request->user()->currentAccessToken() instanceof \Laravel\Sanctum\TransientToken
+        ) {
+            // Only delete if it's a real token, not transient
+            $request->user()->currentAccessToken()->delete();
+        }
+
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('message', 'Logged out successfully');
+    }
+
 
     public function insertVendor()
     {
@@ -254,47 +271,47 @@ class AdminController extends Controller
     public function manageClass(Request $request)
     {
         $perPage = 8;
-    
+
         $subjects = Subject::where('is_active', true)->get();
-    
+
         $query = InstructorClassroom::with(['classroom', 'instructor', 'subject']);
-    
+
         if ($request->has('subject') && !empty($request->subject)) {
             $query->where('subject_id', $request->subject);
         }
-    
+
         if ($request->has('status') && !empty($request->status)) {
             $query->whereHas('classroom', function ($q) use ($request) {
                 $q->where('status', $request->status);
             });
         }
-    
+
         if ($request->has('search') && !empty($request->search)) {
             $query->whereHas('classroom', function ($q) use ($request) {
                 $q->where('class_name', 'LIKE', '%' . $request->search . '%');
             });
         }
-    
+
         // Paginate results
         $classes = $query->simplePaginate($perPage);
         $totalPages = ceil($query->count() / $perPage);
-    
+
         return view('admin.classes.manageClass', compact('classes', 'totalPages', 'subjects'));
     }
-    
+
 
 
 
     public function showChapters($id)
-{
-    $instructorClassroom = InstructorClassroom::with(['classroom.chapters', 'instructor'])->find($id);
+    {
+        $instructorClassroom = InstructorClassroom::with(['classroom.chapters', 'instructor'])->find($id);
 
-    if (!$instructorClassroom) {
-        return redirect()->route('admin.manageClass')->with('error', 'Classroom not found');
+        if (!$instructorClassroom) {
+            return redirect()->route('admin.manageClass')->with('error', 'Classroom not found');
+        }
+
+        return view('admin.classes.classroomChapters', compact('instructorClassroom'));
     }
-
-    return view('admin.classes.classroomChapters', compact('instructorClassroom'));
-}
 
 
     public function managePlan()

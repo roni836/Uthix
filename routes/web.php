@@ -29,6 +29,8 @@ Route::get('/privacy-policy', function () {
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+
         Route::get('/manage-class', [AdminController::class, 'manageClass'])->name('manage.class');
         Route::get('/manage-student', [AdminController::class, 'manageStudent'])->name('manage.student');
         Route::get('/insert-student', [AdminController::class, 'insertStudent'])->name('insert.student');
