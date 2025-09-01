@@ -304,7 +304,7 @@ class AdminController extends Controller
 
     public function showChapters($id)
     {
-        $instructorClassroom = InstructorClassroom::with(['classroom.chapters', 'instructor'])->find($id);
+        $instructorClassroom = InstructorClassroom::with(['classroom','chapters', 'instructor'])->find($id);
 
         if (!$instructorClassroom) {
             return redirect()->route('admin.manageClass')->with('error', 'Classroom not found');

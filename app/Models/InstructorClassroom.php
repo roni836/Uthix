@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class InstructorClassroom extends Model
 {
-    protected $guarded=[];
+    protected $guarded = [];
 
     public function instructor()
     {
@@ -14,8 +15,9 @@ class InstructorClassroom extends Model
     }
     public function chapters()
     {
-        return $this->hasMany(Chapter::class, 'classroom_id');
+        return $this->hasMany(Chapter::class, 'instructor_classroom_id');
     }
+
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
@@ -26,8 +28,7 @@ class InstructorClassroom extends Model
         return $this->belongsTo(Subject::class);
     }
     public function student()
-{
-    return $this->belongsTo(Student::class, 'student_id');
-}
-
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 }
