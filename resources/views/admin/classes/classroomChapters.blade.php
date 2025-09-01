@@ -202,9 +202,9 @@
                     </div>
                     <h4>No Chapters Found</h4>
                     <p class="text-muted">This classroom doesn't have any chapters yet.</p>
-                    <button class="btn btn-primary">
+                    {{-- <button class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i>Add First Chapter
-                    </button>
+                    </button> --}}
                 </div>
             </div>
         </div>
