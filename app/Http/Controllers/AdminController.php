@@ -145,7 +145,8 @@ class AdminController extends Controller
 
     public function insertStudent()
     {
-        return view('admin.student.insertStudent');
+        $data['classroom'] = Classroom::where('status', 'active')->get();
+        return view('admin.student.insertStudent', $data);
     }
 
     public function manageVendor()
