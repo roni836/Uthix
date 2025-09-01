@@ -139,9 +139,13 @@ class AdminController extends Controller
 
     public function manageStudent()
     {
-        $users = Student::with('user')->get();
-        return view('admin.student.manageStudent', compact('users'));
+          $perPage = 8;
+        $users = Student::with('user')->simplePaginate($perPage);
+        $totalPages = ceil(Student::count() / $perPage);
+        return view('admin.student.manageStudent', compact('users','totalPages'));
     }
+
+    
 
     public function insertStudent()
     {

@@ -77,58 +77,53 @@ class StudentController extends Controller
     // }
 
 
-   public function store(Request $request)
-{
-    $user = Auth::user();
-
-    // Validation
-    $validator = Validator::make($request->all(), [
-        'classroom_id' => 'required|exists:classrooms,id',
-        'status' => 'nullable|boolean',
-        'stream' => 'nullable|string|max:255',
-    ]);
-
-    if ($validator->fails()) {
+    public function store(Request $request)
+    {
+        $user = Auth::user();
+    
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'status' => 'nullable|boolean'
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+    
+        $existingStudent = Student::where('user_id', $user->id)->first();
+    
+        if ($existingStudent) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Student profile already exists. You can only edit or delete it.'
+            ], 400); 
+        }
+    
+        $student = Student::create([
+            'user_id' => $user->id,
+            'class' => $request->class,
+        ]);
+    
+        if (!$student) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to create student profile'
+            ], 500);
+        }
+    
         return response()->json([
-            'success' => false,
-            'errors' => $validator->errors(),
-        ], 422);
+            'status' => true,
+            'message' => 'Student profile created successfully',
+            'data' => $student
+        ], 201);
     }
-
-    // Check if student already exists
-    if (Student::where('user_id', $user->id)->exists()) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Student profile already exists. You can only edit or delete it.'
-        ], 409); // Conflict
-    }
-
-    // Create student
-    $student = Student::create([
-        'user_id' => $user->id,
-        'classroom_id' => $request->classroom_id,
-        'stream' => $request->stream,
-        'status' => $request->boolean('status', true), // default true
-    ]);
-
-    // Eager load classroom for response
-    $student->load('classroom');
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Student profile created successfully',
-        'data' => $student
-    ], 201);
-}
-
-
 
     public function adminStore(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'class' => 'required',
+    'classroom_id' => 'required|exists:classrooms,id', // ✅ correct
         ]);
 
         if ($validator->fails()) {
@@ -147,7 +142,7 @@ class StudentController extends Controller
 
         $student = Student::create([
             'user_id' => $user->id,
-            'class' => $request->class,
+            'classroom_id' => $request->classroom_id,
         ]);
         if (!$student) {
             return response()->json([
@@ -190,26 +185,26 @@ class StudentController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-
+    
             if (!$image->isValid()) {
                 return response()->json(['error' => 'Uploaded image is not valid.'], 400);
             }
-
+    
             // Generate unique file name
             $profileImage = time() . '.' . $image->extension();
-
+    
             // Store image in public storage
             $image->storeAs('images/student', $profileImage, 'public');
-
+    
             // Delete old image if exists
             if ($data->image) {
                 Storage::disk('public')->delete('images/student/' . $data->image);
             }
-
+    
             // Set new image name
             $data->image = $profileImage;
         }
-
+        
         // Update user details
         $data->update([
             'name' => $request->name,
@@ -247,4 +242,5 @@ class StudentController extends Controller
             'data' =>  $data,
         ], 200);
     }
+
 }
